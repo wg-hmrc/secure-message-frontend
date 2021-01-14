@@ -18,7 +18,6 @@ package uk.gov.hmrc.securemessagefrontend.controllers
 
 import uk.gov.hmrc.securemessagefrontend.config.AppConfig
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
-import play.api.Configuration
 import play.api.mvc._
 import play.api.i18n.Lang
 import com.google.inject.Inject
