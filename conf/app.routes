@@ -3,5 +3,9 @@
 ->         /govuk-frontend          govuk.Routes
 ->         /hmrc-frontend           hmrcfrontend.Routes
 GET        /hello-world             uk.gov.hmrc.securemessagefrontend.controllers.HelloWorldController.helloWorld
+
+GET        /conversations           uk.gov.hmrc.securemessagefrontend.controllers.ConversationsController.display
+GET        /conversation-message/:id         uk.gov.hmrc.securemessagefrontend.controllers.MessagesController.display(id)
+
 GET        /language/:lang          uk.gov.hmrc.securemessagefrontend.controllers.LanguageSwitchController.switchToLanguage(lang: String)
 GET        /assets/*file            controllers.Assets.versioned(path = "/public", file: Asset)
