@@ -16,7 +16,8 @@
 
 @import uk.gov.hmrc.securemessagefrontend.config.AppConfig
 
-@this(layout: Layout)
+
+@this(layout: Layout) 
 
 @()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -24,3 +25,8 @@
     <h1 class="govuk-heading-xl">secure-message-frontend</h1>
     <p class="govuk-body">@{messages("service.text")}</p>
 }
+
+
+
+
+

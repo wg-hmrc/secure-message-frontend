@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.securemessagefrontend.config
+import sbt.Compile
+import sbt.Keys.compile
+import wartremover.Wart._
+import wartremover.WartRemover.autoImport.{ Warts, wartremoverErrors }
 
-import javax.inject.{ Inject, Singleton }
-import play.api.i18n.Lang
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+object WartRemoverSettings {
 
-@Singleton
-class AppConfig @Inject()(servicesConfig: ServicesConfig) {
-
-  lazy val languageTranslationEnabled: Boolean =
-    servicesConfig.getBoolean("features.languageTranslationEnabled")
-
-  val en: String = "en"
-  val cy: String = "cy"
-  val defaultLanguage: Lang = Lang(en)
+  lazy val wartRemoverError = {
+    val errorWarts = Seq(
+      Nothing,
+      ImplicitParameter,
+      DefaultArguments,
+      ToString
+    )
+    wartremoverErrors in (Compile, compile) ++= Warts.allBut(errorWarts: _*)
+  }
 }

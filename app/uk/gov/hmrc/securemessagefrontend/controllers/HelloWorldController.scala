@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.securemessagefrontend.controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
