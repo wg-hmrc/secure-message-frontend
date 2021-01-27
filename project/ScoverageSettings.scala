@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.securemessagefrontend.config
+import sbt.Keys.parallelExecution
+import scoverage.ScoverageKeys
+import sbt._
 
-import javax.inject.{ Inject, Singleton }
-import play.api.i18n.Lang
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
-@Singleton
-class AppConfig @Inject()(servicesConfig: ServicesConfig) {
-
-  lazy val languageTranslationEnabled: Boolean =
-    servicesConfig.getBoolean("features.languageTranslationEnabled")
-
-  val en: String = "en"
-  val cy: String = "cy"
-  val defaultLanguage: Lang = Lang(en)
+object ScoverageSettings {
+  def apply(): Seq[Def.Setting[_ >: String with Double with Boolean]] =
+    Seq( // Semicolon-separated list of regexes matching classes to exclude
+      ScoverageKeys.coverageExcludedPackages := "<empty>;.*Reverse.*;.*(config|testonly|views).*;.*(BuildInfo|Routes).*",
+      ScoverageKeys.coverageMinimum := 97.56,
+      ScoverageKeys.coverageFailOnMinimum := true,
+      ScoverageKeys.coverageHighlighting := true,
+      parallelExecution in ConfigKey.configurationToKey(Test) := false
+    )
 }

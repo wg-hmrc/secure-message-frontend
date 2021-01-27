@@ -16,6 +16,7 @@
 
 @import uk.gov.hmrc.securemessagefrontend.controllers.routes.LanguageSwitchController._
 @import uk.gov.hmrc.securemessagefrontend.config.AppConfig
+@import uk.gov.hmrc.securemessagefrontend.models.Language
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcLanguageSelect
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.LanguageSelect
 
@@ -23,8 +24,8 @@
 
 @()(implicit messages: Messages, appConfig: AppConfig)
 @hmrcLanguageSelect(LanguageSelect(
-    if (messages.lang.code == "cy") Cy else En,
-    (En, switchToLanguage("en").url),
-    (Cy, switchToLanguage("cy").url)
+  if (messages.lang.code == "cy") Cy else En,
+  (En, selectLanguage(Language.English).url),
+  (Cy, selectLanguage(Language.Cymraeg).url)
 ))
 
