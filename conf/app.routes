@@ -1,7 +1,14 @@
 # microservice specific routes
 
-->         /govuk-frontend          govuk.Routes
-->         /hmrc-frontend           hmrcfrontend.Routes
-GET        /hello-world             uk.gov.hmrc.securemessagefrontend.controllers.HelloWorldController.helloWorld
-GET        /language/:lang          uk.gov.hmrc.securemessagefrontend.controllers.LanguageSwitchController.switchToLanguage(lang: String)
-GET        /assets/*file            controllers.Assets.versioned(path = "/public", file: Asset)
+### NoDocs ###
+->          /govuk-frontend         govuk.Routes
+### NoDocs ###
+->          /hmrc-frontend          hmrcfrontend.Routes
+
+GET         /hello-world            uk.gov.hmrc.securemessagefrontend.controllers.HelloWorldController.helloWorld
+
+### NoDocs ###
+GET        /language/:lang          uk.gov.hmrc.securemessagefrontend.controllers.LanguageSwitchController.selectLanguage(lang: Language)
+
+### NoDocs ###
+GET         /assets/*file           controllers.Assets.versioned(path = "/public", file: Asset)
