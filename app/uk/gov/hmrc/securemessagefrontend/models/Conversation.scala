@@ -22,12 +22,42 @@ final case class ConversationMessage(id: String, content: String)
 
 object FakeData {
   val conversations: Seq[Conversation] = List(
-    Conversation("111", "/conversation-message/111", "HMRC exports", "MRN 20GB16046891253600", "12 January 2021"),
-    Conversation("222", "/conversation-message/222", "HMRC exports", "MRN 20GB16046891253601", "13 January 2021"),
-    Conversation("333", "/conversation-message/222", "HMRC exports", "MRN 20GB16046891253601", "13 January 2021"),
-    Conversation("444", "/conversation-message/222", "HMRC exports", "MRN 20GB16046891253601", "13 January 2021"),
-    Conversation("555", "/conversation-message/222", "HMRC exports", "MRN 20GB16046891253601", "13 January 2021"),
-    Conversation("666", "/conversation-message/222", "HMRC exports", "MRN 20GB16046891253601", "13 January 2021")
+    Conversation(
+      "111",
+      "/secure-messaging/conversation-message/111",
+      "HMRC exports",
+      "MRN 20GB16046891253600",
+      "12 January 2021"),
+    Conversation(
+      "222",
+      "/secure-messaging/conversation-message/222",
+      "HMRC exports",
+      "MRN 20GB16046891253601",
+      "13 January 2021"),
+    Conversation(
+      "333",
+      "/secure-messaging/conversation-message/222",
+      "HMRC exports",
+      "MRN 20GB16046891253601",
+      "13 January 2021"),
+    Conversation(
+      "444",
+      "/secure-messaging/conversation-message/222",
+      "HMRC exports",
+      "MRN 20GB16046891253601",
+      "13 January 2021"),
+    Conversation(
+      "555",
+      "/secure-messaging/conversation-message/222",
+      "HMRC exports",
+      "MRN 20GB16046891253601",
+      "13 January 2021"),
+    Conversation(
+      "666",
+      "/secure-messaging/conversation-message/222",
+      "HMRC exports",
+      "MRN 20GB16046891253601",
+      "13 January 2021")
   )
 
   val messages: Seq[ConversationMessage] = List(
