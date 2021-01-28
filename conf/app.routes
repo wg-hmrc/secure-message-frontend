@@ -7,6 +7,10 @@
 
 GET         /hello-world            uk.gov.hmrc.securemessagefrontend.controllers.HelloWorldController.helloWorld
 
+GET        /conversations           uk.gov.hmrc.securemessagefrontend.controllers.ConversationsController.display
+
+GET        /conversation-message/:id         uk.gov.hmrc.securemessagefrontend.controllers.MessagesController.display(id)
+
 ### NoDocs ###
 GET        /language/:lang          uk.gov.hmrc.securemessagefrontend.controllers.LanguageSwitchController.selectLanguage(lang: Language)
 
