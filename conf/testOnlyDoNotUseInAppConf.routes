@@ -12,4 +12,4 @@
 # Add all the application routes to the prod.routes file
 ->          /                       prod.Routes
 
-GET         /secure-message-frontend/api/schema.json        uk.gov.hmrc.securemessagefrontend.controllers.swagger.ApiSpecsController.specs
+GET         /secure-message-frontend/api/schema.json        controllers.swagger.ApiSpecsController.specs

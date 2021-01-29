@@ -11,3 +11,9 @@ conversation.page.archive.messages.summary = Messages you have read, older than 
 conversation.page.filter.text = Filter your messages
 conversation.page.subject = Subject
 conversation.page.date = Date
+
+conversation.inbox.title = Messages between you and HMRC
+conversation.inbox.heading.status = Status
+conversation.inbox.heading.subject = Subject
+conversation.inbox.heading.date = Date
+conversation.inbox.default.sender = HMRC Digital

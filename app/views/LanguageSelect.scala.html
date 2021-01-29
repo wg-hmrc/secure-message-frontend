@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models
+@import controllers.routes.LanguageSwitchController._
+@import config.AppConfig
+@import models.Language
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcLanguageSelect
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.LanguageSelect
 
-class WithName(string: String) {
-  override val toString: String = string
-}
+@this(hmrcLanguageSelect: HmrcLanguageSelect)
+
+@()(implicit messages: Messages, appConfig: AppConfig)
+@hmrcLanguageSelect(LanguageSelect(
+  if (messages.lang.code == "cy") Cy else En,
+  (En, selectLanguage(Language.English).url),
+  (Cy, selectLanguage(Language.Cymraeg).url)
+))
+

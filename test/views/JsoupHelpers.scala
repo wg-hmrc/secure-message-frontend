@@ -14,8 +14,26 @@
  * limitations under the License.
  */
 
-package models
+package views
 
-class WithName(string: String) {
-  override val toString: String = string
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
+import play.twirl.api.Html
+
+@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
+trait JsoupHelpers {
+
+  implicit class RichHtml(html: Html) {
+    def select(cssQuery: String): Elements =
+      parseNoPrettyPrinting(html).select(cssQuery)
+  }
+
+  // otherwise Jsoup inserts linefeed https://stackoverflow.com/questions/12503117/jsoup-line-feed
+  def parseNoPrettyPrinting(html: Html): Document = {
+    val doc = Jsoup.parse(html.body)
+    doc.outputSettings().prettyPrint(false)
+    doc
+  }
+
 }

@@ -14,33 +14,36 @@
  * limitations under the License.
  */
 
-import play.core.PlayVersion
 import play.core.PlayVersion.current
-import play.sbt.PlayImport._
-import sbt.Keys.libraryDependencies
 import sbt._
 
 object AppDependencies {
 
   val compile = Seq(
-    "uk.gov.hmrc"   %% "bootstrap-frontend-play-27" % "3.4.0",
-    "uk.gov.hmrc"   %% "play-frontend-hmrc"         % "0.40.0-play-27",
-    "uk.gov.hmrc"   %% "play-frontend-govuk"        % "0.60.0-play-27",
-    "uk.gov.hmrc"   %% "play-language"              % "4.10.0-play-27",
-    "com.iheart"    %% "play-swagger"               % "0.10.2",
-    "org.typelevel" %% "cats-core"                  % "2.4.1"
+    "uk.gov.hmrc"       %% "auth-client"                % "4.0.0-play-27",
+    "uk.gov.hmrc"       %% "bootstrap-frontend-play-27" % "4.0.0",
+    "uk.gov.hmrc"       %% "play-frontend-hmrc"         % "0.41.0-play-27",
+    "uk.gov.hmrc"       %% "play-frontend-govuk"        % "0.60.0-play-27",
+    "uk.gov.hmrc"       %% "play-language"              % "4.10.0-play-27",
+    "uk.gov.hmrc"       %% "url-builder"                % "3.4.0-play-27",
+    "com.typesafe.play" %% "play-json-joda"             % "2.9.1",
+    "com.iheart"        %% "play-swagger"               % "0.10.2",
+    "org.typelevel"     %% "cats-core"                  % "2.4.1"
   )
 
   val test = Seq(
-    "uk.gov.hmrc"            %% "bootstrap-test-play-27" % "3.4.0" % Test,
-    "org.scalatest"          %% "scalatest"              % "3.0.0" % Test,
-    "org.jsoup"              % "jsoup"                   % "1.13.1" % Test,
-    "com.typesafe.play"      %% "play-test"              % current % Test,
-    "org.scalatestplus.play" %% "scalatestplus-play"     % "4.0.3" % "test, it",
-    "org.jsoup"              % "jsoup"                   % "1.13.1" % Test,
-    "org.mockito"            % "mockito-core"            % "3.7.7",
-    "com.vladsch.flexmark"   % "flexmark-all"            % "0.36.8" % "test, it",
-    "org.pegdown"            % "pegdown"                 % "1.6.0" % "test, it"
+    "uk.gov.hmrc"             %% "bootstrap-test-play-27"    % "4.0.0"           % Test,
+    "org.scalatest"           %% "scalatest"                 % "3.0.0"           % Test,
+    "org.jsoup"               % "jsoup"                      % "1.13.1"          % Test,
+    "com.typesafe.play"       %% "play-test"                 % current           % Test,
+    "uk.gov.hmrc"             %% "service-integration-test"  % "0.13.0-play-27"  % "test, it",
+    "org.scalatestplus.play"  %% "scalatestplus-play"        % "4.0.3"           % "test, it",
+    "org.jsoup"               % "jsoup"                      % "1.13.1"          % "test, it",
+    "org.mockito"             % "mockito-core"               % "3.7.7"           % "test, it",
+    "com.vladsch.flexmark"    % "flexmark-all"               % "0.36.8"          % "test, it",
+    "org.pegdown"             % "pegdown"                    % "1.6.0"           % "test, it",
+    "net.codingwell"          %% "scala-guice"               % "4.2.11"           % "test, it"
+
   )
 
   val dependencyOverrides = Seq(

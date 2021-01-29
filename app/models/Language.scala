@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.securemessagefrontend.models
+package models
 
 import play.api.i18n.Lang
 import play.api.mvc.PathBindable

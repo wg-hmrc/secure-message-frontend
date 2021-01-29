@@ -16,6 +16,17 @@
 
 package models
 
-class WithName(string: String) {
-  override val toString: String = string
+import org.scalatestplus.play.PlaySpec
+
+class FakeDataSpec extends PlaySpec {
+
+  "FakeData" must {
+    "must return 6 conversations" in {
+      FakeData.conversations("test").size mustBe 6
+    }
+    "must return 6 messages" in {
+      FakeData.messages.size mustBe 6
+    }
+  }
+
 }
