@@ -24,37 +24,37 @@ object FakeData {
   val conversations: Seq[Conversation] = List(
     Conversation(
       "111",
-      "/secure-messaging/conversation-message/111",
+      "/secure-message-stub/conversation-message/111",
       "HMRC exports",
       "MRN 20GB16046891253600",
       "12 January 2021"),
     Conversation(
       "222",
-      "/secure-messaging/conversation-message/222",
+      "/secure-message-stub/conversation-message/222",
       "HMRC exports",
       "MRN 20GB16046891253601",
       "13 January 2021"),
     Conversation(
       "333",
-      "/secure-messaging/conversation-message/222",
+      "/secure-message-stub/conversation-message/222",
       "HMRC exports",
       "MRN 20GB16046891253601",
       "13 January 2021"),
     Conversation(
       "444",
-      "/secure-messaging/conversation-message/222",
+      "/secure-message-stub/conversation-message/222",
       "HMRC exports",
       "MRN 20GB16046891253601",
       "13 January 2021"),
     Conversation(
       "555",
-      "/secure-messaging/conversation-message/222",
+      "/secure-message-stub/conversation-message/222",
       "HMRC exports",
       "MRN 20GB16046891253601",
       "13 January 2021"),
     Conversation(
       "666",
-      "/secure-messaging/conversation-message/222",
+      "/secure-message-stub/conversation-message/222",
       "HMRC exports",
       "MRN 20GB16046891253601",
       "13 January 2021")
