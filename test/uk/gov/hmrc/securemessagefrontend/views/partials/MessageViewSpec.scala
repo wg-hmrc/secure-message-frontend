@@ -46,7 +46,7 @@ class MessageViewSpec extends PlaySpec with GuiceOneAppPerSuite {
       messagePage must include("HMRC sent this message on 20 January 2021 at 8:23am")
       messagePage must include("Dear Customer")
       messagePage must include("MRN 20GB16046891253600")
-      messagePage must include("<a href=\"/secure-message-frontend/conversations\" class=\"govuk-back-link\">Back</a>")
+      messagePage must include("<a href=\"/secure-message-stub/conversations\" class=\"govuk-back-link\">Back</a>")
     }
   }
 
