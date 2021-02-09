@@ -21,10 +21,11 @@ import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.{ Lang, MessagesApi, MessagesImpl }
-import play.api.test.Helpers.{ status }
+import play.api.test.Helpers.status
 import play.api.test.{ FakeRequest, Helpers }
 import uk.gov.hmrc.securemessagefrontend.config.AppConfig
 import uk.gov.hmrc.securemessagefrontend.views.html.partials.{ archivedMessages, conversations, recentMessages }
+
 import scala.concurrent.duration._
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
@@ -38,7 +39,7 @@ class ConversationsControllerSpec extends PlaySpec with GuiceOneAppPerSuite {
         recentMessagesPartial,
         archivedMessagesPartial)
 
-      val result = controller.display(FakeRequest("GET", "/conversations"))
+      val result = controller.display("some-service")(FakeRequest("GET", "/some-service/conversations"))
       status(result) mustBe Status.OK
     }
   }

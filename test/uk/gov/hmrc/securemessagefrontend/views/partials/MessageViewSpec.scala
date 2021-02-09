@@ -40,7 +40,7 @@ class MessageViewSpec extends PlaySpec with GuiceOneAppPerSuite {
           " – Article 18 and Annex VII.”</p>\n                <p class=\"govuk-body\">Robin Newman</p>\n   " +
           "             </div>"
       val htmlBody = messageBodyHtml.render(Some(messageBody), request, messages)
-      val messagePage = messageHtml.render(htmlBody, request, messages).toString
+      val messagePage = messageHtml.render(htmlBody, "some-service", "DA123", request, messages).toString
 
       messagePage must include("MRN 20GB16046891253600 needs action")
       messagePage must include("HMRC sent this message on 20 January 2021 at 8:23am")

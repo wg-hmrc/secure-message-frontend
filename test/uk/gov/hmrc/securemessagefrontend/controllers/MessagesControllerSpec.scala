@@ -32,7 +32,8 @@ class MessagesControllerSpec extends PlaySpec with GuiceOneAppPerSuite {
   "Message Controller" must {
     "show message partial" in new TestCase {
       val controller = new MessagesController(stubMessagesControllerComponents(), messageContent, message)
-      val result = controller.display("111")(FakeRequest("GET", "/conversation-message/111"))
+      val result = controller.display("some-service", "111", "DA123")(
+        FakeRequest("GET", "/some-service/conversation-message/111/DA123"))
 
       status(result) mustBe Status.OK
       val pageContent = contentAsString(result)
