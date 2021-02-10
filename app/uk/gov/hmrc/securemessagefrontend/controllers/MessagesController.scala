@@ -44,7 +44,7 @@ class MessagesController @Inject()(
 
   def response(clientService: String, clientId: String, conversationId: String): Action[AnyContent] = Action {
 
-    Ok(s"$clientService with client $clientId with conversationId $conversationId")
+    Ok(s"$clientService with clientId $clientId with conversationId $conversationId")
   }
 
   private def messageContent(messageId: String) = FakeData.messages.find(_.id === messageId).map(_.content)
