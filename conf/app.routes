@@ -7,9 +7,13 @@
 
 GET         /hello-world            uk.gov.hmrc.securemessagefrontend.controllers.HelloWorldController.helloWorld
 
-GET        /conversations           uk.gov.hmrc.securemessagefrontend.controllers.ConversationsController.display
+GET        /:clientService/conversations           uk.gov.hmrc.securemessagefrontend.controllers.ConversationsController.display(clientService)
 
-GET        /conversation-message/:id         uk.gov.hmrc.securemessagefrontend.controllers.MessagesController.display(id)
+GET        /:clientService/conversation/:clientId/:conversationId        uk.gov.hmrc.securemessagefrontend.controllers.MessagesController.display(clientService, clientId, conversationId)
+
+POST        /:clientService/conversation/:clientId/:conversationId          uk.gov.hmrc.securemessagefrontend.controllers.MessagesController.saveReply(clientService, clientId, conversationId)
+
+GET        /:clientService/conversation/:clientId/:conversationId/result     uk.gov.hmrc.securemessagefrontend.controllers.MessagesController.response(clientService, clientId, conversationId)
 
 ### NoDocs ###
 GET        /language/:lang          uk.gov.hmrc.securemessagefrontend.controllers.LanguageSwitchController.selectLanguage(lang: Language)

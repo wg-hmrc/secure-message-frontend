@@ -32,13 +32,34 @@ class MessagesControllerSpec extends PlaySpec with GuiceOneAppPerSuite {
   "Message Controller" must {
     "show message partial" in new TestCase {
       val controller = new MessagesController(stubMessagesControllerComponents(), messageContent, message)
-      val result = controller.display("111")(FakeRequest("GET", "/conversation-message/111"))
+      val result = controller.display("some-service", "111", "DA123")(
+        FakeRequest("GET", "/some-service/conversation-message/111/DA123"))
 
       status(result) mustBe Status.OK
       val pageContent = contentAsString(result)
       pageContent must include("MRN 20GB16046891253600 needs action")
       pageContent must include("HMRC sent this message on 20 January 2021 at 8:23am")
       pageContent must include("Dear Customer")
+    }
+
+    "save reply" in new TestCase {
+      val controller = new MessagesController(stubMessagesControllerComponents(), messageContent, message)
+      val result = controller.saveReply("some-service", "111", "DA123")(
+        FakeRequest("POST", "/some-service/conversation-message/111/DA123"))
+
+      status(result) mustBe Status.CREATED
+      val pageContent = contentAsString(result)
+      pageContent must include("Saved reply successfull with client some-service clientId 111 and conversationId DA123")
+    }
+
+    "response" in new TestCase {
+      val controller = new MessagesController(stubMessagesControllerComponents(), messageContent, message)
+      val result = controller.response("some-service", "111", "DA123")(
+        FakeRequest("GET", "/some-service/conversation-message/111/DA123/result"))
+
+      status(result) mustBe Status.OK
+      val pageContent = contentAsString(result)
+      pageContent must include("some-service with clientId 111 with conversationId DA123")
     }
   }
 

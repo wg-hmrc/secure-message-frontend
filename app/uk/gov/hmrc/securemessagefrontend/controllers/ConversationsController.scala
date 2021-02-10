@@ -31,10 +31,12 @@ class ConversationsController @Inject()(
   archivedMessages: archivedMessages)
     extends FrontendController(controllerComponents) with I18nSupport {
 
-  def display: Action[AnyContent] = Action { implicit request =>
-    Ok(conversationsPartial(latestMessagesPartial, archivedMessagesPartial))
+  def display(clientService: String): Action[AnyContent] = Action { implicit request =>
+    Ok(conversationsPartial(latestMessagesPartial(clientService), archivedMessagesPartial(clientService)))
   }
 
-  private def latestMessagesPartial()(implicit request: Request[_]) = recentMessages(FakeData.conversations)
-  private def archivedMessagesPartial()(implicit request: Request[_]) = archivedMessages(FakeData.conversations)
+  private def latestMessagesPartial(clientService: String)(implicit request: Request[_]) =
+    recentMessages(FakeData.conversations(clientService))
+  private def archivedMessagesPartial(clientService: String)(implicit request: Request[_]) =
+    archivedMessages(FakeData.conversations(clientService))
 }

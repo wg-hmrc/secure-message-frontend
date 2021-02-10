@@ -18,7 +18,7 @@
 @import play.twirl.api.HtmlFormat
 @this(layout: Layout, govukPanel: GovukPanel,govukBackLink : GovukBackLink)
 
-@(message: HtmlFormat.Appendable)(implicit request: Request[_], messages: Messages)
+@(message: HtmlFormat.Appendable, clientService: String, conversationId: String)(implicit request: Request[_], messages: Messages)
 <div class="govuk-width-container">
     <a href="/secure-message-stub/conversations" class="govuk-back-link">Back</a>
 
