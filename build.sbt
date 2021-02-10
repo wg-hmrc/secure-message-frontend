@@ -167,12 +167,13 @@ lazy val silencerSettings: Seq[Setting[_]] = {
 
 (compile in Compile) := ((compile in Compile) dependsOn dependencyUpdates).value
 dependencyUpdatesFilter -= moduleFilter(name = "flexmark-all")
+dependencyUpdatesFilter -= moduleFilter(organization = "uk.gov.hmrc")
 dependencyUpdatesFilter -= moduleFilter(organization = "org.scala-lang")
 dependencyUpdatesFilter -= moduleFilter(organization = "com.github.ghik")
 dependencyUpdatesFilter -= moduleFilter(organization = "com.typesafe.play")
 dependencyUpdatesFilter -= moduleFilter(organization = "org.scalatest")
 dependencyUpdatesFilter -= moduleFilter(organization = "org.scalatestplus.play")
-dependencyUpdatesFailBuild := false
+dependencyUpdatesFailBuild := true
 sources in (Compile, doc) := Seq.empty
 
 val codeStyleIntegrationTest = taskKey[Unit]("enforce code style then integration test")
