@@ -28,7 +28,10 @@ val appName = "secure-message-frontend"
 val silencerVersion = "1.7.0"
 
 lazy val externalServices = List(
-  ExternalService("DATASTREAM")
+  ExternalService("DATASTREAM"),
+  ExternalService("AUTH"),
+  ExternalService("IDENTITY_VERIFICATION"),
+  ExternalService("USER_DETAILS")
 )
 
 lazy val wartremoverSettings =
@@ -50,10 +53,10 @@ lazy val microservice = Project(appName, file("."))
     majorVersion := 0,
     scalaVersion := "2.12.12",
     name := appName,
-    RoutesKeys.routesImport += "uk.gov.hmrc.securemessagefrontend.models._",
+    RoutesKeys.routesImport += "models._",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     TwirlKeys.templateImports ++= Seq(
-      "uk.gov.hmrc.securemessagefrontend.config.AppConfig",
+      "config.AppConfig",
       "uk.gov.hmrc.govukfrontend.views.html.components._",
       "uk.gov.hmrc.govukfrontend.views.html.helpers._",
       "uk.gov.hmrc.hmrcfrontend.views.html.components._",
@@ -145,8 +148,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(ScoverageSettings())
   .settings(wartremoverSettings: _*)
   .settings(
-    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-    buildInfoPackage := "uk.gov.hmrc.securemessagefrontend"
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
   )
 
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")

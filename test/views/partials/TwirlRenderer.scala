@@ -14,8 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package views.partials
 
-class WithName(string: String) {
-  override val toString: String = string
+import play.twirl.api.HtmlFormat
+
+import scala.util.Try
+
+trait TwirlRenderer[T] {
+
+  /**
+    * Calls the Twirl template with the given parameters and returns the resulting markup
+    *
+    * @param templateParams
+    * @return [[Try[HtmlFormat.Appendable]]] containing the markup
+    */
+  def render(templateParams: T): Try[HtmlFormat.Appendable]
 }
