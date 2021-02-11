@@ -28,7 +28,7 @@ object AppDependencies {
     "uk.gov.hmrc"   %% "play-frontend-govuk"        % "0.60.0-play-27",
     "uk.gov.hmrc"   %% "play-language"              % "4.10.0-play-27",
     "com.iheart"    %% "play-swagger"               % "0.10.2",
-    "org.typelevel" %% "cats-core"                  % "2.4.0"
+    "org.typelevel" %% "cats-core"                  % "2.4.1"
   )
 
   val test = Seq(
