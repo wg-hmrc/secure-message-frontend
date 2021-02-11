@@ -32,19 +32,19 @@ class MessagesController @Inject()(
   message: message)
     extends FrontendController(controllerComponents) with I18nSupport {
 
-  def display(clientService: String, clientId: String, conversationId: String): Action[AnyContent] = Action {
+  def display(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action {
     implicit request =>
-      Ok(message(messagePartial(clientId), clientService: String, conversationId: String))
+      Ok(message(messagePartial(client), clientService: String, conversationId: String))
   }
 
-  def saveReply(clientService: String, clientId: String, conversationId: String): Action[AnyContent] = Action {
+  def saveReply(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action {
 
-    Created(s"Saved reply successfull with client $clientService clientId $clientId and conversationId $conversationId")
+    Created(s"Saved reply successfull with client $clientService client $client and conversationId $conversationId")
   }
 
-  def response(clientService: String, clientId: String, conversationId: String): Action[AnyContent] = Action {
+  def response(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action {
 
-    Ok(s"$clientService with clientId $clientId with conversationId $conversationId")
+    Ok(s"$clientService with client $client with conversationId $conversationId")
   }
 
   private def messageContent(messageId: String) = FakeData.messages.find(_.id === messageId).map(_.content)

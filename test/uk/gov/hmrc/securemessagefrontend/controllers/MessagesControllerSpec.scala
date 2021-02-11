@@ -49,7 +49,7 @@ class MessagesControllerSpec extends PlaySpec with GuiceOneAppPerSuite {
 
       status(result) mustBe Status.CREATED
       val pageContent = contentAsString(result)
-      pageContent must include("Saved reply successfull with client some-service clientId 111 and conversationId DA123")
+      pageContent must include("Saved reply successfull with client some-service client 111 and conversationId DA123")
     }
 
     "response" in new TestCase {
@@ -59,7 +59,7 @@ class MessagesControllerSpec extends PlaySpec with GuiceOneAppPerSuite {
 
       status(result) mustBe Status.OK
       val pageContent = contentAsString(result)
-      pageContent must include("some-service with clientId 111 with conversationId DA123")
+      pageContent must include("some-service with client 111 with conversationId DA123")
     }
   }
 
