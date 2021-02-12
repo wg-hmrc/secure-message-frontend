@@ -22,7 +22,7 @@ import play.api.i18n.Messages
 
 object HtmlUtil {
 
-  private val dtf = DateTimeFormat.forPattern("d MMM yyyy HH:mm")
+  private val dtf = DateTimeFormat.forPattern("d MMMM yyyy")
 
   def getSenderName(conversationHeader: ConversationHeader)(implicit messages: Messages): String =
     conversationHeader.senderName match {
