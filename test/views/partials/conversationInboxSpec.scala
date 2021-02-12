@@ -28,7 +28,7 @@ class conversationInboxSpec extends TemplateUnitSpec[ConversationInbox] {
     "have all mandatory information" in {
       render(ConversationInbox("cds-frontend", "test", List.empty)) match {
         case Success(component) => {
-          val res = component.select("h2")
+          val res = component.select("h1")
           res.text mustBe "test"
         }
         case _ => fail("There was a problem reading the test output")
