@@ -48,6 +48,7 @@ class ConversationController @Inject()(
         secureMessageConnector
           .getConversation(client, conversationId)
           .flatMap { conversationMessage =>
+            secureMessageConnector.recordReadTime(client, conversationId)
             Future.successful(
               Ok(
                 conversation(
