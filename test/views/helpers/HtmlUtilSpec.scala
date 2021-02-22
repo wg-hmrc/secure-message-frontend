@@ -19,8 +19,7 @@ package views.helpers
 import models.FirstReader
 import org.joda.time.DateTime
 import org.scalatestplus.play.PlaySpec
-import views.helpers.HtmlUtil.{ backToConversationsLink, firstReadMessageConversationText,
-  readMessageConversationText, readableTime, sentMessageConversationText }
+import views.helpers.HtmlUtil.{ backToConversationsLink, firstReadMessageConversationText, readMessageConversationText, readableTime, sentMessageConversationText }
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class HtmlUtilSpec extends PlaySpec {
