@@ -45,7 +45,7 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
     hc: HeaderCarrier): Future[HttpResponse] = {
     val dateTime = ReadTime(DateTime.now)
     httpClient.POST[ReadTime, HttpResponse](
-      s"$secureMessageBaseUrl/secure-messaging/conversation/add-read-time/$client/$conversationId",
+      s"$secureMessageBaseUrl/secure-messaging/conversation/$client/$conversationId/read-times",
       dateTime)
   }
 
