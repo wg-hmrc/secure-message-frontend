@@ -58,3 +58,4 @@ object SenderInformation {
 
   implicit val dateFormat: Format[DateTime] = Format(jodaDateReads(dateFormatString), jodaDateWrites(dateFormatString))
   implicit val senderInformationFormat: Reads[SenderInformation] = Json.reads[SenderInformation]
+}
