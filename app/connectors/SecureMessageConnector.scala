@@ -31,7 +31,8 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
   private val secureMessageBaseUrl = servicesConfig.baseUrl("secure-message")
 
   def getConversationList()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[List[ConversationHeader]] =
-    httpClient.GET[List[ConversationHeader]](s"$secureMessageBaseUrl/secure-messaging/messages/HMRC-CUS-ORG/EORINumber")
+    httpClient.GET[List[ConversationHeader]](
+      s"$secureMessageBaseUrl/secure-messaging/conversations/HMRC-CUS-ORG/EORINumber")
 
   def getConversation(clientName: String, conversationId: String)(
     implicit ec: ExecutionContext,
