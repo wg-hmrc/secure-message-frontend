@@ -58,7 +58,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
               Map.empty,
               "subject",
               "en",
-              List(Message(SenderInformation("", testTime), None, "message content")))))
+              List(Message(SenderInformation("", testTime), None, "TWVzc2FnZSBib2R5IQ==")))))
       val response = wsClient
         .url(resource("/secure-message-frontend/cdcm/conversation/client/1111"))
         .withHttpHeaders(AuthUtil.buildEoriToken)
@@ -74,7 +74,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
       pageContent must include(
         "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\">You read</span>      this message on")
       pageContent must include("govuk-body")
-      pageContent must include("message content")
+      pageContent must include("Message body!")
 
     }
   }

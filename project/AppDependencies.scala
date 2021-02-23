@@ -39,7 +39,7 @@ object AppDependencies {
     "uk.gov.hmrc"             %% "service-integration-test"  % "0.13.0-play-27"  % "test, it",
     "org.scalatestplus.play"  %% "scalatestplus-play"        % "4.0.3"           % "test, it",
     "org.jsoup"               % "jsoup"                      % "1.13.1"          % "test, it",
-    "org.mockito"             % "mockito-core"               % "3.7.7"           % "test, it",
+    "org.mockito"             % "mockito-core"               % "3.8.0"           % "test, it",
     "com.vladsch.flexmark"    % "flexmark-all"               % "0.36.8"          % "test, it",
     "org.pegdown"             % "pegdown"                    % "1.6.0"           % "test, it",
     "net.codingwell"          %% "scala-guice"               % "4.2.11"           % "test, it"
