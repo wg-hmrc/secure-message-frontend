@@ -43,7 +43,6 @@ object AppDependencies {
     "com.vladsch.flexmark"    % "flexmark-all"               % "0.36.8"          % "test, it",
     "org.pegdown"             % "pegdown"                    % "1.6.0"           % "test, it",
     "net.codingwell"          %% "scala-guice"               % "4.2.11"           % "test, it"
-
   )
 
   val dependencyOverrides = Seq(
