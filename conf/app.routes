@@ -1,20 +1,20 @@
 # microservice specific routes
 
 ### NoDocs ###
-->      /govuk-frontend                                                 govuk.Routes
+->          /govuk-frontend                                                    govuk.Routes
 ### NoDocs ###
-->      /hmrc-frontend                                                  hmrcfrontend.Routes
+->          /hmrc-frontend                                                     hmrcfrontend.Routes
 
-GET     /:clientService/conversations                                   controllers.ConversationInboxController.display(clientService, apiFilter: Option[List[String]])
+GET         /:clientService/messages                                           controllers.ConversationInboxController.display(clientService, apiFilter: Option[List[String]])
 
-GET     /:clientService/conversation/:client/:conversationId            controllers.ConversationController.display(clientService, client, conversationId)
+GET         /:clientService/conversation/:client/:conversationId               controllers.ConversationController.display(clientService, client, conversationId)
 
-POST    /:clientService/conversation/:client/:conversationId            controllers.ConversationController.saveReply(clientService, client, conversationId)
+POST        /:clientService/conversation/:client/:conversationId               controllers.ConversationController.saveReply(clientService, client, conversationId)
 
-GET     /:clientService/conversation/:client/:conversationId/result     controllers.ConversationController.response(clientService, client, conversationId)
-
-### NoDocs ###
-GET     /language/:lang                                                 controllers.LanguageSwitchController.selectLanguage(lang: Language)
+GET         /:clientService/conversation/:client/:conversationId/result        controllers.ConversationController.response(clientService, client, conversationId)
 
 ### NoDocs ###
-GET     /assets/*file                                                   controllers.Assets.versioned(path = "/public", file: Asset)
+GET         /language/:lang                                                    controllers.LanguageSwitchController.selectLanguage(lang: Language)
+
+### NoDocs ###
+GET         /assets/*file                                                      controllers.Assets.versioned(path = "/public", file: Asset)
