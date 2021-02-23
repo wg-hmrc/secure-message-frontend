@@ -62,7 +62,7 @@ class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with Mocki
               1)))
       )
       val response = wsClient
-        .url(resource("/secure-message-frontend/cdcm/conversations"))
+        .url(resource("/secure-message-frontend/cdcm/messages"))
         .withHttpHeaders(AuthUtil.buildEoriToken)
         .get()
         .futureValue
