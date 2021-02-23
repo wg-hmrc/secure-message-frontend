@@ -79,6 +79,6 @@ class ConversationController @Inject()(
             sentMessageConversationText(readableTime(message.senderInformation.created)),
             firstReadMessageConversationText(message.firstReader),
             readMessageConversationText,
-            message.content
+            decodeBase64String(message.content)
           )))
 }

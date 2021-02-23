@@ -31,8 +31,7 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
   private val secureMessageBaseUrl = servicesConfig.baseUrl("secure-message")
 
   def getConversationList()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[List[ConversationHeader]] =
-    httpClient.GET[List[ConversationHeader]](
-      s"$secureMessageBaseUrl/secure-messaging/conversations/HMRC-CUS-ORG/EORINumber")
+    httpClient.GET[List[ConversationHeader]](s"$secureMessageBaseUrl/secure-messaging/messages/HMRC-CUS-ORG/EORINumber")
 
   def getConversation(clientName: String, conversationId: String)(
     implicit ec: ExecutionContext,
@@ -45,7 +44,7 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
     hc: HeaderCarrier): Future[HttpResponse] = {
     val dateTime = ReadTime(DateTime.now)
     httpClient.POST[ReadTime, HttpResponse](
-      s"$secureMessageBaseUrl/secure-messaging/conversation/$client/$conversationId/read-times",
+      s"$secureMessageBaseUrl/secure-messaging/conversation/$client/$conversationId/read-time",
       dateTime)
   }
 

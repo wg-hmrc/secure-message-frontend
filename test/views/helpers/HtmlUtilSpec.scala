@@ -19,7 +19,7 @@ package views.helpers
 import models.FirstReader
 import org.joda.time.DateTime
 import org.scalatestplus.play.PlaySpec
-import views.helpers.HtmlUtil.{ backToConversationsLink, firstReadMessageConversationText, readMessageConversationText, readableTime, sentMessageConversationText }
+import views.helpers.HtmlUtil.{ backToConversationsLink, decodeBase64String, firstReadMessageConversationText, readMessageConversationText, readableTime, sentMessageConversationText }
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class HtmlUtilSpec extends PlaySpec {
@@ -41,5 +41,9 @@ class HtmlUtilSpec extends PlaySpec {
 
   "backToConversationsLink function should return correct link to take back to conversations" in {
     backToConversationsLink("stub").toString mustBe "<a href=/stub/conversations class=\"govuk-back-link\">Back</a>"
+  }
+
+  "decodeBase64String function should return decoded string" in {
+    decodeBase64String("V2hhdCBhIGRheSE=") mustBe ("What a day!")
   }
 }

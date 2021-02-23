@@ -17,11 +17,13 @@
 package views.helpers
 
 import models.{ ConversationHeader, FirstReader }
+import org.apache.commons.codec.binary.Base64
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import play.api.i18n.Messages
 import play.twirl.api.{ Html, HtmlFormat }
 
+@SuppressWarnings(Array("org.wartremover.warts.PlatformDefault"))
 object HtmlUtil {
 
   private val dtf = DateTimeFormat.forPattern("d MMMM yyyy")
@@ -49,5 +51,8 @@ object HtmlUtil {
 
   def backToConversationsLink(callingService: String): Html =
     HtmlFormat.raw(s"""<a href=/$callingService/conversations class="govuk-back-link">Back</a>""")
+
+  def decodeBase64String(input: String): String =
+    new String(Base64.decodeBase64(input.getBytes("UTF-8")))
 
 }
