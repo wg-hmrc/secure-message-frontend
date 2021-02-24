@@ -39,7 +39,7 @@ object HtmlUtil {
     dtf.print(conversationHeader.issueDate)
 
   def getConversationUrl(clientService: String, conversationHeader: ConversationHeader): String =
-    s"$clientService/conversation/${conversationHeader.client}/${conversationHeader.conversationId}"
+    s"/$clientService/conversation/${conversationHeader.client}/${conversationHeader.conversationId}"
 
   def readableTime(dateTime: DateTime): String =
     conversationDateTimeFormat.print(dateTime)
@@ -50,7 +50,7 @@ object HtmlUtil {
     firstReader.map(r => s"on ${readableTime(r.read)}")
 
   def backToConversationsLink(callingService: String): Html =
-    HtmlFormat.raw(s"""<a href=/$callingService/conversations class="govuk-back-link">Back</a>""")
+    HtmlFormat.raw(s"""<a href=/$callingService/messages class="govuk-back-link">Back</a>""")
 
   def decodeBase64String(input: String): String =
     new String(Base64.decodeBase64(input.getBytes("UTF-8")))

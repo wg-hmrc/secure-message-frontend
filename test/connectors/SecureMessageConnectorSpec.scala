@@ -41,7 +41,8 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
             any[HttpReads[List[ConversationHeader]]],
             any[HeaderCarrier],
             any[ExecutionContext]))
-        .thenReturn(Future(List(ConversationHeader("cdcm", "123", "ABC", new DateTime(), None, true, 1))))
+        .thenReturn(
+          Future(List(ConversationHeader("cdcm", "123", "ABC", new DateTime(), None, unreadMessages = true, 1))))
       private val result = await(connector.getConversationList())
       result.size mustBe 1
     }
@@ -49,7 +50,7 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
 
   "SecureMessgaeConnector.getConversation" must {
     "return a conversation" in new TestCase {
-      val testDate = DateTime.now()
+      private val testDate = DateTime.now()
       when(
         mockHttpClient
           .GET[Conversation](any[String], any[Seq[(String, String)]], any[Seq[(String, String)]])(
@@ -62,21 +63,19 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
               "client",
               "conversationId",
               "status",
-              Map.empty[String, String],
+              None,
               "subject",
               "en",
               List(Message(SenderInformation("name", testDate), None, "content")))))
       private val result = await(connector.getConversation("client", "conversationId"))
-      result mustBe (
-        Conversation(
-          "client",
-          "conversationId",
-          "status",
-          Map.empty[String, String],
-          "subject",
-          "en",
-          List(Message(SenderInformation("name", testDate), None, "content"))
-        )
+      result mustBe Conversation(
+        "client",
+        "conversationId",
+        "status",
+        None,
+        "subject",
+        "en",
+        List(Message(SenderInformation("name", testDate), None, "content"))
       )
     }
   }

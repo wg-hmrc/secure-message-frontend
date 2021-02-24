@@ -25,7 +25,7 @@ final case class Conversation(
   client: String,
   conversationId: String,
   status: String,
-  tags: Map[String, String],
+  tags: Option[Map[String, String]],
   subject: String,
   language: String,
   messages: List[Message])
@@ -40,7 +40,7 @@ object Message {
   implicit val messageReads: Reads[Message] = Json.reads[Message]
 }
 
-final case class FirstReader(name: String, read: DateTime)
+final case class FirstReader(read: DateTime, name: Option[String])
 
 object FirstReader {
 

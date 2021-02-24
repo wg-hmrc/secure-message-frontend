@@ -55,7 +55,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
               "client",
               "conversationId",
               "status",
-              Map.empty,
+              None,
               "subject",
               "en",
               List(Message(SenderInformation("", testTime), None, "TWVzc2FnZSBib2R5IQ==")))))
