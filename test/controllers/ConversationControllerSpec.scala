@@ -45,11 +45,11 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       val messages = List(
         Message(
           SenderInformation("senderName", DateTime.parse("2021-02-19T10:29:47.275Z")),
-          Some(FirstReader("firstReadername", DateTime.parse("2021-03-01T10:29:47.275Z"))),
+          Some(FirstReader(DateTime.parse("2021-03-01T10:29:47.275Z"), Some("firstReadername"))),
           "TWVzc2FnZSBib2R5IQ=="
         ))
 
-      val messagesContent = controller.messagePartial(messages).toString()
+      private val messagesContent = controller.messagePartial(messages).toString()
       messagesContent must include("this message on 19 Feb 2021 at 10:29 AM")
       messagesContent must include("on 1 Mar 2021 at 10:29 AM")
       messagesContent must include("You read")
@@ -61,17 +61,17 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       val messages = List(
         Message(
           SenderInformation("senderName", DateTime.parse("2021-02-19T10:29:47.275Z")),
-          Some(FirstReader("firstReadername", DateTime.parse("2021-03-01T10:29:47.275Z"))),
+          Some(FirstReader(DateTime.parse("2021-03-01T10:29:47.275Z"), Some("firstReadername"))),
           "TWVzc2FnZSBib2R5IQ=="
         ),
         Message(
           SenderInformation("senderName", DateTime.parse("2021-04-19T10:29:47.275Z")),
-          Some(FirstReader("firstReadername", DateTime.parse("2021-05-01T10:29:47.275Z"))),
+          Some(FirstReader(DateTime.parse("2021-05-01T10:29:47.275Z"), Some("firstReadername"))),
           "TWVzc2FnZSBib2R5IQ=="
         )
       )
 
-      val messagesContent = controller.messagePartial(messages).toString()
+      private val messagesContent = controller.messagePartial(messages).toString()
       messagesContent must include("this message on 19 Feb 2021 at 10:29 AM")
       messagesContent must include("on 1 Mar 2021 at 10:29 AM")
       messagesContent must include("You read")
@@ -93,9 +93,9 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
           "TWVzc2FnZSBib2R5IQ=="
         ))
 
-      val messagesContent = controller.messagePartial(messages).toString()
+      private val messagesContent = controller.messagePartial(messages).toString()
       messagesContent must include("this message on 19 Feb 2021 at 10:29 AM")
-      messagesContent must not include ("First read")
+      messagesContent must not include "First read"
       messagesContent must include("You read")
       messagesContent must include("Message body!")
     }
@@ -104,36 +104,35 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       mockAuthorise[Unit]()(Future.successful(()))
       when(
         mockSecureMessageConnector.getConversation(any[String], any[String])(any[ExecutionContext], any[HeaderCarrier]))
-        .thenReturn(
-          Future.successful(Conversation(client, conversationId, "", Map.empty[String, String], "", "", List.empty)))
+        .thenReturn(Future.successful(Conversation(client, conversationId, "", None, "", "", List.empty)))
 
       when(mockConversation.apply(any[ConversationView])(any[Messages]))
         .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
 
-      val result =
+      private val result =
         controller.display("some-service", "hmrc", "11111")(FakeRequest("GET", "/some-service/conversation/hmrc/11111"))
       status(result) mustBe Status.OK
-      val pageContent = contentAsString(result)
+      private val pageContent = contentAsString(result)
       pageContent must include("MRN 20GB16046891253600 needs action")
     }
 
     "save reply" in new TestCase {
 
-      val result = controller.saveReply("some-service", "111", "DA123")(
+      private val result = controller.saveReply("some-service", "111", "DA123")(
         FakeRequest("POST", "/some-service/conversation-message/111/DA123"))
 
       status(result) mustBe Status.CREATED
-      val pageContent = contentAsString(result)
+      private val pageContent = contentAsString(result)
       pageContent must include("Saved reply successfull with client some-service client 111 and conversationId DA123")
     }
 
     "response" in new TestCase {
 
-      val result = controller.response("some-service", "111", "DA123")(
+      private val result = controller.response("some-service", "111", "DA123")(
         FakeRequest("GET", "/some-service/conversation-message/111/DA123/result"))
 
       status(result) mustBe Status.OK
-      val pageContent = contentAsString(result)
+      private val pageContent = contentAsString(result)
       pageContent must include("some-service with client 111 with conversationId DA123")
     }
   }
@@ -146,9 +145,9 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
     val conversationId = "conversationId"
 
-    val messageContent = app.injector.instanceOf[messageContent]
+    val messageContent: messageContent = app.injector.instanceOf[messageContent]
 
-    val mockConversation = mock[conversation]
+    val mockConversation: conversation = mock[conversation]
 
     implicit val request: FakeRequest[_] = FakeRequest("POST", "/some-service/conversation-message/111/DA123")
     implicit val appConfig: AppConfig = app.injector.instanceOf[AppConfig]
