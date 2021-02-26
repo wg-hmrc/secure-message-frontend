@@ -19,6 +19,7 @@ package controllers
 import config.AppConfig
 import connectors.SecureMessageConnector
 import controllers.generic.models.{ CustomerEnrolment, Tag }
+import javax.inject.{ Inject, Singleton }
 import play.api.i18n.I18nSupport
 import play.api.mvc.{ MessagesControllerComponents, _ }
 import uk.gov.hmrc.auth.core.{ AuthConnector, AuthorisedFunctions }
@@ -27,7 +28,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.partials.conversationInbox
 import views.viewmodels.ConversationInbox
-import javax.inject.{ Inject, Singleton }
 
 import scala.concurrent.{ ExecutionContext, Future }
 

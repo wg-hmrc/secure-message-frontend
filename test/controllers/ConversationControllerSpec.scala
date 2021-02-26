@@ -16,10 +16,12 @@
 
 package controllers
 
+import akka.stream.Materializer
 import akka.util.Timeout
 import config.AppConfig
 import connectors.SecureMessageConnector
-import models.{ Conversation, ConversationView, FirstReaderInformation, Message, SenderInformation }
+import forms.MessageFormProvider
+import models.{ Conversation, CustomerMessage, FirstReaderInformation, Message, SenderInformation }
 import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -27,24 +29,30 @@ import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.Messages
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{ contentAsString, status, stubMessagesControllerComponents }
-import play.twirl.api.{ Html }
+import play.api.test.{ FakeRequest, NoMaterializer }
+import play.twirl.api.Html
+import uk.gov.hmrc.govukfrontend.views.viewmodels.panel.Panel
 import uk.gov.hmrc.http.HeaderCarrier
-import scala.concurrent.{ ExecutionContext, Future }
-import views.html.partials.{ conversation, messageContent }
+import views.html.partials.{ conversationView, messageContent, messageReply, messageResult }
+import views.viewmodels.ConversationView
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
+import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with MockAuthConnector {
+
+  implicit val mat: Materializer = NoMaterializer
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   "Conversation Controller" must {
 
     "return message partial with 1 message" in new TestCase {
       val messages = List(
         Message(
-          SenderInformation(Some("senderName"), DateTime.parse("2021-02-19T10:29:47.275Z"), false),
+          SenderInformation(Some("senderName"), DateTime.parse("2021-02-19T10:29:47.275Z"), self = false),
           Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-03-01T10:29:47.275Z"))),
           "TWVzc2FnZSBib2R5IQ=="
         ))
@@ -61,7 +69,7 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
     "return message partial with `You sent` instead of organisation name if sender name is missing" in new TestCase {
       val messages = List(
         Message(
-          SenderInformation(None, DateTime.parse("2021-02-19T10:29:47.275Z"), false),
+          SenderInformation(None, DateTime.parse("2021-02-19T10:29:47.275Z"), self = false),
           Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-03-01T10:29:47.275Z"))),
           "TWVzc2FnZSBib2R5IQ=="
         ))
@@ -79,12 +87,12 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
       val messages = List(
         Message(
-          SenderInformation(Some("senderName"), DateTime.parse("2021-02-19T10:29:47.275Z"), false),
+          SenderInformation(Some("senderName"), DateTime.parse("2021-02-19T10:29:47.275Z"), self = false),
           Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-03-01T10:29:47.275Z"))),
           "TWVzc2FnZSBib2R5IQ=="
         ),
         Message(
-          SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), false),
+          SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), self = false),
           Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-05-01T10:29:47.275Z"))),
           "TWVzc2FnZSBib2R5IQ=="
         )
@@ -107,7 +115,7 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
       val messages = List(
         Message(
-          SenderInformation(Some("senderName"), DateTime.parse("2021-02-19T10:29:47.275Z"), false),
+          SenderInformation(Some("senderName"), DateTime.parse("2021-02-19T10:29:47.275Z"), self = false),
           None,
           "TWVzc2FnZSBib2R5IQ=="
         ))
@@ -131,40 +139,65 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
           "",
           "",
           List(Message(
-            SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), false),
+            SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), self = false),
             Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-05-01T10:29:47.275Z"))),
             "TWVzc2FnZSBib2R5IQ=="
           ))
         )))
 
-      when(mockConversation.apply(any[ConversationView])(any[Messages]))
+      when(mockConversationView.apply(any[ConversationView])(any[Messages]))
         .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
 
       private val result =
-        controller.display("some-service", "hmrc", "11111")(FakeRequest("GET", "/some-service/conversation/hmrc/11111"))
+        controller.display("some-service", "hmrc", "11111", showReplyForm = false)(
+          FakeRequest("GET", "/some-service/conversation/hmrc/11111"))
       status(result) mustBe Status.OK
       private val pageContent = contentAsString(result)
       pageContent must include("MRN 20GB16046891253600 needs action")
     }
 
-    "save reply" in new TestCase {
-
+    "save a customer reply and return OK with a redirection URL" in new TestCase {
+      mockAuthorise[Unit]()(Future.successful(()))
+      when(mockSecureMessageConnector
+        .postCustomerMessage(any[String], any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
+        .thenReturn(Future.successful(true))
       private val result = controller.saveReply("some-service", "111", "DA123")(
-        FakeRequest("POST", "/some-service/conversation-message/111/DA123"))
-
-      status(result) mustBe Status.CREATED
-      private val pageContent = contentAsString(result)
-      pageContent must include("Saved reply successfull with client some-service client 111 and conversationId DA123")
-    }
-
-    "response" in new TestCase {
-
-      private val result = controller.response("some-service", "111", "DA123")(
-        FakeRequest("GET", "/some-service/conversation-message/111/DA123/result"))
-
+        FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(
+          ("content", "c29tZSBjb250ZW50")))
       status(result) mustBe Status.OK
       private val pageContent = contentAsString(result)
-      pageContent must include("some-service with client 111 with conversationId DA123")
+      pageContent must include("/some-service/conversation/111/DA123/result")
+    }
+
+    "return BAD REQUEST when the payload is not valid" in new TestCase {
+      mockAuthorise[Unit]()(Future.successful(()))
+      private val result = controller.saveReply("some-service", "111", "DA123")(
+        FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(
+          ("invalid", "c29tZSBjb250ZW50")))
+      status(result) mustBe Status.BAD_REQUEST
+    }
+
+    "return BAD GATEWAY when the message can't be sent" in new TestCase {
+      mockAuthorise[Unit]()(Future.successful(()))
+      when(mockSecureMessageConnector
+        .postCustomerMessage(any[String], any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
+        .thenReturn(Future.successful(false))
+      private val result = controller.saveReply("some-service", "111", "DA123")(
+        FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(
+          ("content", "c29tZSBjb250ZW50")))
+      status(result) mustBe Status.BAD_GATEWAY
+      private val pageContent = contentAsString(result)
+      pageContent must include("Failed to send message")
+    }
+
+    "return a result page HTML partial" in new TestCase {
+      mockAuthorise[Unit]()(Future.successful(()))
+      when(mockMessageResult.apply(any[String], any[Panel])).thenReturn(Html("<div>result</div>"))
+      private val result = controller.result("some-service", "111", "DA123")(
+        FakeRequest("GET", "/some-service/conversation-message/111/DA123/result"))
+      status(result) mustBe Status.OK
+      private val pageContent = contentAsString(result)
+      pageContent must include("result")
     }
   }
 
@@ -178,19 +211,27 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
     val messageContent: messageContent = app.injector.instanceOf[messageContent]
 
-    val mockConversation: conversation = mock[conversation]
+    val mockMessageReply: messageReply = mock[messageReply]
+    val mockMessageResult: messageResult = mock[messageResult]
+    val mockConversationView: conversationView = mock[conversationView]
 
     implicit val request: FakeRequest[_] = FakeRequest("POST", "/some-service/conversation-message/111/DA123")
     implicit val appConfig: AppConfig = app.injector.instanceOf[AppConfig]
 
     val mockSecureMessageConnector: SecureMessageConnector = mock[SecureMessageConnector]
 
+    val messageFormProvider: MessageFormProvider = new MessageFormProvider
+
     val controller = new ConversationController(
       stubMessagesControllerComponents(),
       mockSecureMessageConnector,
       messageContent,
-      mockConversation,
-      mockAuthConnector)
+      mockMessageReply,
+      mockMessageResult,
+      mockConversationView,
+      mockAuthConnector,
+      messageFormProvider
+    )
 
   }
 

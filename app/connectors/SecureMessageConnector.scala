@@ -18,16 +18,17 @@ package connectors
 
 import controllers.generic.models.{ CustomerEnrolment, Tag }
 import javax.inject.Inject
-import models.{ Conversation, ConversationHeader }
+import models.{ Conversation, ConversationHeader, CustomerMessage, ReadTime }
 import org.joda.time.DateTime
+import play.api.Logging
+import play.mvc.Http.Status.CREATED
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient, HttpResponse }
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import models.ReadTime
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: ServicesConfig) {
+class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: ServicesConfig) extends Logging {
 
   private val secureMessageBaseUrl = servicesConfig.baseUrl("secure-message")
 
@@ -69,5 +70,21 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
       s"$secureMessageBaseUrl/secure-messaging/conversation/$client/$conversationId/read-time",
       dateTime)
   }
+
+  def postCustomerMessage(client: String, conversationId: String, message: CustomerMessage)(
+    implicit ec: ExecutionContext,
+    hc: HeaderCarrier): Future[Boolean] =
+    httpClient
+      .POST[CustomerMessage, HttpResponse](
+        s"$secureMessageBaseUrl/secure-messaging/conversation/$client/$conversationId/customer-message",
+        message)
+      .map { response =>
+        response.status match {
+          case CREATED => true
+          case status =>
+            logger.error(s"POST of customer message failed. Got response status $status with message ${response.body}")
+            false
+        }
+      }
 
 }

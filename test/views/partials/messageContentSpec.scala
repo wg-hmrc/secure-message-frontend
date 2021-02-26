@@ -16,13 +16,13 @@
 
 package views.partials
 
-import models.MessageView
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.{ Lang, MessagesApi, MessagesImpl }
 import play.api.test.FakeRequest
 import views.html.Layout
 import views.html.partials.messageContent
+import views.viewmodels.MessageView
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class messageContentSpec extends PlaySpec {

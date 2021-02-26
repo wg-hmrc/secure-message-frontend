@@ -44,5 +44,10 @@ class LanguageSpec extends PlaySpec with MustMatchers with EitherValues {
       val result = pathBindable.unbind("language", Language.English)
       result mustEqual Language.English.toString
     }
+
+    "return invalid language" in {
+      val result = pathBindable.bind("langfuagfdsfse", "french")
+      result mustEqual Left("Invalid language")
+    }
   }
 }
