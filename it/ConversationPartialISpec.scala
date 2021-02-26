@@ -16,20 +16,17 @@
 
 import com.google.inject.AbstractModule
 import connectors.SecureMessageConnector
-import models.{ Conversation, Message, SenderInformation }
+import controllers.Assets.{ CREATED, OK }
 import net.codingwell.scalaguice.ScalaModule
-import org.joda.time.DateTime
-import org.mockito.ArgumentMatchers.{ any, anyString }
-import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.http.{ ContentTypes, HeaderNames }
 import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.{ Json, Reads }
 import play.api.libs.ws.WSClient
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.integration.ServiceSpec
-import scala.concurrent.{ ExecutionContext, Future }
+import java.io.File
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
@@ -39,8 +36,6 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
 
   private val wsClient = app.injector.instanceOf[WSClient]
 
-  private val testTime = DateTime.parse("2021-02-19T10:29:47.275Z")
-
   override def additionalOverrides: Seq[GuiceableModule] =
     Seq(new AbstractModule with ScalaModule {
       override def configure(): Unit =
@@ -48,33 +43,38 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
     })
   "Given a conversation from secure message" must {
     "return conversation partial" in {
-      when(mockSecureMessageConnector.getConversation(anyString, anyString)(any[ExecutionContext], any[HeaderCarrier]))
-        .thenReturn(
-          Future.successful(
-            Conversation(
-              "client",
-              "conversationId",
-              "status",
-              None,
-              "subject",
-              "en",
-              List(Message(SenderInformation("", testTime), None, "TWVzc2FnZSBib2R5IQ==")))))
-      val response = wsClient
-        .url(resource("/secure-message-frontend/cdcm/conversation/client/1111"))
+
+      val responseFromSecureMessage =
+        wsClient
+          .url("http://localhost:9051/secure-messaging/conversation/cdcm/SMF123456789")
+          .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
+          .put(new File("./it/resources/create-conversation.json"))
+          .futureValue
+      responseFromSecureMessage.status mustBe (CREATED)
+      val responseFromSecureMessageFrontend = wsClient
+        .url("http://localhost:9055/secure-message-frontend/whatever/conversation/cdcm/SMF123456789")
         .withHttpHeaders(AuthUtil.buildEoriToken)
         .get()
         .futureValue
-      response.status mustBe 200
-      val pageContent = response.body
+      responseFromSecureMessageFrontend.status mustBe (OK)
+      val pageContent = responseFromSecureMessageFrontend.body
       pageContent must include("Back")
       pageContent must include("govuk-back-link")
-      pageContent must include("subject")
+      pageContent must include("This subject needs action")
       pageContent must include(
-        "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\"> sent</span>  this message on 19 Feb 2021 at 10:29 AM")
+        "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\">CDS Exports Team sent</span>  this message on ")
       pageContent must include(
         "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\">You read</span>      this message on")
       pageContent must include("govuk-body")
-      pageContent must include("Message body!")
+      pageContent must include("Message body!!")
+
+      val response = wsClient
+        .url("http://localhost:9051/delete/conversation/SMF123456789/cdcm")
+        .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
+        .delete
+        .futureValue
+
+      response.status mustBe (OK)
 
     }
   }
