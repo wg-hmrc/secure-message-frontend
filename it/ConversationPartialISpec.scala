@@ -30,7 +30,7 @@ import java.io.File
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
-  override def externalServices: Seq[String] = Seq("auth-login-api")
+  override def externalServices: Seq[String] = Seq("auth-login-api", "secure-message", "secure-message-frontend")
 
   private val mockSecureMessageConnector = mock[SecureMessageConnector]
 
@@ -44,15 +44,19 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
   "Given a conversation from secure message" must {
     "return conversation partial" in {
 
+      val secureMessageUrl = externalResource("secure-message", "/secure-messaging/conversation/cdcm/SMF123456789")
       val responseFromSecureMessage =
         wsClient
-          .url("http://localhost:9051/secure-messaging/conversation/cdcm/SMF123456789")
+          .url(secureMessageUrl)
           .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
           .put(new File("./it/resources/create-conversation.json"))
           .futureValue
       responseFromSecureMessage.status mustBe (CREATED)
+
+      val secureMessageFrontendUrl =
+        externalResource("secure-message-frontend", "/secure-message-frontend/whatever/conversation/cdcm/SMF123456789")
       val responseFromSecureMessageFrontend = wsClient
-        .url("http://localhost:9055/secure-message-frontend/whatever/conversation/cdcm/SMF123456789")
+        .url(secureMessageFrontendUrl)
         .withHttpHeaders(AuthUtil.buildEoriToken)
         .get()
         .futureValue
