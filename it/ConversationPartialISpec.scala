@@ -44,24 +44,27 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
   "Given a conversation from secure message" must {
     "return conversation partial" in {
 
-      val secureMessageUrl = externalResource("secure-message", "/secure-messaging/conversation/cdcm/SMF123456789")
-      val responseFromSecureMessage =
+      lazy val secureMessagePort = externalServicePorts("secure-message")
+      lazy val createConversationUrl =
+        s"http://localhost:$secureMessagePort/secure-messaging/conversation/cdcm/SMF123456789"
+      lazy val responseFromSecureMessage =
         wsClient
-          .url(secureMessageUrl)
+          .url(createConversationUrl)
           .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
           .put(new File("./it/resources/create-conversation.json"))
           .futureValue
       responseFromSecureMessage.status mustBe (CREATED)
 
-      val secureMessageFrontendUrl =
-        externalResource("secure-message-frontend", "/secure-message-frontend/whatever/conversation/cdcm/SMF123456789")
-      val responseFromSecureMessageFrontend = wsClient
-        .url(secureMessageFrontendUrl)
+      lazy val secureMessageFrontendPort = externalServicePorts("secure-message-frontend")
+      lazy val getConverstionUrl =
+        s"http://localhost:$secureMessageFrontendPort/secure-message-frontend/whatever/conversation/cdcm/SMF123456789"
+      lazy val responseFromSecureMessageFrontend = wsClient
+        .url(getConverstionUrl)
         .withHttpHeaders(AuthUtil.buildEoriToken)
         .get()
         .futureValue
       responseFromSecureMessageFrontend.status mustBe (OK)
-      val pageContent = responseFromSecureMessageFrontend.body
+      lazy val pageContent = responseFromSecureMessageFrontend.body
       pageContent must include("Back")
       pageContent must include("govuk-back-link")
       pageContent must include("This subject needs action")
@@ -71,14 +74,13 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
         "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\">You read</span>      this message on")
       pageContent must include("govuk-body")
       pageContent must include("Message body!!")
-
-      val response = wsClient
-        .url("http://localhost:9051/delete/conversation/SMF123456789/cdcm")
+      val deleteResponse = wsClient
+        .url(s"http://localhost:$secureMessagePort/delete/conversation/SMF123456789/cdcm")
         .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
         .delete
         .futureValue
 
-      response.status mustBe (OK)
+      deleteResponse.status mustBe (OK)
 
     }
   }
