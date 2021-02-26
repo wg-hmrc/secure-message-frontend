@@ -15,28 +15,32 @@
  *@
 
 @import views.html._
-@import models.MessageView
+@import views.viewmodels.MessageView
 @import play.twirl.api.HtmlFormat
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
+@import play.api.mvc.Call
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(layout: Layout)
 
-@(message: MessageView)(implicit messages: Messages)
+@(message: MessageView)(implicit messages: Messages, requestHeader: RequestHeader)
+@import message._
 <p>
 <span class="govuk-caption-m">
-    <span class="govuk-caption-m-!-govuk-body govuk-!-font-weight-bold">@{message.sender} sent</span>  @message.sentText
+    <span class="govuk-caption-m-!-govuk-body govuk-!-font-weight-bold">@sender sent</span>  @sentText
 </span>
-    @message.firstRead.map{s =>
+    @firstRead.map{s =>
     <span class="govuk-caption-m">
    <span class="govuk-caption-m-!-govuk-body govuk-!-font-weight-bold">First read</span> @s
 </span>
     }
     @if(!message.self) {
     <span class="govuk-caption-m">
-    <span class="govuk-caption-m-!-govuk-body govuk-!-font-weight-bold">You read</span>      @message.readText
+    <span class="govuk-caption-m-!-govuk-body govuk-!-font-weight-bold">You read</span>      @readText
 </span>
     }
 </p>
 
 <div class="govuk-body">
-@HtmlFormat.raw(message.content)
+@HtmlFormat.raw(content)
 </div>

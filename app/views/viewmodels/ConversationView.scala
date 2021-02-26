@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package models
+package views.viewmodels
 
-final case class MessageView(
-  sender: String,
-  sentText: String,
-  firstRead: Option[String],
-  readText: String,
-  content: String,
-  self: Boolean
-)
+import play.twirl.api.Html
+
+final case class ConversationView(subject: String, latestMessage: Html, replyForm: Html, remainingMessages: Seq[Html])

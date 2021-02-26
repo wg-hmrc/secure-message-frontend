@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-import sbt.Keys.parallelExecution
-import scoverage.ScoverageKeys
-import sbt._
+package forms
 
-object ScoverageSettings {
-  def apply(): Seq[Def.Setting[_ >: String with Double with Boolean]] =
-    Seq( // Semicolon-separated list of regexes matching classes to exclude
-      ScoverageKeys.coverageExcludedPackages := "<empty>;.*Reverse.*;.*(config|testonly|views).*;.*(BuildInfo|Routes).*",
-      ScoverageKeys.coverageMinimum := 70.00,
-      ScoverageKeys.coverageFailOnMinimum := true,
-      ScoverageKeys.coverageHighlighting := true,
-      parallelExecution in ConfigKey.configurationToKey(Test) := false
+import models.CustomerMessage
+import play.api.data.Form
+import play.api.data.Forms.{ mapping, nonEmptyText }
+
+class MessageFormProvider {
+
+  private val CONTENT_MAX_LENGTH = 100000
+
+  def apply(): Form[CustomerMessage] =
+    Form(
+      mapping(
+        "content" -> nonEmptyText(maxLength = CONTENT_MAX_LENGTH)
+      )(CustomerMessage.apply)(CustomerMessage.unapply)
     )
+
 }

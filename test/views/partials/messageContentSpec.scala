@@ -16,13 +16,13 @@
 
 package views.partials
 
-import models.MessageView
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.{ Lang, MessagesApi, MessagesImpl }
 import play.api.test.FakeRequest
 import views.html.Layout
 import views.html.partials.messageContent
+import views.viewmodels.MessageView
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class messageContentSpec extends PlaySpec {
@@ -32,10 +32,10 @@ class messageContentSpec extends PlaySpec {
       val messageContent = new messageContent(layout)(MessageView(
         "Mike",
         "sent text",
-        Some("sample text for first read"),
         "read text",
         "message body",
-        false)).toString
+        false,
+        Some("sample text for first read"))).toString
 
       messageContent must include("Mike")
       messageContent must include("sent text")
@@ -46,7 +46,7 @@ class messageContentSpec extends PlaySpec {
     }
     "be handled without first read information" in new TestClass {
       val messageContent =
-        new messageContent(layout)(MessageView("Mike", "sent text", None, "read text", "message body", false)).toString
+        new messageContent(layout)(MessageView("Mike", "sent text", "read text", "message body", false, None)).toString
 
       messageContent must include("Mike")
       messageContent must include("sent text")

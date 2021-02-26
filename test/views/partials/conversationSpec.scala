@@ -16,23 +16,27 @@
 
 package views.partials
 
-import models.ConversationView
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.{ Lang, MessagesApi, MessagesImpl }
+import play.api.mvc.Request
 import play.api.test.FakeRequest
-import play.twirl.api.{ Html }
+import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.html.components.{ GovukBackLink, GovukPanel }
 import views.html.Layout
-import views.html.partials.conversation
+import views.html.partials.conversationView
+import views.viewmodels.ConversationView
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class conversationSpec extends PlaySpec {
   "conversation template" must {
     "have message content with subject and back link" in new TestClass {
-      val conversationContent = new conversation(layout, new GovukPanel, new GovukBackLink)(
-        ConversationView("subject", Html("first message"), Seq(Html("message content one")))).toString
-
+      private val conversationContent =
+        new conversationView(layout, new GovukPanel, new GovukBackLink)(ConversationView(
+          "subject",
+          Html("first message"),
+          Html("reply form"),
+          Seq(Html("message content one")))).toString
       conversationContent must include("subject")
       conversationContent must include("message content one")
     }
@@ -40,7 +44,7 @@ class conversationSpec extends PlaySpec {
 
   class TestClass {
     implicit val messages: MessagesImpl = MessagesImpl(Lang("en"), mock[MessagesApi])
-    implicit val request = FakeRequest("GET", "/")
-    val layout = mock[Layout]
+    implicit val request: Request[_] = FakeRequest("GET", "/")
+    val layout: Layout = mock[Layout]
   }
 }

@@ -28,6 +28,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.partials.conversationInbox
 import views.viewmodels.ConversationInbox
 import javax.inject.{ Inject, Singleton }
+import play.api.Logging
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -38,7 +39,7 @@ class ConversationInboxController @Inject()(
   inbox: conversationInbox,
   secureMessageConnector: SecureMessageConnector,
   val authConnector: AuthConnector)(implicit ec: ExecutionContext)
-    extends FrontendController(controllerComponents) with I18nSupport with AuthorisedFunctions {
+    extends FrontendController(controllerComponents) with I18nSupport with AuthorisedFunctions with Logging {
 
   implicit val config: AppConfig = appConfig
 
@@ -47,6 +48,7 @@ class ConversationInboxController @Inject()(
     enrolmentKeys: Option[List[String]],
     customerEnrolments: Option[List[CustomerEnrolment]],
     tags: Option[List[Tag]]): Action[AnyContent] = Action.async { implicit request =>
+    logger.info(s"********* ${request.rawQueryString}")
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
     authorised() {
       secureMessageConnector.getConversationList(enrolmentKeys, customerEnrolments, tags).flatMap { conversations =>

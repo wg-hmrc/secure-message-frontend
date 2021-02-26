@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-import sbt.Keys.parallelExecution
-import scoverage.ScoverageKeys
-import sbt._
+package views.viewmodels
 
-object ScoverageSettings {
-  def apply(): Seq[Def.Setting[_ >: String with Double with Boolean]] =
-    Seq( // Semicolon-separated list of regexes matching classes to exclude
-      ScoverageKeys.coverageExcludedPackages := "<empty>;.*Reverse.*;.*(config|testonly|views).*;.*(BuildInfo|Routes).*",
-      ScoverageKeys.coverageMinimum := 70.00,
-      ScoverageKeys.coverageFailOnMinimum := true,
-      ScoverageKeys.coverageHighlighting := true,
-      parallelExecution in ConfigKey.configurationToKey(Test) := false
-    )
-}
+final case class MessageView(
+  sender: String,
+  sentText: String,
+  readText: String,
+  content: String,
+  self: Boolean,
+  firstRead: Option[String])

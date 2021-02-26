@@ -7,8 +7,9 @@
 
 GET         /:clientService/messages                                           controllers.ConversationInboxController.display(clientService: String, enrolmentKey: Option[List[String]], enrolment: Option[List[CustomerEnrolment]], tag: Option[List[Tag]])
 
-GET         /:clientService/conversation/:client/:conversationId               controllers.ConversationController.display(clientService, client, conversationId)
+GET         /:clientService/conversation/:client/:conversationId               controllers.ConversationController.display(clientService, client, conversationId, showReplyForm: Boolean ?= false)
 
++ nocsrf
 POST        /:clientService/conversation/:client/:conversationId               controllers.ConversationController.saveReply(clientService, client, conversationId)
 
 GET         /:clientService/conversation/:client/:conversationId/result        controllers.ConversationController.response(clientService, client, conversationId)

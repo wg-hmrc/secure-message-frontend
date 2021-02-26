@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-import sbt.Keys.parallelExecution
-import scoverage.ScoverageKeys
-import sbt._
+package models
 
-object ScoverageSettings {
-  def apply(): Seq[Def.Setting[_ >: String with Double with Boolean]] =
-    Seq( // Semicolon-separated list of regexes matching classes to exclude
-      ScoverageKeys.coverageExcludedPackages := "<empty>;.*Reverse.*;.*(config|testonly|views).*;.*(BuildInfo|Routes).*",
-      ScoverageKeys.coverageMinimum := 70.00,
-      ScoverageKeys.coverageFailOnMinimum := true,
-      ScoverageKeys.coverageHighlighting := true,
-      parallelExecution in ConfigKey.configurationToKey(Test) := false
-    )
+import models.utils.HTMLEncoder
+import play.api.libs.json.{ JsPath, Writes }
+
+final case class CustomerMessage(content: String)
+
+object CustomerMessage {
+  implicit val writes: Writes[CustomerMessage] =
+    (JsPath \ "content").write[String].contramap((m: CustomerMessage) => HTMLEncoder.encode(m.content))
 }
