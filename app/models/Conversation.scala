@@ -34,23 +34,26 @@ object Conversation {
   implicit val conversationFormat: Reads[Conversation] = Json.reads[Conversation]
 }
 
-final case class Message(senderInformation: SenderInformation, firstReader: Option[FirstReader], content: String)
+final case class Message(
+  senderInformation: SenderInformation,
+  firstReader: Option[FirstReaderInformation],
+  content: String)
 
 object Message {
   implicit val messageReads: Reads[Message] = Json.reads[Message]
 }
 
-final case class FirstReader(read: DateTime, name: Option[String])
+final case class FirstReaderInformation(name: Option[String], read: DateTime)
 
-object FirstReader {
+object FirstReaderInformation {
 
   private val dateFormatString = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 
   implicit val dateFormat: Format[DateTime] = Format(jodaDateReads(dateFormatString), jodaDateWrites(dateFormatString))
-  implicit val firstReaderFormat: Reads[FirstReader] = Json.reads[FirstReader]
+  implicit val firstReaderFormat: Reads[FirstReaderInformation] = Json.reads[FirstReaderInformation]
 }
 
-final case class SenderInformation(name: String, created: DateTime)
+final case class SenderInformation(name: String, sent: DateTime, self: Boolean)
 
 object SenderInformation {
 

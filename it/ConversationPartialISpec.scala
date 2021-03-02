@@ -58,7 +58,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
               None,
               "subject",
               "en",
-              List(Message(SenderInformation("", testTime), None, "TWVzc2FnZSBib2R5IQ==")))))
+              List(Message(SenderInformation("", testTime, false), None, "TWVzc2FnZSBib2R5IQ==")))))
       val response = wsClient
         .url(resource("/secure-message-frontend/cdcm/conversation/client/1111"))
         .withHttpHeaders(AuthUtil.buildEoriToken)
