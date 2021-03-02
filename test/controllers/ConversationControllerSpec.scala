@@ -19,7 +19,7 @@ package controllers
 import akka.util.Timeout
 import config.AppConfig
 import connectors.SecureMessageConnector
-import models.{ Conversation, ConversationView, FirstReader, Message, SenderInformation }
+import models.{ Conversation, ConversationView, FirstReaderInformation, Message, SenderInformation }
 import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -44,8 +44,8 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
     "return message partial with 1 message" in new TestCase {
       val messages = List(
         Message(
-          SenderInformation("senderName", DateTime.parse("2021-02-19T10:29:47.275Z")),
-          Some(FirstReader(DateTime.parse("2021-03-01T10:29:47.275Z"), Some("firstReadername"))),
+          SenderInformation("senderName", DateTime.parse("2021-02-19T10:29:47.275Z"), false),
+          Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-03-01T10:29:47.275Z"))),
           "TWVzc2FnZSBib2R5IQ=="
         ))
 
@@ -60,13 +60,13 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
       val messages = List(
         Message(
-          SenderInformation("senderName", DateTime.parse("2021-02-19T10:29:47.275Z")),
-          Some(FirstReader(DateTime.parse("2021-03-01T10:29:47.275Z"), Some("firstReadername"))),
+          SenderInformation("senderName", DateTime.parse("2021-02-19T10:29:47.275Z"), false),
+          Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-03-01T10:29:47.275Z"))),
           "TWVzc2FnZSBib2R5IQ=="
         ),
         Message(
-          SenderInformation("senderName", DateTime.parse("2021-04-19T10:29:47.275Z")),
-          Some(FirstReader(DateTime.parse("2021-05-01T10:29:47.275Z"), Some("firstReadername"))),
+          SenderInformation("senderName", DateTime.parse("2021-04-19T10:29:47.275Z"), false),
+          Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-05-01T10:29:47.275Z"))),
           "TWVzc2FnZSBib2R5IQ=="
         )
       )
@@ -88,7 +88,7 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
       val messages = List(
         Message(
-          SenderInformation("senderName", DateTime.parse("2021-02-19T10:29:47.275Z")),
+          SenderInformation("senderName", DateTime.parse("2021-02-19T10:29:47.275Z"), false),
           None,
           "TWVzc2FnZSBib2R5IQ=="
         ))

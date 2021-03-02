@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models.{ ConversationHeader, FirstReader }
+import models.{ ConversationHeader, FirstReaderInformation }
 import org.apache.commons.codec.binary.Base64
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -46,7 +46,7 @@ object HtmlUtil {
 
   def sentMessageConversationText(time: String): String = s"this message on $time"
   def readMessageConversationText: String = s"this message on ${readableTime(DateTime.now)}"
-  def firstReadMessageConversationText(firstReader: Option[FirstReader]): Option[String] =
+  def firstReadMessageConversationText(firstReader: Option[FirstReaderInformation]): Option[String] =
     firstReader.map(r => s"on ${readableTime(r.read)}")
 
   def backToConversationsLink(callingService: String): Html =

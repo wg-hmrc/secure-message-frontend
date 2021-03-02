@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models.FirstReader
+import models.FirstReaderInformation
 import org.joda.time.DateTime
 import org.scalatestplus.play.PlaySpec
 import views.helpers.HtmlUtil._
@@ -35,7 +35,7 @@ class HtmlUtilSpec extends PlaySpec {
 
   "firstReadMessageConversationText function returns correct first read message text" in {
     val testTime = DateTime.now
-    val firstReader = Some(FirstReader(testTime, Some("Name")))
+    val firstReader = Some(FirstReaderInformation(Some("Name"), testTime))
     firstReadMessageConversationText(firstReader) must be(Some(s"on ${readableTime(testTime)}"))
   }
 
