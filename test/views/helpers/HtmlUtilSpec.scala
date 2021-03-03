@@ -24,13 +24,13 @@ import views.helpers.HtmlUtil._
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class HtmlUtilSpec extends PlaySpec {
 
-  "sentMessageConversationText function returns correct sent message text" in {
-    sentMessageConversationText("15 Feb 2021 at 11:49 AM") must be("this message on 15 Feb 2021 at 11:49 AM")
+  "conversation readableTime function returns correct readable timestamp" in {
+    readableTime(DateTime.parse("2021-02-19T10:29:47.275Z")) must be("19 February 2021 at 10:29am")
   }
 
   "readMessageConversationText function returns correct read message text" in {
     val testTime = DateTime.now
-    readMessageConversationText must be(s"this message on ${readableTime(testTime)}")
+    readMessageConversationText must be(s"this on ${readableTime(testTime)}")
   }
 
   "firstReadMessageConversationText function returns correct first read message text" in {

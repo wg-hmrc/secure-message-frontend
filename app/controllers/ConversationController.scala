@@ -22,7 +22,7 @@ import models.{ ConversationView, Message, MessageView }
 import play.api.i18n.I18nSupport
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents, Request }
 import uk.gov.hmrc.auth.core.{ AuthConnector, AuthorisedFunctions }
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{ HeaderCarrier, NotFoundException }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.helpers.HtmlUtil.{ readableTime, _ }
@@ -49,12 +49,16 @@ class ConversationController @Inject()(
           .getConversation(client, conversationId)
           .flatMap { conversationMessage =>
             secureMessageConnector.recordReadTime(client, conversationId)
+            val messages = messagePartial(conversationMessage.messages)
+            val firstMessage = messages.headOption.getOrElse(
+              throw new NotFoundException("There can't be a conversation without a message"))
             Future.successful(
               Ok(
                 conversation(
                   ConversationView(
                     s"${conversationMessage.subject}",
-                    messagePartial(conversationMessage.messages),
+                    firstMessage,
+                    messages.tail,
                     backToConversationsLink(clientService)))))
           }
       }
@@ -71,14 +75,15 @@ class ConversationController @Inject()(
   }
 
   private[controllers] def messagePartial(messages: List[Message])(implicit request: Request[_]) =
-    messages.map(
-      message =>
-        messageContent(
-          MessageView(
-            message.senderInformation.name,
-            sentMessageConversationText(readableTime(message.senderInformation.sent)),
-            firstReadMessageConversationText(message.firstReader),
-            readMessageConversationText,
-            decodeBase64String(message.content)
-          )))
+    messages
+      .sortBy(_.senderInformation.sent.getMillis)(Ordering[Long].reverse)
+      .map(message =>
+        messageContent(MessageView(
+          senderName(message.senderInformation),
+          sentMessageConversationText(readableTime(message.senderInformation.sent)),
+          firstReadMessageConversationText(message.firstReader),
+          readMessageConversationText,
+          decodeBase64String(message.content),
+          message.senderInformation.self
+        )))
 }

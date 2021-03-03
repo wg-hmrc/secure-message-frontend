@@ -30,9 +30,11 @@
    <span class="govuk-caption-m-!-govuk-body govuk-!-font-weight-bold">First read</span> @s
 </span>
     }
+    @if(!message.self) {
     <span class="govuk-caption-m">
     <span class="govuk-caption-m-!-govuk-body govuk-!-font-weight-bold">You read</span>      @message.readText
 </span>
+    }
 </p>
 
 <div class="govuk-body">

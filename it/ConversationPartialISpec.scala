@@ -58,7 +58,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
               None,
               "subject",
               "en",
-              List(Message(SenderInformation("", testTime, false), None, "TWVzc2FnZSBib2R5IQ==")))))
+              List(Message(SenderInformation(Some(""), testTime, false), None, "TWVzc2FnZSBib2R5IQ==")))))
       val response = wsClient
         .url(resource("/secure-message-frontend/cdcm/conversation/client/1111"))
         .withHttpHeaders(AuthUtil.buildEoriToken)
@@ -70,12 +70,43 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
       pageContent must include("govuk-back-link")
       pageContent must include("subject")
       pageContent must include(
-        "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\"> sent</span>  this message on 19 Feb 2021 at 10:29")
+        "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\"> sent</span>  this on 19 February 2021 at 10:29am")
       pageContent must include(
-        "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\">You read</span>      this message on")
+        "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\">You read</span>      this on")
       pageContent must include("govuk-body")
       pageContent must include("Message body!")
 
+    }
+
+    "return messages in cronological order of creation with latest being on top" in {
+      val dateRegex = """(\d\d)\s(January|February|March)\s(2020|2021)""".r
+      val messages = List(
+        Message(
+          SenderInformation(Some(""), DateTime.parse("2021-01-19T10:29:47.275Z"), false),
+          None,
+          "TWVzc2FnZSBib2R5IQ=="),
+        Message(
+          SenderInformation(Some(""), DateTime.parse("2021-03-19T10:29:47.275Z"), false),
+          None,
+          "TWVzc2FnZSBib2R5IQ=="),
+        Message(
+          SenderInformation(Some(""), DateTime.parse("2021-02-19T10:29:47.275Z"), false),
+          None,
+          "TWVzc2FnZSBib2R5IQ==")
+      )
+
+      when(mockSecureMessageConnector.getConversation(anyString, anyString)(any[ExecutionContext], any[HeaderCarrier]))
+        .thenReturn(
+          Future.successful(Conversation("client", "conversationId", "status", None, "subject", "en", messages)))
+      val response = wsClient
+        .url(resource("/secure-message-frontend/cdcm/conversation/client/1111"))
+        .withHttpHeaders(AuthUtil.buildEoriToken)
+        .get()
+        .futureValue
+      response.status mustBe 200
+
+      dateRegex.findAllIn(response.body).size mustBe (3)
+      dateRegex.findFirstIn(response.body).get mustBe ("19 March 2021")
     }
   }
 

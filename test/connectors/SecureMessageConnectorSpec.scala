@@ -80,7 +80,7 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
               None,
               "subject",
               "en",
-              List(Message(SenderInformation("name", testDate, false), None, "content")))))
+              List(Message(SenderInformation(Some("name"), testDate, false), None, "content")))))
       private val result = await(connector.getConversation("client", "conversationId"))
       result mustBe Conversation(
         "client",
@@ -89,7 +89,7 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
         None,
         "subject",
         "en",
-        List(Message(SenderInformation("name", testDate, false), None, "content"))
+        List(Message(SenderInformation(Some("name"), testDate, false), None, "content"))
       )
     }
   }

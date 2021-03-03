@@ -29,8 +29,13 @@ class messageContentSpec extends PlaySpec {
 
   "messsageContent template" must {
     "have all information including first read" in new TestClass {
-      val messageContent = new messageContent(layout)(
-        MessageView("Mike", "sent text", Some("sample text for first read"), "read text", "message body")).toString
+      val messageContent = new messageContent(layout)(MessageView(
+        "Mike",
+        "sent text",
+        Some("sample text for first read"),
+        "read text",
+        "message body",
+        false)).toString
 
       messageContent must include("Mike")
       messageContent must include("sent text")
@@ -41,7 +46,7 @@ class messageContentSpec extends PlaySpec {
     }
     "be handled without first read information" in new TestClass {
       val messageContent =
-        new messageContent(layout)(MessageView("Mike", "sent text", None, "read text", "message body")).toString
+        new messageContent(layout)(MessageView("Mike", "sent text", None, "read text", "message body", false)).toString
 
       messageContent must include("Mike")
       messageContent must include("sent text")
