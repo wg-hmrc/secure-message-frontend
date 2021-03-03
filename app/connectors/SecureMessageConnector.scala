@@ -16,8 +16,9 @@
 
 package connectors
 
+import controllers.generic.models.{ CustomerEnrolment, Tag }
 import javax.inject.Inject
-import models.{ Conversation, ConversationHeader, ReadTime }
+import models.{ Conversation, ConversationHeader }
 import org.joda.time.DateTime
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient, HttpResponse }
@@ -30,9 +31,29 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
 
   private val secureMessageBaseUrl = servicesConfig.baseUrl("secure-message")
 
-  def getConversationList()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[List[ConversationHeader]] =
-    httpClient.GET[List[ConversationHeader]](
-      s"$secureMessageBaseUrl/secure-messaging/conversations/HMRC-CUS-ORG/EORINumber")
+  def getConversationList(
+    enrolmentKeys: Option[List[String]],
+    customerEnrolments: Option[List[CustomerEnrolment]],
+    tags: Option[List[Tag]])(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[List[ConversationHeader]] = {
+    val queryParams = queryParamsBuilder(enrolmentKeys, customerEnrolments, tags)
+    httpClient
+      .GET[List[ConversationHeader]](
+        s"$secureMessageBaseUrl/secure-messaging/conversations",
+        queryParams.getOrElse(List()))
+  }
+
+  private def queryParamsBuilder(
+    enrolmentKeys: Option[List[String]],
+    customerEnrolments: Option[List[CustomerEnrolment]],
+    tags: Option[List[Tag]]): Option[Seq[(String, String)]] =
+    for {
+      keysQueryParams: List[(String, String)] <- enrolmentKeys.map(keys => keys.map(ek => ("enrolmentKey", ek)))
+      enrolmentsQueryParams: List[(String, String)] <- customerEnrolments
+                                                        .map(enrols =>
+                                                          enrols.map(ce =>
+                                                            ("enrolment", s"${ce.key}~${ce.name}~${ce.value}")))
+      tagsQueryParams: List[(String, String)] <- tags.map(t => t.map(tag => ("tag", s"${tag.key}~${tag.value}")))
+    } yield (keysQueryParams union enrolmentsQueryParams union tagsQueryParams)
 
   def getConversation(clientName: String, conversationId: String)(
     implicit ec: ExecutionContext,

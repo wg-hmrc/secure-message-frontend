@@ -16,8 +16,10 @@
 
 package connectors
 
+import controllers.generic.models.{ CustomerEnrolment, Tag }
 import models.{ Conversation, ConversationHeader, Message, ReadTime, SenderInformation }
 import org.joda.time.DateTime
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{ any, anyString }
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -35,15 +37,27 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
 
   "SecureMessgaeConnector.getConversationList" must {
     "return a list with one conversation" in new TestCase {
+      val expectedQueryParams = Seq(
+        ("enrolmentKey", "HMRC-CUS-ORG"),
+        ("enrolment", "HMRC-CUS-ORG~EORIName~GB7777777777"),
+        ("tag", "notificationType~CDS Exports")
+      )
       when(
         mockHttpClient
-          .GET[List[ConversationHeader]](any[String], any[Seq[(String, String)]], any[Seq[(String, String)]])(
+          .GET[List[ConversationHeader]](
+            any[String],
+            ArgumentMatchers.eq(expectedQueryParams),
+            any[Seq[(String, String)]])(
             any[HttpReads[List[ConversationHeader]]],
             any[HeaderCarrier],
             any[ExecutionContext]))
         .thenReturn(
           Future(List(ConversationHeader("cdcm", "123", "ABC", new DateTime(), None, unreadMessages = true, 1))))
-      private val result = await(connector.getConversationList())
+      private val result = await(
+        connector.getConversationList(
+          Some(List("HMRC-CUS-ORG")),
+          Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777"))),
+          Some(List(Tag("notificationType", "CDS Exports")))))
       result.size mustBe 1
     }
   }

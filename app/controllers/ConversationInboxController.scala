@@ -18,7 +18,7 @@ package controllers
 
 import config.AppConfig
 import connectors.SecureMessageConnector
-import play.api.Logger
+import controllers.generic.models.{ CustomerEnrolment, Tag }
 import play.api.i18n.I18nSupport
 import play.api.mvc.{ MessagesControllerComponents, _ }
 import uk.gov.hmrc.auth.core.{ AuthConnector, AuthorisedFunctions }
@@ -27,8 +27,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.partials.conversationInbox
 import views.viewmodels.ConversationInbox
-
 import javax.inject.{ Inject, Singleton }
+
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
@@ -40,23 +40,21 @@ class ConversationInboxController @Inject()(
   val authConnector: AuthConnector)(implicit ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport with AuthorisedFunctions {
 
-  private val logger = Logger(getClass)
-
   implicit val config: AppConfig = appConfig
 
-  def display(clientService: String, apiFilters: Option[List[String]]): Action[AnyContent] = Action.async {
-    implicit request =>
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
-      val apiFilterValues = apiFilters.getOrElse(List("NONE")).mkString("&apiFilter=")
-      // FIXME the logging is just to keep the compiler happy until the filters are implemented
-      logger.info(s"apiFilter=$apiFilterValues")
-      authorised() {
-        secureMessageConnector.getConversationList().flatMap { conversations =>
-          val messages = this.messagesApi.preferred(request)
-          Future.successful(
-            Ok(inbox.apply(ConversationInbox(clientService, messages("conversation.inbox.title"), conversations))))
-        }
+  def display(
+    clientService: String,
+    enrolmentKeys: Option[List[String]],
+    customerEnrolments: Option[List[CustomerEnrolment]],
+    tags: Option[List[Tag]]): Action[AnyContent] = Action.async { implicit request =>
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+    authorised() {
+      secureMessageConnector.getConversationList(enrolmentKeys, customerEnrolments, tags).flatMap { conversations =>
+        val messages = this.messagesApi.preferred(request)
+        Future.successful(
+          Ok(inbox.apply(ConversationInbox(clientService, messages("conversation.inbox.title"), conversations))))
       }
+    }
   }
 
 }
