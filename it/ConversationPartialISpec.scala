@@ -70,7 +70,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
       pageContent must include("govuk-back-link")
       pageContent must include("subject")
       pageContent must include(
-        "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\"> sent</span>  this message on 19 Feb 2021 at 10:29 AM")
+        "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\"> sent</span>  this message on 19 Feb 2021 at 10:29")
       pageContent must include(
         "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\">You read</span>      this message on")
       pageContent must include("govuk-body")

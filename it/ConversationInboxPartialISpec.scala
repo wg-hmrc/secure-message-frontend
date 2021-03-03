@@ -16,9 +16,11 @@
 
 import com.google.inject.AbstractModule
 import connectors.SecureMessageConnector
+import controllers.generic.models.{ CustomerEnrolment, Tag }
 import models.ConversationHeader
 import net.codingwell.scalaguice.ScalaModule
 import org.joda.time.DateTime
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
@@ -49,7 +51,12 @@ class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with Mocki
 
   "Getting the conversation list partial" should {
     "return status code 200" in {
-      when(mockSecureMessageConnector.getConversationList()(any[ExecutionContext], any[HeaderCarrier])).thenReturn(
+      when(
+        mockSecureMessageConnector.getConversationList(
+          ArgumentMatchers.eq(Some(List("HMRC-CUS-ORG"))),
+          ArgumentMatchers.eq(Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777")))),
+          ArgumentMatchers.eq(Some(List(Tag("notificationType", "CDS Exports"))))
+        )(any[ExecutionContext], any[HeaderCarrier])).thenReturn(
         Future.successful(
           List(
             ConversationHeader(
@@ -62,7 +69,8 @@ class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with Mocki
               1)))
       )
       val response = wsClient
-        .url(resource("/secure-message-frontend/cdcm/messages"))
+        .url(resource("/secure-message-frontend/cdcm/messages?" +
+          "enrolmentKey=HMRC-CUS-ORG&enrolment=HMRC-CUS-ORG~EORIName~GB7777777777&tag=notificationType~CDS%20Exports"))
         .withHttpHeaders(AuthUtil.buildEoriToken)
         .get()
         .futureValue

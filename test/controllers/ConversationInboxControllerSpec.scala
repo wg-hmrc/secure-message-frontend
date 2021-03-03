@@ -19,8 +19,10 @@ package controllers
 import akka.util.Timeout
 import config.AppConfig
 import connectors.SecureMessageConnector
+import controllers.generic.models.{ CustomerEnrolment, Tag }
 import models.ConversationHeader
 import org.joda.time.DateTime
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -44,7 +46,12 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
   "Conversations Controller" must {
     "show latest messages" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
-      when(mockSecureMessageConnector.getConversationList()(any[ExecutionContext], any[HeaderCarrier]))
+      when(
+        mockSecureMessageConnector.getConversationList(
+          ArgumentMatchers.eq(Some(List("HMRC-CUS-ORG"))),
+          ArgumentMatchers.eq(Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777")))),
+          ArgumentMatchers.eq(Some(List(Tag("notificationType", "CDS Exports"))))
+        )(any[ExecutionContext], any[HeaderCarrier]))
         .thenReturn(
           Future(
             List(
@@ -63,7 +70,12 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
         mockConversationsInboxPartial,
         mockSecureMessageConnector,
         mockAuthConnector)
-      private val result = controller.display("cds-frontend", None)(FakeRequest(method = GET, path = "/conversations"))
+      private val result = controller.display(
+        "cds-frontend",
+        Some(List("HMRC-CUS-ORG")),
+        Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777"))),
+        Some(List(Tag("notificationType", "CDS Exports")))
+      )(FakeRequest(method = GET, path = "/messages"))
       status(result) mustBe OK
     }
   }

@@ -5,7 +5,7 @@
 ### NoDocs ###
 ->          /hmrc-frontend                                                     hmrcfrontend.Routes
 
-GET         /:clientService/messages                                           controllers.ConversationInboxController.display(clientService, apiFilter: Option[List[String]])
+GET         /:clientService/messages                                           controllers.ConversationInboxController.display(clientService: String, enrolmentKey: Option[List[String]], enrolment: Option[List[CustomerEnrolment]], tag: Option[List[Tag]])
 
 GET         /:clientService/conversation/:client/:conversationId               controllers.ConversationController.display(clientService, client, conversationId)
 
