@@ -18,4 +18,8 @@ package models
 
 import play.twirl.api.{ Html, HtmlFormat }
 
-final case class ConversationView(subject: String, messages: Seq[HtmlFormat.Appendable], backLink: Html)
+final case class ConversationView(
+  subject: String,
+  latestMessage: HtmlFormat.Appendable,
+  remainingMessages: Seq[HtmlFormat.Appendable],
+  backLink: Html)

@@ -44,15 +44,34 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
     "return message partial with 1 message" in new TestCase {
       val messages = List(
         Message(
-          SenderInformation("senderName", DateTime.parse("2021-02-19T10:29:47.275Z"), false),
+          SenderInformation(Some("senderName"), DateTime.parse("2021-02-19T10:29:47.275Z"), false),
           Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-03-01T10:29:47.275Z"))),
           "TWVzc2FnZSBib2R5IQ=="
         ))
 
       private val messagesContent = controller.messagePartial(messages).toString()
-      messagesContent must include("this message on 19 Feb 2021 at 10:29")
-      messagesContent must include("on 1 Mar 2021 at 10:29")
+
+      messagesContent must include("this on 19 February 2021 at 10:29am")
+      messagesContent must include("on 1 March 2021 at 10:29am")
       messagesContent must include("You read")
+      messagesContent must include("senderName sent")
+      messagesContent must include("Message body!")
+    }
+
+    "return message partial with `You sent` instead of organisation name if sender name is missing" in new TestCase {
+      val messages = List(
+        Message(
+          SenderInformation(None, DateTime.parse("2021-02-19T10:29:47.275Z"), false),
+          Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-03-01T10:29:47.275Z"))),
+          "TWVzc2FnZSBib2R5IQ=="
+        ))
+
+      private val messagesContent = controller.messagePartial(messages).toString()
+
+      messagesContent must include("this on 19 February 2021 at 10:29am")
+      messagesContent must include("on 1 March 2021 at 10:29am")
+      messagesContent must include("You read")
+      messagesContent must include("You sent")
       messagesContent must include("Message body!")
     }
 
@@ -60,25 +79,25 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
       val messages = List(
         Message(
-          SenderInformation("senderName", DateTime.parse("2021-02-19T10:29:47.275Z"), false),
+          SenderInformation(Some("senderName"), DateTime.parse("2021-02-19T10:29:47.275Z"), false),
           Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-03-01T10:29:47.275Z"))),
           "TWVzc2FnZSBib2R5IQ=="
         ),
         Message(
-          SenderInformation("senderName", DateTime.parse("2021-04-19T10:29:47.275Z"), false),
+          SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), false),
           Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-05-01T10:29:47.275Z"))),
           "TWVzc2FnZSBib2R5IQ=="
         )
       )
 
       private val messagesContent = controller.messagePartial(messages).toString()
-      messagesContent must include("this message on 19 Feb 2021 at 10:29")
-      messagesContent must include("on 1 Mar 2021 at 10:29")
+
+      messagesContent must include("this on 19 February 2021 at 10:29am")
+      messagesContent must include("on 1 March 2021 at 10:29am")
       messagesContent must include("You read")
       messagesContent must include("Message body!")
-
-      messagesContent must include("this message on 19 Apr 2021 at 10:29")
-      messagesContent must include("on 1 May 2021 at 10:29")
+      messagesContent must include("this on 19 April 2021 at 10:29am")
+      messagesContent must include("on 1 May 2021 at 10:29am")
       messagesContent must include("You read")
       messagesContent must include("Message body!")
 
@@ -88,13 +107,13 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
       val messages = List(
         Message(
-          SenderInformation("senderName", DateTime.parse("2021-02-19T10:29:47.275Z"), false),
+          SenderInformation(Some("senderName"), DateTime.parse("2021-02-19T10:29:47.275Z"), false),
           None,
           "TWVzc2FnZSBib2R5IQ=="
         ))
 
       private val messagesContent = controller.messagePartial(messages).toString()
-      messagesContent must include("this message on 19 Feb 2021 at 10:29")
+      messagesContent must include("this on 19 February 2021 at 10:29am")
       messagesContent must not include "First read"
       messagesContent must include("You read")
       messagesContent must include("Message body!")
@@ -104,7 +123,19 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       mockAuthorise[Unit]()(Future.successful(()))
       when(
         mockSecureMessageConnector.getConversation(any[String], any[String])(any[ExecutionContext], any[HeaderCarrier]))
-        .thenReturn(Future.successful(Conversation(client, conversationId, "", None, "", "", List.empty)))
+        .thenReturn(Future.successful(Conversation(
+          client,
+          conversationId,
+          "",
+          None,
+          "",
+          "",
+          List(Message(
+            SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), false),
+            Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-05-01T10:29:47.275Z"))),
+            "TWVzc2FnZSBib2R5IQ=="
+          ))
+        )))
 
       when(mockConversation.apply(any[ConversationView])(any[Messages]))
         .thenReturn(new Html("MRN 20GB16046891253600 needs action"))

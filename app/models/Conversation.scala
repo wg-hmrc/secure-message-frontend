@@ -53,7 +53,7 @@ object FirstReaderInformation {
   implicit val firstReaderFormat: Reads[FirstReaderInformation] = Json.reads[FirstReaderInformation]
 }
 
-final case class SenderInformation(name: String, sent: DateTime, self: Boolean)
+final case class SenderInformation(name: Option[String], sent: DateTime, self: Boolean)
 
 object SenderInformation {
 

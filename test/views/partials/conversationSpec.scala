@@ -31,7 +31,7 @@ class conversationSpec extends PlaySpec {
   "conversation template" must {
     "have message content with subject and back link" in new TestClass {
       val conversationContent = new conversation(layout, new GovukPanel, new GovukBackLink)(
-        ConversationView("subject", Seq(Html("message content one")), Html("back"))).toString
+        ConversationView("subject", Html("first message"), Seq(Html("message content one")), Html("back"))).toString
 
       conversationContent must include("back")
       conversationContent must include("subject")

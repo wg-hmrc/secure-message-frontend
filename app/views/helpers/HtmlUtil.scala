@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models.{ ConversationHeader, FirstReaderInformation }
+import models.{ ConversationHeader, FirstReaderInformation, SenderInformation }
 import org.apache.commons.codec.binary.Base64
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -27,7 +27,8 @@ import play.twirl.api.{ Html, HtmlFormat }
 object HtmlUtil {
 
   private val dtf = DateTimeFormat.forPattern("d MMMM yyyy")
-  private val conversationDateTimeFormat = DateTimeFormat.forPattern("d MMM yyyy 'at' HH:mm aa")
+  private val conversationDateTimeFormat = DateTimeFormat.forPattern("d MMMM yyyy 'at' h:mm")
+  private val amOrPm = DateTimeFormat.forPattern("a")
 
   def getSenderName(conversationHeader: ConversationHeader)(implicit messages: Messages): String =
     conversationHeader.senderName match {
@@ -42,10 +43,16 @@ object HtmlUtil {
     s"/$clientService/conversation/${conversationHeader.client}/${conversationHeader.conversationId}"
 
   def readableTime(dateTime: DateTime): String =
-    conversationDateTimeFormat.print(dateTime)
+    conversationDateTimeFormat.print(dateTime) + amOrPm.print(dateTime).toLowerCase
 
-  def sentMessageConversationText(time: String): String = s"this message on $time"
-  def readMessageConversationText: String = s"this message on ${readableTime(DateTime.now)}"
+// sender information for an org is mandatory. if for any reason if its missing we are putting as you, this will be covered in diff story
+  def senderName(sender: SenderInformation): String = sender.name match {
+    case Some(name)       => name
+    case _ if sender.self => "You"
+    case _                => "You"
+  }
+  def sentMessageConversationText(time: String): String = s"this on $time"
+  def readMessageConversationText: String = s"this on ${readableTime(DateTime.now)}"
   def firstReadMessageConversationText(firstReader: Option[FirstReaderInformation]): Option[String] =
     firstReader.map(r => s"on ${readableTime(r.read)}")
 

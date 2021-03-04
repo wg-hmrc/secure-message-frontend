@@ -21,4 +21,6 @@ final case class MessageView(
   sentText: String,
   firstRead: Option[String],
   readText: String,
-  content: String)
+  content: String,
+  self: Boolean
+)
