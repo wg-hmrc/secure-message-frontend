@@ -28,7 +28,7 @@ object HtmlUtil {
 
   private val dtf = DateTimeFormat.forPattern("d MMMM yyyy")
   private val conversationDateTimeFormat = DateTimeFormat.forPattern("d MMMM yyyy 'at' h:mm")
-  private val test = DateTimeFormat.forPattern("a")
+  private val amOrPm = DateTimeFormat.forPattern("a")
 
   def getSenderName(conversationHeader: ConversationHeader)(implicit messages: Messages): String =
     conversationHeader.senderName match {
@@ -43,7 +43,7 @@ object HtmlUtil {
     s"/$clientService/conversation/${conversationHeader.client}/${conversationHeader.conversationId}"
 
   def readableTime(dateTime: DateTime): String =
-    conversationDateTimeFormat.print(dateTime) + test.print(dateTime).toLowerCase
+    conversationDateTimeFormat.print(dateTime) + amOrPm.print(dateTime).toLowerCase
 
 // sender information for an org is mandatory. if for any reason if its missing we are putting as you, this will be covered in diff story
   def senderName(sender: SenderInformation): String = sender.name match {
