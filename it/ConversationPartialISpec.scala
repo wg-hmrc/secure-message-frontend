@@ -66,8 +66,6 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
         .futureValue
       response.status mustBe 200
       val pageContent = response.body
-      pageContent must include("Back")
-      pageContent must include("govuk-back-link")
       pageContent must include("subject")
       pageContent must include(
         "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\"> sent</span>  this on 19 February 2021 at 10:29am")

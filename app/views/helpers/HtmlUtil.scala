@@ -21,7 +21,6 @@ import org.apache.commons.codec.binary.Base64
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import play.api.i18n.Messages
-import play.twirl.api.{ Html, HtmlFormat }
 
 @SuppressWarnings(Array("org.wartremover.warts.PlatformDefault"))
 object HtmlUtil {
@@ -55,9 +54,6 @@ object HtmlUtil {
   def readMessageConversationText: String = s"this on ${readableTime(DateTime.now)}"
   def firstReadMessageConversationText(firstReader: Option[FirstReaderInformation]): Option[String] =
     firstReader.map(r => s"on ${readableTime(r.read)}")
-
-  def backToConversationsLink(callingService: String): Html =
-    HtmlFormat.raw(s"""<a href=/$callingService/messages class="govuk-back-link">Back</a>""")
 
   def decodeBase64String(input: String): String =
     new String(Base64.decodeBase64(input.getBytes("UTF-8")))

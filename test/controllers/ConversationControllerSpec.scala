@@ -29,7 +29,7 @@ import play.api.http.Status
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{ contentAsString, status, stubMessagesControllerComponents }
-import play.twirl.api.Html
+import play.twirl.api.{ Html }
 import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ ExecutionContext, Future }
 import views.html.partials.{ conversation, messageContent }

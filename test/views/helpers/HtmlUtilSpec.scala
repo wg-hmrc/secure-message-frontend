@@ -39,10 +39,6 @@ class HtmlUtilSpec extends PlaySpec {
     firstReadMessageConversationText(firstReader) must be(Some(s"on ${readableTime(testTime)}"))
   }
 
-  "backToConversationsLink function should return correct link to take back to conversations" in {
-    backToConversationsLink("stub").toString mustBe "<a href=/stub/messages class=\"govuk-back-link\">Back</a>"
-  }
-
   "decodeBase64String function should return decoded string" in {
     decodeBase64String("V2hhdCBhIGRheSE=") mustBe "What a day!"
   }

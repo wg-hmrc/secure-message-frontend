@@ -19,6 +19,7 @@ package controllers
 import com.google.inject.Inject
 import connectors.SecureMessageConnector
 import models.{ ConversationView, Message, MessageView }
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents, Request }
 import uk.gov.hmrc.auth.core.{ AuthConnector, AuthorisedFunctions }
@@ -49,6 +50,7 @@ class ConversationController @Inject()(
           .getConversation(client, conversationId)
           .flatMap { conversationMessage =>
             secureMessageConnector.recordReadTime(client, conversationId)
+            Logger(s"request came from $clientService")
             val messages = messagePartial(conversationMessage.messages)
             val firstMessage = messages.headOption.getOrElse(
               throw new NotFoundException("There can't be a conversation without a message"))
@@ -58,8 +60,8 @@ class ConversationController @Inject()(
                   ConversationView(
                     s"${conversationMessage.subject}",
                     firstMessage,
-                    messages.tail,
-                    backToConversationsLink(clientService)))))
+                    messages.tail
+                  ))))
           }
       }
   }
