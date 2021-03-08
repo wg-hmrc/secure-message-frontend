@@ -73,7 +73,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
 //      pageContent must include("govuk-body")
 //      pageContent must include("Message body!!")
 //
-     lazy val secureMessagePort1 = externalServicePorts("secure-message")
+      lazy val secureMessagePort1 = externalServicePorts("secure-message")
 
       val deleteResponse = wsClient
         .url(s"http://localhost:$secureMessagePort1/test-only/delete/conversation/SMF123456789/cdcm")
