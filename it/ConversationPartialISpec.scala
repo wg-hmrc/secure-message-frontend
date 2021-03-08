@@ -55,25 +55,25 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
           .futureValue
       responseFromSecureMessage.status mustBe (CREATED)
 
-      lazy val secureMessageFrontendPort = externalServicePorts("secure-message-frontend")
-      lazy val getConverstionUrl =
-        s"http://localhost:$secureMessageFrontendPort/secure-message-frontend/whatever/conversation/cdcm/SMF123456789"
-      lazy val responseFromSecureMessageFrontend = wsClient
-        .url(getConverstionUrl)
-        .withHttpHeaders(AuthUtil.buildEoriToken)
-        .get()
-        .futureValue
-      responseFromSecureMessageFrontend.status mustBe (OK)
-      lazy val pageContent = responseFromSecureMessageFrontend.body
-      pageContent must include("This subject needs action")
-      //  pageContent must include(
-      //   "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\">CDS Exports Team sent</span>  this message on ")
-//      pageContent must include(
-//        "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\">You read</span>      this message on")
-      pageContent must include("govuk-body")
-      pageContent must include("Message body!!")
-
-      lazy val secureMessagePort1 = externalServicePorts("secure-message")
+//      lazy val secureMessageFrontendPort = externalServicePorts("secure-message-frontend")
+//      lazy val getConverstionUrl =
+//        s"http://localhost:$secureMessageFrontendPort/secure-message-frontend/whatever/conversation/cdcm/SMF123456789"
+//      lazy val responseFromSecureMessageFrontend = wsClient
+//        .url(getConverstionUrl)
+//        .withHttpHeaders(AuthUtil.buildEoriToken)
+//        .get()
+//        .futureValue
+//      responseFromSecureMessageFrontend.status mustBe (OK)
+//      lazy val pageContent = responseFromSecureMessageFrontend.body
+//      pageContent must include("This subject needs action")
+//      //  pageContent must include(
+//      //   "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\">CDS Exports Team sent</span>  this message on ")
+////      pageContent must include(
+////        "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\">You read</span>      this message on")
+//      pageContent must include("govuk-body")
+//      pageContent must include("Message body!!")
+//
+     lazy val secureMessagePort1 = externalServicePorts("secure-message")
 
       val deleteResponse = wsClient
         .url(s"http://localhost:$secureMessagePort1/test-only/delete/conversation/SMF123456789/cdcm")
