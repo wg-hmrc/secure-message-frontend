@@ -16,11 +16,16 @@
 
 package models
 
-final case class MessageView(
-  sender: String,
-  sentText: String,
-  firstRead: Option[String],
-  readText: String,
-  content: String,
-  self: Boolean
-)
+import org.scalatestplus.play.PlaySpec
+import play.api.libs.json.Json
+
+class CustomerMessageSpec extends PlaySpec {
+
+  "A customer message as JSON" must {
+    "have its content correctly Base64 encoded" in {
+      val message = CustomerMessage("Some content")
+      Json.toJson(message) mustEqual Json.parse("""{"content":"PHA+U29tZSBjb250ZW50PC9wPg=="}""")
+    }
+  }
+
+}

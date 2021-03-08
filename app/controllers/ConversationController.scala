@@ -18,17 +18,23 @@ package controllers
 
 import com.google.inject.Inject
 import connectors.SecureMessageConnector
-import models.{ ConversationView, Message, MessageView }
-import play.api.Logger
+import forms.MessageFormProvider
+import javax.inject.Singleton
+import models.{ CustomerMessage, Message }
+import play.api.Logging
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents, Request }
 import uk.gov.hmrc.auth.core.{ AuthConnector, AuthorisedFunctions }
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.panel.Panel
 import uk.gov.hmrc.http.{ HeaderCarrier, NotFoundException }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import views.helpers.HtmlUtil.{ readableTime, _ }
-import views.html.partials.{ conversation, messageContent }
-import javax.inject.Singleton
+import views.helpers.HtmlUtil._
+import views.html.partials.{ conversationView, messageContent, messageReply, messageResult }
+import views.viewmodels.{ ConversationView, MessageReply, MessageView }
+
 import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
@@ -37,43 +43,70 @@ class ConversationController @Inject()(
   controllerComponents: MessagesControllerComponents,
   secureMessageConnector: SecureMessageConnector,
   messageContent: messageContent,
-  conversation: conversation,
-  val authConnector: AuthConnector
-)(implicit ec: ExecutionContext)
-    extends FrontendController(controllerComponents) with I18nSupport with AuthorisedFunctions {
+  messageReply: messageReply,
+  messageResult: messageResult,
+  conversationView: conversationView,
+  val authConnector: AuthConnector,
+  formProvider: MessageFormProvider)(implicit ec: ExecutionContext)
+    extends FrontendController(controllerComponents) with I18nSupport with AuthorisedFunctions with Logging {
 
-  def display(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action.async {
+  def display(
+    clientService: String,
+    client: String,
+    conversationId: String,
+    showReplyForm: Boolean): Action[AnyContent] = Action.async { implicit request =>
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+    val replyFormActionUrl = s"/$clientService/conversation/$client/$conversationId"
+    authorised() {
+      secureMessageConnector
+        .getConversation(client, conversationId)
+        .flatMap { conversation =>
+          secureMessageConnector.recordReadTime(client, conversationId)
+          val messages = {
+            messagePartial(conversation.messages)
+          }
+          val firstMessage = messages.headOption.getOrElse(
+            throw new NotFoundException("There can't be a conversation without a message"))
+          val replyForm =
+            messageReply(MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormActionUrl)))
+          Future.successful(
+            Ok(conversationView(ConversationView(conversation.subject, firstMessage, replyForm, messages.tail))))
+        }
+    }
+  }
+
+  val form: Form[CustomerMessage] = formProvider()
+
+  def saveReply(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action.async {
     implicit request =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
       authorised() {
-        secureMessageConnector
-          .getConversation(client, conversationId)
-          .flatMap { conversationMessage =>
-            secureMessageConnector.recordReadTime(client, conversationId)
-            Logger(s"request came from $clientService")
-            val messages = messagePartial(conversationMessage.messages)
-            val firstMessage = messages.headOption.getOrElse(
-              throw new NotFoundException("There can't be a conversation without a message"))
-            Future.successful(
-              Ok(
-                conversation(
-                  ConversationView(
-                    s"${conversationMessage.subject}",
-                    firstMessage,
-                    messages.tail
-                  ))))
-          }
+        form
+          .bindFromRequest()
+          .fold(
+            (_: Form[CustomerMessage]) => {
+              // TODO - form error handling needs to happen here by calling messageContent template with the form showing errors
+              Future(BadRequest)
+            },
+            message =>
+              secureMessageConnector.postCustomerMessage(client, conversationId, message).map { sent =>
+                val redirectURL = s"/$clientService/conversation/$client/$conversationId/result"
+                if (sent) Ok(redirectURL) else BadGateway("Failed to send message")
+            }
+          )
       }
   }
 
-  def saveReply(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action {
-
-    Created(s"Saved reply successfull with client $clientService client $client and conversationId $conversationId")
-  }
-
-  def response(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action {
-
-    Ok(s"$clientService with client $client with conversationId $conversationId")
+  def result(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action {
+    // FIXME - log statement is just to keep compiler happy - do we really need these parameters?
+    logger.debug(s"service: $clientService, client: $client, conversation: $conversationId")
+    Ok(
+      messageResult(
+        s"/$clientService/messages",
+        Panel(
+          title = Text("Message sent"),
+          content = Text("We received your message")
+        )))
   }
 
   private[controllers] def messagePartial(messages: List[Message])(implicit request: Request[_]) =
@@ -88,4 +121,5 @@ class ConversationController @Inject()(
           decodeBase64String(message.content),
           message.senderInformation.self
         )))
+
 }

@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package models
+package views.viewmodels
 
-import play.twirl.api.{ HtmlFormat }
+import play.twirl.api.Html
 
-final case class ConversationView(
-  subject: String,
-  latestMessage: HtmlFormat.Appendable,
-  remainingMessages: Seq[HtmlFormat.Appendable]
-)
+final case class ConversationView(subject: String, latestMessage: Html, replyForm: Html, remainingMessages: Seq[Html])

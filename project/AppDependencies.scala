@@ -20,15 +20,16 @@ import sbt._
 object AppDependencies {
 
   val compile = Seq(
-    "uk.gov.hmrc"       %% "auth-client"                % "4.0.0-play-27",
-    "uk.gov.hmrc"       %% "bootstrap-frontend-play-27" % "4.0.0",
-    "uk.gov.hmrc"       %% "play-frontend-hmrc"         % "0.41.0-play-27",
-    "uk.gov.hmrc"       %% "play-frontend-govuk"        % "0.60.0-play-27",
-    "uk.gov.hmrc"       %% "play-language"              % "4.10.0-play-27",
-    "uk.gov.hmrc"       %% "url-builder"                % "3.4.0-play-27",
-    "com.typesafe.play" %% "play-json-joda"             % "2.9.1",
-    "com.iheart"        %% "play-swagger"               % "0.10.2",
-    "org.typelevel"     %% "cats-core"                  % "2.4.2"
+    "uk.gov.hmrc"             %% "auth-client"                % "4.0.0-play-27",
+    "uk.gov.hmrc"             %% "bootstrap-frontend-play-27" % "4.0.0",
+    "uk.gov.hmrc"             %% "play-frontend-hmrc"         % "0.41.0-play-27",
+    "uk.gov.hmrc"             %% "play-frontend-govuk"        % "0.60.0-play-27",
+    "uk.gov.hmrc"             %% "play-language"              % "4.10.0-play-27",
+    "uk.gov.hmrc"             %% "url-builder"                % "3.4.0-play-27",
+    "com.typesafe.play"       %% "play-json-joda"             % "2.9.1",
+    "com.iheart"              %% "play-swagger"               % "0.10.2",
+    "org.typelevel"           %% "cats-core"                  % "2.4.2",
+    "org.scala-lang.modules"  %% "scala-xml"                  % "1.3.0"
   )
 
   val test = Seq(
@@ -42,7 +43,7 @@ object AppDependencies {
     "org.mockito"             % "mockito-core"               % "3.8.0"           % "test, it",
     "com.vladsch.flexmark"    % "flexmark-all"               % "0.36.8"          % "test, it",
     "org.pegdown"             % "pegdown"                    % "1.6.0"           % "test, it",
-    "net.codingwell"          %% "scala-guice"               % "4.2.11"           % "test, it"
+    "net.codingwell"          %% "scala-guice"               % "5.0.0"           % "test, it"
   )
 
   val dependencyOverrides = Seq(
