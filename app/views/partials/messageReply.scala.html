@@ -22,6 +22,7 @@
 @(reply: MessageReply)(implicit messages: Messages, requestHeader: RequestHeader)
 @import reply._
 @if(showReplyForm){
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible"/>
     @formWithCSRF(Call(method = "POST", url = replyFormUrl)) {
         <div id="reply-form" class="govuk-form-group">
             <h3 class="govuk-label-wrapper">
@@ -32,7 +33,7 @@
         </div>
     }
 } else {
-    <div id="reply-link">
+    <div class="govuk-body" id="reply-link">
         @replyIcon
         <a href="@replyFormUrl?showReplyForm=true#reply-form">Reply to this message</a>
     </div>

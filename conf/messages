@@ -16,4 +16,3 @@ conversation.inbox.title = Messages between you and HMRC
 conversation.inbox.heading.status = Status
 conversation.inbox.heading.subject = Subject
 conversation.inbox.heading.date = Date
-conversation.inbox.default.sender = HMRC Digital
