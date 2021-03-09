@@ -14,39 +14,53 @@
  * limitations under the License.
  */
 
-import controllers.Assets.{ CREATED, OK }
+//import com.google.inject.AbstractModule
+//import connectors.SecureMessageConnector
+//import com.google.inject.AbstractModule
+import controllers.Assets.CREATED
+//import play.api.inject.guice.GuiceableModule
+//import net.codingwell.scalaguice.ScalaModule
+//import play.api.inject.guice.GuiceableModule
+//import models.{ Conversation, Message, SenderInformation }
+//import net.codingwell.scalaguice.ScalaModule
+//import org.joda.time.DateTime
+//import org.mockito.ArgumentMatchers.{ any, anyString }
+//import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.http.{ ContentTypes, HeaderNames }
+//import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.{ Json, Reads }
 import play.api.libs.ws.WSClient
+//import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.integration.ServiceSpec
 
 import java.io.File
+//import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
   override def externalServices: Seq[String] = Seq("auth-login-api", "secure-message")
+  val secureMessagePort = externalServicePorts("secure-message")
 
-  // private val mockSecureMessageConnector = mock[SecureMessageConnector]
+  override protected def beforeEach() = {
+    (wsClient
+      .url(s"http://localhost:$secureMessagePort/test-only/delete/conversation/SMF123456789/cdcm")
+      .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
+      .delete
+      .futureValue)
+      .status mustBe 200
+    ()
+  }
 
   private val wsClient = app.injector.instanceOf[WSClient]
 
-  // private val testTime = DateTime.parse("2021-02-19T10:29:47.275Z")
-
-//  override def additionalOverrides: Seq[GuiceableModule] =
-//    Seq(new AbstractModule with ScalaModule {
-//      override def configure(): Unit =
-//        bind[SecureMessageConnector].toInstance(mockSecureMessageConnector)
-//    })
-
-  "given" must {
-    "save" in {
-
-      val secureMessagePort = externalServicePorts("secure-message")
+  "Conversation partial" must {
+    "return all information" in {
       val createConversationUrl =
         s"http://localhost:$secureMessagePort/secure-messaging/conversation/cdcm/SMF123456789"
+
       val responseFromSecureMessage =
         wsClient
           .url(createConversationUrl)
@@ -62,79 +76,18 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
         .futureValue
       response.status mustBe 200
 
-      val deleteResponse = wsClient
-        .url(s"http://localhost:$secureMessagePort/test-only/delete/conversation/SMF123456789/cdcm")
-        .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
-        .delete
-        .futureValue
-
-      deleteResponse.status mustBe (OK)
-
+      val pageContent = response.body
+      pageContent must include(
+        "<h1 class=\"govuk-heading-l margin-top-small margin-bottom-small\">This subject needs action</h1>")
+      pageContent must include("CDS Exports Team sent")
+      pageContent must include("You read")
+      pageContent must include("You read")
+      pageContent must include("Message body!!")
+      pageContent must include("reply-link")
+      pageContent must include("Reply to this message")
     }
 
   }
-
-//  "Given a conversation from secure message" must {
-//    "return conversation partial" in {
-//      when(mockSecureMessageConnector.getConversation(anyString, anyString)(any[ExecutionContext], any[HeaderCarrier]))
-//        .thenReturn(
-//          Future.successful(
-//            Conversation(
-//              "client",
-//              "conversationId",
-//              "status",
-//              None,
-//              "subject",
-//              "en",
-//              List(Message(SenderInformation(Some(""), testTime, false), None, "TWVzc2FnZSBib2R5IQ==")))))
-//      val response = wsClient
-//        .url(resource("/secure-message-frontend/cdcm/conversation/client/1111"))
-//        .withHttpHeaders(AuthUtil.buildEoriToken)
-//        .get()
-//        .futureValue
-//      response.status mustBe 200
-//      val pageContent = response.body
-//      pageContent must include("subject")
-//      pageContent must include(
-//        "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\"> sent</span>  this on 19 February 2021 at 10:29am")
-//      pageContent must include(
-//        "<span class=\"govuk-caption-m-!-govuk-body govuk-!-font-weight-bold\">You read</span>      this on")
-//      pageContent must include("govuk-body")
-//      pageContent must include("Message body!")
-//
-//    }
-//
-//    "return messages in cronological order of creation with latest being on top" in {
-//      val dateRegex = """(\d\d)\s(January|February|March)\s(2020|2021)""".r
-//      val messages = List(
-//        Message(
-//          SenderInformation(Some(""), DateTime.parse("2021-01-19T10:29:47.275Z"), false),
-//          None,
-//          "TWVzc2FnZSBib2R5IQ=="),
-//        Message(
-//          SenderInformation(Some(""), DateTime.parse("2021-03-19T10:29:47.275Z"), false),
-//          None,
-//          "TWVzc2FnZSBib2R5IQ=="),
-//        Message(
-//          SenderInformation(Some(""), DateTime.parse("2021-02-19T10:29:47.275Z"), false),
-//          None,
-//          "TWVzc2FnZSBib2R5IQ==")
-//      )
-//
-//      when(mockSecureMessageConnector.getConversation(anyString, anyString)(any[ExecutionContext], any[HeaderCarrier]))
-//        .thenReturn(
-//          Future.successful(Conversation("client", "conversationId", "status", None, "subject", "en", messages)))
-//      val response = wsClient
-//        .url(resource("/secure-message-frontend/cdcm/conversation/client/1111"))
-//        .withHttpHeaders(AuthUtil.buildEoriToken)
-//        .get()
-//        .futureValue
-//      response.status mustBe 200
-//
-//      dateRegex.findAllIn(response.body).size mustBe (3)
-//      dateRegex.findFirstIn(response.body).get mustBe ("19 March 2021")
-//    }
-//  }
 
   object AuthUtil {
 
