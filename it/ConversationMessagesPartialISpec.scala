@@ -14,62 +14,68 @@
  * limitations under the License.
  */
 
-import controllers.Assets.CREATED
+import com.google.inject.AbstractModule
+import connectors.SecureMessageConnector
+import models.{ Conversation, Message, SenderInformation }
+import net.codingwell.scalaguice.ScalaModule
+import org.joda.time.DateTime
+import org.mockito.ArgumentMatchers.{ any, anyString }
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import play.api.http.{ ContentTypes, HeaderNames }
+import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.{ Json, Reads }
 import play.api.libs.ws.WSClient
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.integration.ServiceSpec
-import java.io.File
+import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
-class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
-  override def externalServices: Seq[String] = Seq("auth-login-api", "secure-message")
-  val secureMessagePort = externalServicePorts("secure-message")
+class ConversationMessagesPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
 
-  override protected def beforeEach() = {
-    (wsClient
-      .url(s"http://localhost:$secureMessagePort/test-only/delete/conversation/SMF123456789/cdcm")
-      .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
-      .delete
-      .futureValue)
-      .status mustBe 200
-    ()
-  }
+  override def externalServices: Seq[String] = Seq("auth-login-api")
+
+  private val mockSecureMessageConnector = mock[SecureMessageConnector]
 
   private val wsClient = app.injector.instanceOf[WSClient]
 
-  "Conversation partial" must {
-    "return all information" in {
-      val createConversationUrl =
-        s"http://localhost:$secureMessagePort/secure-messaging/conversation/cdcm/SMF123456789"
+  override def additionalOverrides: Seq[GuiceableModule] =
+    Seq(new AbstractModule with ScalaModule {
+      override def configure(): Unit =
+        bind[SecureMessageConnector].toInstance(mockSecureMessageConnector)
+    })
 
-      val responseFromSecureMessage =
-        wsClient
-          .url(createConversationUrl)
-          .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
-          .put(new File("./it/resources/create-conversation.json"))
-          .futureValue
-      responseFromSecureMessage.status mustBe (CREATED)
+  "Conversation messages" should {
+    "return messages in cronological order of creation with latest being on top" in {
+      val dateRegex = """(\d\d)\s(January|February|March)\s(2020|2021)""".r
+      val messages = List(
+        Message(
+          SenderInformation(Some(""), DateTime.parse("2021-01-19T10:29:47.275Z"), false),
+          None,
+          "TWVzc2FnZSBib2R5IQ=="),
+        Message(
+          SenderInformation(Some(""), DateTime.parse("2021-03-19T10:29:47.275Z"), false),
+          None,
+          "TWVzc2FnZSBib2R5IQ=="),
+        Message(
+          SenderInformation(Some(""), DateTime.parse("2021-02-19T10:29:47.275Z"), false),
+          None,
+          "TWVzc2FnZSBib2R5IQ==")
+      )
 
+      when(mockSecureMessageConnector.getConversation(anyString, anyString)(any[ExecutionContext], any[HeaderCarrier]))
+        .thenReturn(
+          Future.successful(Conversation("client", "conversationId", "status", None, "subject", "en", messages)))
       val response = wsClient
-        .url(resource("/secure-message-frontend/whatever/conversation/cdcm/SMF123456789"))
+        .url(resource("/secure-message-frontend/cdcm/conversation/client/1111"))
         .withHttpHeaders(AuthUtil.buildEoriToken)
         .get()
         .futureValue
       response.status mustBe 200
 
-      val pageContent = response.body
-      pageContent must include(
-        "<h1 class=\"govuk-heading-l margin-top-small margin-bottom-small\">This subject needs action</h1>")
-      pageContent must include("CDS Exports Team sent")
-      pageContent must include("You read")
-      pageContent must include("You read")
-      pageContent must include("Message body!!")
-      pageContent must include("reply-link")
-      pageContent must include("Reply to this message")
+      dateRegex.findAllIn(response.body).size mustBe (3)
+      dateRegex.findFirstIn(response.body).get mustBe ("19 March 2021")
     }
   }
 
