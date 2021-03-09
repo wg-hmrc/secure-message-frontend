@@ -14,30 +14,15 @@
  * limitations under the License.
  */
 
-//import com.google.inject.AbstractModule
-//import connectors.SecureMessageConnector
-//import com.google.inject.AbstractModule
 import controllers.Assets.CREATED
-//import play.api.inject.guice.GuiceableModule
-//import net.codingwell.scalaguice.ScalaModule
-//import play.api.inject.guice.GuiceableModule
-//import models.{ Conversation, Message, SenderInformation }
-//import net.codingwell.scalaguice.ScalaModule
-//import org.joda.time.DateTime
-//import org.mockito.ArgumentMatchers.{ any, anyString }
-//import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.http.{ ContentTypes, HeaderNames }
-//import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.{ Json, Reads }
 import play.api.libs.ws.WSClient
-//import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.integration.ServiceSpec
-
 import java.io.File
-//import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
@@ -86,7 +71,6 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
       pageContent must include("reply-link")
       pageContent must include("Reply to this message")
     }
-
   }
 
   object AuthUtil {
@@ -153,5 +137,4 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
     def buildEoriToken: (String, String) = buildUserToken(EORI_USER_PAYLOAD)
     def buildNonEoriToken: (String, String) = buildUserToken(NO_EORI_USER_PAYLOAD)
   }
-
 }

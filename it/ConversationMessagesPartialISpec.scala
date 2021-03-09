@@ -29,7 +29,6 @@ import play.api.libs.json.{ Json, Reads }
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.integration.ServiceSpec
-
 import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
@@ -81,6 +80,17 @@ class ConversationMessagesPartialISpec extends PlaySpec with ServiceSpec with Mo
   }
 
   object AuthUtil {
+
+    private val wsClient = app.injector.instanceOf[WSClient]
+
+    val payload = ""
+
+    wsClient
+      .url(s"http://localhost:$ggAuthPort/government-gateway/session/login")
+      .withHttpHeaders(("Content-Type", "application/json"))
+      .post(payload)
+      .futureValue
+
     lazy val ggAuthPort: Int = externalServicePorts("auth-login-api")
 
     implicit val deserialiser: Reads[GatewayToken] = Json.reads[GatewayToken]
