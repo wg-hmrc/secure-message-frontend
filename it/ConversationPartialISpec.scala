@@ -27,7 +27,7 @@ import java.io.File
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
-  override def externalServices: Seq[String] = Seq("auth-login-api", "secure-message", "secure-message-frontend")
+  override def externalServices: Seq[String] = Seq("auth-login-api", "secure-message")
 
   // private val mockSecureMessageConnector = mock[SecureMessageConnector]
 
