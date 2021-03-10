@@ -23,6 +23,7 @@ import play.api.libs.json.{ Json, Reads }
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.integration.ServiceSpec
 import java.io.File
+import play.api.http.Status.OK
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
@@ -35,7 +36,6 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
       .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
       .delete
       .futureValue)
-      .status mustBe 200
     ()
   }
 
@@ -59,7 +59,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
         .withHttpHeaders(AuthUtil.buildEoriToken)
         .get()
         .futureValue
-      response.status mustBe 200
+      response.status mustBe OK
 
       val pageContent = response.body
       pageContent must include(

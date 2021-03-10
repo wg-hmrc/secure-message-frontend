@@ -30,6 +30,7 @@ import play.api.libs.ws.WSClient
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.integration.ServiceSpec
 import scala.concurrent.{ ExecutionContext, Future }
+import play.api.http.Status.OK
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class ConversationMessagesPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
@@ -72,9 +73,9 @@ class ConversationMessagesPartialISpec extends PlaySpec with ServiceSpec with Mo
         .withHttpHeaders(AuthUtil.buildEoriToken)
         .get()
         .futureValue
-      response.status mustBe 200
+      response.status mustBe OK
 
-      dateRegex.findAllIn(response.body).size mustBe (3)
+      dateRegex.findAllIn(response.body).size mustBe (6)
       dateRegex.findFirstIn(response.body).get mustBe ("19 March 2021")
     }
   }

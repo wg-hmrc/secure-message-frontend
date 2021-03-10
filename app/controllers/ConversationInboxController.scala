@@ -19,6 +19,7 @@ package controllers
 import config.AppConfig
 import connectors.SecureMessageConnector
 import controllers.generic.models.{ CustomerEnrolment, Tag }
+import controllers.utils.QueryStringValidation
 import javax.inject.{ Inject, Singleton }
 import play.api.i18n.I18nSupport
 import play.api.mvc.{ MessagesControllerComponents, _ }
@@ -38,7 +39,8 @@ class ConversationInboxController @Inject()(
   inbox: conversationInbox,
   secureMessageConnector: SecureMessageConnector,
   val authConnector: AuthConnector)(implicit ec: ExecutionContext)
-    extends FrontendController(controllerComponents) with I18nSupport with AuthorisedFunctions {
+    extends FrontendController(controllerComponents) with I18nSupport with AuthorisedFunctions
+    with QueryStringValidation {
 
   implicit val config: AppConfig = appConfig
 
@@ -48,13 +50,16 @@ class ConversationInboxController @Inject()(
     customerEnrolments: Option[List[CustomerEnrolment]],
     tags: Option[List[Tag]]): Action[AnyContent] = Action.async { implicit request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
-    authorised() {
-      secureMessageConnector.getConversationList(enrolmentKeys, customerEnrolments, tags).flatMap { conversations =>
-        val messages = this.messagesApi.preferred(request)
-        Future.successful(
-          Ok(inbox.apply(ConversationInbox(clientService, messages("conversation.inbox.title"), conversations))))
-      }
+    validateQueryParameters(request.queryString, "enrolment", "enrolmentKey", "tag") match {
+      case Left(e) => Future.successful(BadRequest(e.getMessage))
+      case _ =>
+        authorised() {
+          secureMessageConnector.getConversationList(enrolmentKeys, customerEnrolments, tags).flatMap { conversations =>
+            val messages = this.messagesApi.preferred(request)
+            Future.successful(
+              Ok(inbox.apply(ConversationInbox(clientService, messages("conversation.inbox.title"), conversations))))
+          }
+        }
     }
   }
-
 }

@@ -29,7 +29,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.http.Status._
 import play.api.i18n.{ Lang, Messages, MessagesApi, MessagesImpl }
-import play.api.test.Helpers.{ GET, status }
+import play.api.test.Helpers.{ GET, contentAsString, status }
 import play.api.test.{ FakeRequest, Helpers }
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
@@ -77,6 +77,27 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
         Some(List(Tag("notificationType", "CDS Exports")))
       )(FakeRequest(method = GET, path = "/messages"))
       status(result) mustBe OK
+    }
+
+    "return BAD REQUEST when query filter parameters are not valid" in new TestCase {
+      mockAuthorise[Unit]()(Future.successful(()))
+      when(
+        mockSecureMessageConnector.getConversationList(
+          ArgumentMatchers.eq(None),
+          ArgumentMatchers.eq(None),
+          ArgumentMatchers.eq(None)
+        )(any[ExecutionContext], any[HeaderCarrier])).thenReturn(Future(List()))
+      when(mockConversationsInboxPartial.apply(any[ConversationInbox])(any[Messages])).thenReturn(new Html("test"))
+      private val controller = new ConversationInboxController(
+        mockAppConfig,
+        Helpers.stubMessagesControllerComponents(),
+        mockConversationsInboxPartial,
+        mockSecureMessageConnector,
+        mockAuthConnector)
+      private val result = controller.display("cds-frontend", None, None, None)(
+        FakeRequest(method = GET, path = "/messages?x=3&abc=test&some_key=some_value"))
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe "Invalid query parameter(s) found: [abc, some_key, x]"
     }
   }
 
