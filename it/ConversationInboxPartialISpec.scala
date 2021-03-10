@@ -29,6 +29,7 @@ import org.scalatestplus.play.PlaySpec
 import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.{ Json, Reads }
 import play.api.libs.ws.WSClient
+import play.api.http.Status.{ BAD_REQUEST, OK }
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.integration.ServiceSpec
 
@@ -50,7 +51,7 @@ class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with Mocki
     })
 
   "Getting the conversation list partial" should {
-    "return status code 200" in {
+    "return status code OK 200" in {
       when(
         mockSecureMessageConnector.getConversationList(
           ArgumentMatchers.eq(Some(List("HMRC-CUS-ORG"))),
@@ -74,7 +75,24 @@ class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with Mocki
         .withHttpHeaders(AuthUtil.buildEoriToken)
         .get()
         .futureValue
-      response.status mustBe 200
+      response.status mustBe OK
+    }
+
+    "return status code BAD REQUEST 400 when provided with filter parameters that are invalid (not allowed)" in {
+      when(
+        mockSecureMessageConnector.getConversationList(
+          ArgumentMatchers.eq(None),
+          ArgumentMatchers.eq(None),
+          ArgumentMatchers.eq(None)
+        )(any[ExecutionContext], any[HeaderCarrier])).thenReturn(Future.successful(List()))
+      val response = wsClient
+        .url(resource("/secure-message-frontend/cdcm/messages?" +
+          "enrolment_key=HMRC-CUS-ORG&enrolement=HMRC-CUS-ORG~EORIName~GB7777777777&tags=notificationType~CDS%20Exports"))
+        .withHttpHeaders(AuthUtil.buildEoriToken)
+        .get()
+        .futureValue
+      response.status mustBe BAD_REQUEST
+      response.body mustBe "Invalid query parameter(s) found: [enrolement, enrolment_key, tags]"
     }
   }
 
