@@ -30,10 +30,12 @@ val silencerVersion = "1.7.0"
 lazy val externalServices = List(
   ExternalService("DATASTREAM"),
   ExternalService("AUTH"),
+  ExternalService("AUTH_LOGIN_API"),
   ExternalService("IDENTITY_VERIFICATION"),
   ExternalService("USER_DETAILS"),
   ExternalService("SECURE_MESSAGE_FRONTEND"),
-  ExternalService("SECURE_MESSAGE")
+  ExternalService("SECURE_MESSAGE"),
+  ExternalService("EMAIL")
 )
 
 lazy val wartremoverSettings =

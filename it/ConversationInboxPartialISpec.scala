@@ -38,7 +38,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
 
-  override def externalServices: Seq[String] = Seq("auth-login-api")
+  override def externalServices: Seq[String] = Seq.empty
 
   private val mockSecureMessageConnector = mock[SecureMessageConnector]
 
@@ -97,7 +97,8 @@ class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with Mocki
   }
 
   object AuthUtil {
-    lazy val ggAuthPort: Int = externalServicePorts("auth-login-api")
+
+    lazy val ggAuthPort: Int = 8585
 
     implicit val deserialiser: Reads[GatewayToken] = Json.reads[GatewayToken]
 
