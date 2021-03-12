@@ -171,9 +171,91 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
     "return BAD REQUEST when the payload is not valid" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
+
+      when(
+        mockSecureMessageConnector.getConversation(any[String], any[String])(any[ExecutionContext], any[HeaderCarrier]))
+        .thenReturn(Future.successful(Conversation(
+          client,
+          conversationId,
+          "",
+          None,
+          "",
+          "",
+          List(Message(
+            SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), self = false),
+            Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-05-01T10:29:47.275Z"))),
+            "TWVzc2FnZSBib2R5IQ=="
+          ))
+        )))
+
+      when(mockConversationView.apply(any[ConversationView])(any[Messages]))
+        .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
+
       private val result = controller.saveReply("some-service", "111", "DA123")(
         FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(
           ("invalid", "c29tZSBjb250ZW50")))
+      status(result) mustBe Status.BAD_REQUEST
+    }
+
+    "return BAD REQUEST when the payload is empty" in new TestCase {
+
+      mockAuthorise[Unit]()(Future.successful(()))
+
+      when(
+        mockSecureMessageConnector.getConversation(any[String], any[String])(any[ExecutionContext], any[HeaderCarrier]))
+        .thenReturn(Future.successful(Conversation(
+          client,
+          conversationId,
+          "",
+          None,
+          "",
+          "",
+          List(Message(
+            SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), self = false),
+            Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-05-01T10:29:47.275Z"))),
+            "TWVzc2FnZSBib2R5IQ=="
+          ))
+        )))
+
+      when(mockConversationView.apply(any[ConversationView])(any[Messages]))
+        .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
+
+      when(mockSecureMessageConnector
+        .postCustomerMessage(any[String], any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
+        .thenReturn(Future.successful(true))
+      private val result = controller.saveReply("some-service", "111", "DA123")(
+        FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(("content", "")))
+      status(result) mustBe Status.BAD_REQUEST
+    }
+
+    "return BAD REQUEST when the payload exceeds 4000 chars" in new TestCase {
+      mockAuthorise[Unit]()(Future.successful(()))
+      val textLength4001: String = List.fill(4001)("a").mkString
+      when(
+        mockSecureMessageConnector.getConversation(any[String], any[String])(any[ExecutionContext], any[HeaderCarrier]))
+        .thenReturn(Future.successful(Conversation(
+          client,
+          conversationId,
+          "",
+          None,
+          "",
+          "",
+          List(Message(
+            SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), self = false),
+            Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-05-01T10:29:47.275Z"))),
+            "TWVzc2FnZSBib2R5IQ=="
+          ))
+        )))
+
+      when(mockConversationView.apply(any[ConversationView])(any[Messages]))
+        .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
+
+      when(mockSecureMessageConnector
+        .postCustomerMessage(any[String], any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
+        .thenReturn(Future.successful(true))
+      private val result = controller.saveReply("some-service", "111", "DA123")(
+        FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(
+          ("content", textLength4001)))
       status(result) mustBe Status.BAD_REQUEST
     }
 

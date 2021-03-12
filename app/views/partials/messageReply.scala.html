@@ -24,13 +24,22 @@
 @if(showReplyForm){
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible"/>
     @formWithCSRF(Call(method = "POST", url = replyFormUrl)) {
-        <div id="reply-form" class="govuk-form-group">
+        <div id="reply-form" class="govuk-form-group @if(formErrors.nonEmpty){govuk-form-group--error}">
             <h3 class="govuk-label-wrapper">
                 <label class="govuk-label govuk-label--m" for="reply-text">Reply to this message</label>
             </h3>
+            @if(formErrors.nonEmpty){
+            <span id="more-detail-error" class="govuk-error-message">
+                @for(error <- formErrors) {
+                  @messages(error)
+                  }
+            </span>
+            }
             <textarea class="govuk-textarea" id="reply-text" name="content" rows="8" spellcheck="true"></textarea>
-            <button class="govuk-button" data-module="govuk-button">Send</button>
         </div>
+
+<button class="govuk-button" data-module="govuk-button">Send</button>
+
     }
 } else {
     <div class="govuk-body" id="reply-link">

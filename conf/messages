@@ -16,3 +16,6 @@ conversation.inbox.title = Messages between you and HMRC
 conversation.inbox.heading.status = Status
 conversation.inbox.heading.subject = Subject
 conversation.inbox.heading.date = Date
+
+conversation.reply.form.empty = You must write a message to reply
+conversation.reply.form.exceeded.length = The message must be 4,000 characters or fewer

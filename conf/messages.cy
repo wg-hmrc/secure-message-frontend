@@ -11,3 +11,6 @@ conversation.page.archive.messages.summary = Messages you have read, older than 
 conversation.page.filter.text = Filter your messages
 conversation.page.subject = Subject
 conversation.page.date = Date
+
+conversation.reply.form.empty = You must write a message to reply
+conversation.reply.form.exceeded.length = The message must be 4,000 characters or fewer

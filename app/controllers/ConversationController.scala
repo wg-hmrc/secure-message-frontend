@@ -34,7 +34,6 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.helpers.HtmlUtil._
 import views.html.partials.{ conversationView, messageContent, messageReply, messageResult }
 import views.viewmodels.{ ConversationView, MessageReply, MessageView }
-
 import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
@@ -54,7 +53,8 @@ class ConversationController @Inject()(
     clientService: String,
     client: String,
     conversationId: String,
-    showReplyForm: Boolean): Action[AnyContent] = Action.async { implicit request =>
+    showReplyForm: Boolean
+  ): Action[AnyContent] = Action.async { implicit request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
     val replyFormActionUrl = s"/$clientService/conversation/$client/$conversationId"
     authorised() {
@@ -68,7 +68,8 @@ class ConversationController @Inject()(
           val firstMessage = messages.headOption.getOrElse(
             throw new NotFoundException("There can't be a conversation without a message"))
           val replyForm =
-            messageReply(MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormActionUrl)))
+            messageReply(
+              MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormActionUrl), Seq.empty[String]))
           Future.successful(
             Ok(conversationView(ConversationView(conversation.subject, firstMessage, replyForm, messages.tail))))
         }
@@ -80,13 +81,34 @@ class ConversationController @Inject()(
   def saveReply(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action.async {
     implicit request =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+      val replyFormActionUrl = s"/$clientService/conversation/$client/$conversationId"
+
       authorised() {
         form
           .bindFromRequest()
           .fold(
-            (_: Form[CustomerMessage]) => {
-              // TODO - form error handling needs to happen here by calling messageContent template with the form showing errors
-              Future(BadRequest)
+            form => {
+              secureMessageConnector
+                .getConversation(client, conversationId)
+                .flatMap {
+                  conversation =>
+                    secureMessageConnector.recordReadTime(client, conversationId)
+                    val messages = {
+                      messagePartial(conversation.messages)
+                    }
+                    val firstMessage = messages.headOption.getOrElse(
+                      throw new NotFoundException("There can't be a conversation without a message"))
+                    val replyForm =
+                      messageReply(
+                        MessageReply(
+                          true,
+                          replyFormActionUrl,
+                          getReplyIcon(replyFormActionUrl),
+                          form.errors.map(_.message)))
+                    Future.successful(BadRequest(
+                      conversationView(ConversationView(conversation.subject, firstMessage, replyForm, messages.tail))))
+                }
+
             },
             message =>
               secureMessageConnector.postCustomerMessage(client, conversationId, message).map { sent =>
