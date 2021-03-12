@@ -35,7 +35,6 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.helpers.HtmlUtil._
 import views.html.partials.{ conversationView, messageContent, messageReply, messageResult }
 import views.viewmodels.{ ConversationView, MessageReply, MessageView }
-
 import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))

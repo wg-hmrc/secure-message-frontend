@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.viewmodels.MessageReply
 
-@this(formWithCSRF: FormWithCSRF,govukErrorSummary: GovukErrorSummary )
+@this(formWithCSRF: FormWithCSRF)
 
 @(reply: MessageReply)(implicit messages: Messages, requestHeader: RequestHeader)
 @import reply._
@@ -44,6 +44,6 @@
 } else {
     <div class="govuk-body" id="reply-link">
         @replyIcon
-        <a href="@replyFormUrl?showReplyForm=true&error=true#reply-form">Reply to this message</a>
+        <a href="@replyFormUrl?showReplyForm=true#reply-form">Reply to this message</a>
     </div>
 }
