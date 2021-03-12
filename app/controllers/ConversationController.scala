@@ -19,7 +19,6 @@ package controllers
 import com.google.inject.Inject
 import connectors.SecureMessageConnector
 import forms.MessageFormProvider
-
 import javax.inject.Singleton
 import models.{ CustomerMessage, Message }
 import play.api.Logging
