@@ -59,8 +59,7 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
   def getConversation(clientName: String, conversationId: String)(
     implicit ec: ExecutionContext,
     hc: HeaderCarrier): Future[Conversation] =
-    httpClient.GET[Conversation](
-      s"$secureMessageBaseUrl/secure-messaging/conversation/$clientName/$conversationId/HMRC-CUS-ORG/EORINumber")
+    httpClient.GET[Conversation](s"$secureMessageBaseUrl/secure-messaging/conversation/$clientName/$conversationId")
 
   def recordReadTime(client: String, conversationId: String)(
     implicit ec: ExecutionContext,
