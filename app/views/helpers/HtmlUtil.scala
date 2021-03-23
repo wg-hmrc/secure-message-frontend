@@ -53,8 +53,11 @@ object HtmlUtil {
     case _ if sender.self => "You"
     case _                => "You"
   }
+
   def sentMessageConversationText(time: String): String = s"this on $time"
+
   def readMessageConversationText: String = s"this on ${readableTime(DateTime.now)}"
+
   def firstReadMessageConversationText(firstReader: Option[FirstReaderInformation]): Option[String] =
     firstReader.map(r => s"on ${readableTime(r.read)}")
 
@@ -62,9 +65,9 @@ object HtmlUtil {
     new String(Base64.decodeBase64(input.getBytes("UTF-8")))
 
   // scalastyle:off
-  def getReplyIcon(formActionUrl: String): Html =
+  def getReplyIcon(replyFormUrl: String): Html =
     Html.apply(Xhtml.toXhtml(Utility.trim(<span>
-      <a style="text-decoration:none;" href={formActionUrl}>
+      <a style="text-decoration:none;" href={replyFormUrl}>
         <svg style="vertical-align:text-top;padding-right:5px;" width="21px" height="20px" viewBox="0 0 33 31" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
           <title>Reply</title>
           <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
