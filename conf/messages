@@ -3,7 +3,7 @@ service.homePageUrl = /secure-message-frontend
 service.text = This is your new service
 back.button.text = Back
 
-conversation.page.heading = Messages between you and customs authorities
+conversation.page.heading = Messages between you and HMRC
 conversation.page.recent.messages.heading = Your messages
 conversation.page.archive.messages.heading = Archived messages
 conversation.page.recent.messages.summary = Recent and unread messages
@@ -12,7 +12,7 @@ conversation.page.filter.text = Filter your messages
 conversation.page.subject = Subject
 conversation.page.date = Date
 
-conversation.inbox.title = Messages between you and HMRC
+conversation.inbox.title = Messages between you and customs authorities
 conversation.inbox.heading.status = Status
 conversation.inbox.heading.subject = Subject
 conversation.inbox.heading.date = Date
