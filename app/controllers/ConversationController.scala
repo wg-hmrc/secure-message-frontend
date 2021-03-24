@@ -57,7 +57,6 @@ class ConversationController @Inject()(
   ): Action[AnyContent] = Action.async { implicit request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
     val replyFormActionUrl = s"/$clientService/conversation/$client/$conversationId"
-    val replyFormUrl = s"$replyFormActionUrl?showReplyForm=true#reply-form"
     authorised() {
       secureMessageConnector
         .getConversation(client, conversationId)
@@ -69,7 +68,8 @@ class ConversationController @Inject()(
           val firstMessage = messages.headOption.getOrElse(
             throw new NotFoundException("There can't be a conversation without a message"))
           val replyForm =
-            messageReply(MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormUrl), Seq.empty[String]))
+            messageReply(
+              MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormActionUrl), Seq.empty[String]))
           Future.successful(
             Ok(conversationView(ConversationView(conversation.subject, firstMessage, replyForm, messages.tail))))
         }
@@ -82,7 +82,7 @@ class ConversationController @Inject()(
     implicit request =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
       val replyFormActionUrl = s"/$clientService/conversation/$client/$conversationId"
-      val replyFormUrl = s"$replyFormActionUrl?showReplyForm=true#reply-form"
+
       authorised() {
         form
           .bindFromRequest()
@@ -101,9 +101,9 @@ class ConversationController @Inject()(
                     val replyForm =
                       messageReply(
                         MessageReply(
-                          showReplyForm = true,
+                          true,
                           replyFormActionUrl,
-                          getReplyIcon(replyFormUrl),
+                          getReplyIcon(replyFormActionUrl),
                           form.errors.map(_.message)))
                     Future.successful(BadRequest(
                       conversationView(ConversationView(conversation.subject, firstMessage, replyForm, messages.tail))))
