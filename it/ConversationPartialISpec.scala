@@ -32,7 +32,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
 
   override protected def beforeEach() = {
     (wsClient
-      .url(s"http://localhost:$secureMessagePort/test-only/delete/conversation/SMF123456789/cdcm")
+      .url(s"http://localhost:$secureMessagePort/test-only/delete/conversation/SMF123456789/CDCM")
       .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
       .delete
       .futureValue)
@@ -44,7 +44,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
   "Conversation partial" must {
     "return all information" in {
       val createConversationUrl =
-        s"http://localhost:$secureMessagePort/secure-messaging/conversation/cdcm/SMF123456789"
+        s"http://localhost:$secureMessagePort/secure-messaging/conversation/CDCM/SMF123456789"
 
       val responseFromSecureMessage =
         wsClient
@@ -55,7 +55,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
       responseFromSecureMessage.status mustBe (CREATED)
 
       val response = wsClient
-        .url(resource("/secure-message-frontend/whatever/conversation/cdcm/SMF123456789"))
+        .url(resource("/secure-message-frontend/whatever/conversation/CDCM/SMF123456789"))
         .withHttpHeaders(AuthUtil.buildEoriToken)
         .get()
         .futureValue
