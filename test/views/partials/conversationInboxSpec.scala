@@ -26,10 +26,16 @@ class conversationInboxSpec extends TemplateUnitSpec[ConversationInbox] {
 
   "A conversation inbox template" must {
     "have all mandatory information" in {
-      render(ConversationInbox("cds-frontend", "test", List.empty)) match {
+      render(ConversationInbox("cds-frontend", "test", 5, 1, List.empty)) match {
         case Success(component) => {
-          val res = component.select("h1")
-          res.text mustBe "test"
+          val pageContent = component.body
+          pageContent must include("""<h1 class="govuk-heading-xl">test</h1>""")
+          pageContent must include("""<span class="govuk-visually-hidden"> 1 unread</span>""")
+          pageContent must include("""<span  class="govuk-visually-hidden"> 5 in total </span>""")
+          pageContent must include(
+            """<div class="header-status"><span aria-hidden="true" class="govuk-visually-hidden" ></span></div>""")
+          pageContent must include("""<div class="govuk-!-font-weight-bold header-subject"></div>""")
+          pageContent must include("""<div class="govuk-!-font-weight-bold header-date"></div>""")
         }
         case _ => fail("There was a problem reading the test output")
       }
