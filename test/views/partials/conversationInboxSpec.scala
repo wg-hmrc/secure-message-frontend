@@ -22,6 +22,7 @@ import views.viewmodels.ConversationInbox
 
 import scala.util.{ Success, Try }
 
+@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class conversationInboxSpec extends TemplateUnitSpec[ConversationInbox] {
 
   "A conversation inbox template" must {
