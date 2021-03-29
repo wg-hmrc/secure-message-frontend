@@ -27,11 +27,8 @@
         }
     },
     "tags": {
-        "sourceId": "CDCM",
-        "caseId": "D-80542",
-        "queryId": "D-80542-20201120",
         "mrn": "DMS7324874993",
-        "notificationType": "CDS Exports"
+        "notificationType": "CDS-EXPORTS"
     },
     "subject": "This subject needs action",
     "message": "TWVzc2FnZSBib2R5ISE=",

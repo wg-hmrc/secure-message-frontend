@@ -35,7 +35,9 @@ lazy val externalServices = List(
   ExternalService("USER_DETAILS"),
   ExternalService("SECURE_MESSAGE_FRONTEND"),
   ExternalService("SECURE_MESSAGE"),
-  ExternalService("EMAIL")
+  ExternalService("EMAIL"),
+  ExternalService("CHANNEL_PREFERENCES"),
+  ExternalService("ENTITY_RESOLVER")
 )
 
 lazy val wartremoverSettings =
