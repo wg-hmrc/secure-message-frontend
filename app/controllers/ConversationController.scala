@@ -69,9 +69,10 @@ class ConversationController @Inject()(
           val firstMessage = messages.headOption.getOrElse(
             throw new NotFoundException("There can't be a conversation without a message"))
           val replyForm =
-            messageReply(MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormUrl), Seq.empty[String]))
+            messageReply(
+              MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormUrl), Seq.empty[String], ""))
           Future.successful(
-            Ok(conversationView(ConversationView(conversation.subject, firstMessage, replyForm, messages.tail))))
+            Ok(conversationView(ConversationView(conversation.subject, firstMessage, replyForm, messages.tail, Seq()))))
         }
     }
   }
@@ -104,9 +105,17 @@ class ConversationController @Inject()(
                           showReplyForm = true,
                           replyFormActionUrl,
                           getReplyIcon(replyFormUrl),
-                          form.errors.map(_.message)))
-                    Future.successful(BadRequest(
-                      conversationView(ConversationView(conversation.subject, firstMessage, replyForm, messages.tail))))
+                          form.errors.map(_.message),
+                          content = form.data.getOrElse("content", "")))
+                    Future.successful(
+                      BadRequest(
+                        conversationView(
+                          ConversationView(
+                            conversation.subject,
+                            firstMessage,
+                            replyForm,
+                            messages.tail,
+                            form.errors.map(_.message)))))
                 }
 
             },

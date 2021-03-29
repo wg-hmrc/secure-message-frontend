@@ -21,14 +21,18 @@ import play.api.data.Form
 import play.api.data.Forms.{ mapping, text }
 
 class MessageFormProvider {
-  private val CONTENT_MAX_LENGTH = 4000
+
   def apply(): Form[CustomerMessage] =
     Form(
       mapping(
         "content" -> text
           .verifying("conversation.reply.form.empty", _.nonEmpty)
-          .verifying("conversation.reply.form.exceeded.length", _.length <= CONTENT_MAX_LENGTH)
+          .verifying("conversation.reply.form.exceeded.length", _.length <= MessageFormProvider.CONTENT_MAX_LENGTH)
       )(CustomerMessage.apply)(CustomerMessage.unapply)
     )
 
+}
+
+object MessageFormProvider {
+  val CONTENT_MAX_LENGTH: Int = 4000
 }

@@ -16,34 +16,39 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.viewmodels.MessageReply
+@import forms.MessageFormProvider.CONTENT_MAX_LENGTH
 
-@this(formWithCSRF: FormWithCSRF)
+@this(
+    formWithCSRF: FormWithCSRF,
+    govukCharacterCount: GovukCharacterCount
+)
 
 @(reply: MessageReply)(implicit messages: Messages, requestHeader: RequestHeader)
 @import reply._
-@if(showReplyForm){
+@if(showReplyForm) {
     <hr aria-hidden="true" class="govuk-section-break govuk-section-break--m govuk-section-break--visible"/>
     @formWithCSRF(Call(method = "POST", url = replyFormUrl)) {
-        <div id="reply-form" class="govuk-form-group @if(formErrors.nonEmpty){govuk-form-group--error}">
-            <h3 class="govuk-label-wrapper">
-                <label class="govuk-label govuk-label--m" for="reply-text">Reply to this message</label>
-            </h3>
-            @if(formErrors.nonEmpty){
-            <span id="more-detail-error" class="govuk-error-message">
-                @for(error <- formErrors) {
-                  @messages(error)
-                  }
-            </span>
-            }
-            <textarea class="govuk-textarea" id="reply-text" name="content" rows="8" spellcheck="true"></textarea>
-        </div>
 
-<button class="govuk-button" data-module="govuk-button">Send</button>
+        @govukCharacterCount(CharacterCount(
+            id = "reply-form",
+            name = "content",
+            maxLength = Some(CONTENT_MAX_LENGTH),
+            threshold = Some(50),
+            label = Label(
+                isPageHeading = false,
+                classes = "govuk-label--s",
+                content = Text(messages("conversation.reply.form.heading"))
+            ),
+            errorMessage = formErrors.headOption.map(error => ErrorMessage(content = Text(messages(error)))),
+            value = Some(content),
+            attributes = Map("spellcheck" -> "true")
+        ))
 
+        <button class="govuk-button" data-module="govuk-button">Send</button>
     }
 } else {
     <div class="govuk-body" id="reply-link">
         @replyIcon
-        <a href="@replyFormUrl?showReplyForm=true#reply-form">Reply to this message</a>
+        <a href="@replyFormUrl?showReplyForm=true#reply-form">@messages("conversation.reply.form.heading")</a>
     </div>
 }
