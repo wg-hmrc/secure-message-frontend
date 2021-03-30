@@ -20,7 +20,6 @@ import config.AppConfig
 import connectors.SecureMessageConnector
 import controllers.generic.models.{ CustomerEnrolment, Tag }
 import controllers.utils.QueryStringValidation
-import javax.inject.{ Inject, Singleton }
 import play.api.i18n.I18nSupport
 import play.api.mvc.{ MessagesControllerComponents, _ }
 import uk.gov.hmrc.auth.core.{ AuthConnector, AuthorisedFunctions }
@@ -30,6 +29,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.partials.conversationInbox
 import views.viewmodels.ConversationInbox
 
+import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
@@ -57,7 +57,14 @@ class ConversationInboxController @Inject()(
           secureMessageConnector.getConversationList(enrolmentKeys, customerEnrolments, tags).flatMap { conversations =>
             val messages = this.messagesApi.preferred(request)
             Future.successful(
-              Ok(inbox.apply(ConversationInbox(clientService, messages("conversation.inbox.title"), conversations))))
+              Ok(
+                inbox.apply(
+                  ConversationInbox(
+                    clientService,
+                    messages("conversation.inbox.title"),
+                    conversations.size,
+                    conversations.count(_.unreadMessages),
+                    conversations))))
           }
         }
     }

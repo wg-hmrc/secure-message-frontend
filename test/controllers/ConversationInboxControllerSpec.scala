@@ -34,7 +34,7 @@ import play.api.test.{ FakeRequest, Helpers }
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.partials.conversationInbox
-import views.viewmodels.ConversationInbox
+import views.viewmodels.{ ConversationInbox }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -43,8 +43,8 @@ import scala.concurrent.{ ExecutionContext, Future }
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with MockAuthConnector {
 
-  "Conversations Controller" must {
-    "show latest messages" in new TestCase {
+  "ConversationInbox Controller" must {
+    "return 200 when secure message connector returns valid data" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
       when(
         mockSecureMessageConnector.getConversationList(

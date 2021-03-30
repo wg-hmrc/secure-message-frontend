@@ -23,15 +23,19 @@ import play.api.libs.json.{ Json, OWrites, Reads, __ }
 final case class ConversationInbox(
   clientService: String,
   heading: String,
+  total: Int,
+  unread: Int,
   conversationHeaders: List[ConversationHeader])
 object ConversationInbox {
 
-  def defaultObject: ConversationInbox = ConversationInbox("", "", List.empty[ConversationHeader])
+  def defaultObject: ConversationInbox = ConversationInbox("", "", 0, 0, List.empty[ConversationHeader])
 
   implicit def jsonReads: Reads[ConversationInbox] =
     (
       (__ \ "clientService").readWithDefault[String](defaultObject.clientService) and
         (__ \ "heading").readWithDefault[String](defaultObject.heading) and
+        (__ \ "total").readWithDefault[Int](defaultObject.total) and
+        (__ \ "unread").readWithDefault[Int](defaultObject.unread) and
         (__ \ "conversationHeaders").readWithDefault[List[ConversationHeader]](defaultObject.conversationHeaders)
     )(ConversationInbox.apply _)
 
