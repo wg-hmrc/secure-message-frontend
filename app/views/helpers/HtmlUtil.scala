@@ -41,10 +41,9 @@ object HtmlUtil {
     }
 
   def getMessageDate(conversationHeader: ConversationHeader): String =
-    if (conversationHeader.issueDate.toLocalDate.toString === DateTime.now.toLocalDate.toString)
+    if (conversationHeader.issueDate.toLocalDate.toString === DateTime.now.toLocalDate.toString) {
       dtfHours.print(conversationHeader.issueDate) + amOrPm.print(conversationHeader.issueDate).toLowerCase
-    else
-      dtf.print(conversationHeader.issueDate)
+    } else { dtf.print(conversationHeader.issueDate) }
 
   def getConversationUrl(clientService: String, conversationHeader: ConversationHeader): String =
     s"/$clientService/conversation/${conversationHeader.client}/${conversationHeader.conversationId}"
