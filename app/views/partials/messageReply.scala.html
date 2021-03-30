@@ -20,7 +20,8 @@
 
 @this(
     formWithCSRF: FormWithCSRF,
-    govukCharacterCount: GovukCharacterCount
+    govukCharacterCount: GovukCharacterCount,
+    govukButton: GovukButton
 )
 
 @(reply: MessageReply)(implicit messages: Messages, requestHeader: RequestHeader)
@@ -33,7 +34,7 @@
             id = "reply-form",
             name = "content",
             maxLength = Some(CONTENT_MAX_LENGTH),
-            threshold = Some(50),
+            threshold = Some(75),
             label = Label(
                 isPageHeading = false,
                 classes = "govuk-label--s",
@@ -44,7 +45,9 @@
             attributes = Map("spellcheck" -> "true")
         ))
 
-        <button class="govuk-button" data-module="govuk-button">Send</button>
+        @govukButton(Button(
+            content = Text(messages("conversation.reply.form.send.button"))
+        ))
     }
 } else {
     <div class="govuk-body" id="reply-link">
