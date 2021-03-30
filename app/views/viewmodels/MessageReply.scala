@@ -18,7 +18,6 @@ package views.viewmodels
 
 import play.twirl.api.Html
 
-@SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
 final case class MessageReply(
   showReplyForm: Boolean,
   replyFormUrl: String,
