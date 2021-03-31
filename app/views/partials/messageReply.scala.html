@@ -27,6 +27,11 @@
 @(reply: MessageReply)(implicit messages: Messages, requestHeader: RequestHeader)
 @import reply._
 @if(showReplyForm) {
+    <style>
+    .govuk-character-count {
+        margin-bottom: 5px;
+    }
+    </style>
     <hr aria-hidden="true" class="govuk-section-break govuk-section-break--m govuk-section-break--visible"/>
     @formWithCSRF(Call(method = "POST", url = replyFormUrl)) {
 
