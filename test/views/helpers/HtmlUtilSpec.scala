@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models.FirstReaderInformation
+import models.{ ConversationHeader, FirstReaderInformation }
 import org.joda.time.DateTime
 import org.scalatestplus.play.PlaySpec
 import views.helpers.HtmlUtil._
@@ -41,5 +41,17 @@ class HtmlUtilSpec extends PlaySpec {
 
   "decodeBase64String function should return decoded string" in {
     decodeBase64String("V2hhdCBhIGRheSE=") mustBe "What a day!"
+  }
+
+  "conversation Inbox creation date" must {
+    "return correct date if date is not today" in {
+      getMessageDate(ConversationHeader("", "", "", DateTime.parse("2021-02-19T10:29:47.275Z"), None, false, 1)) must be(
+        "19 February 2021")
+    }
+
+    "return just time if message creation is today" in {
+      val dateTime = DateTime.parse(s"${DateTime.now().toLocalDate}T05:29:47.275Z")
+      getMessageDate(ConversationHeader("", "", "", dateTime, None, false, 1)) mustBe ("5:29am")
+    }
   }
 }

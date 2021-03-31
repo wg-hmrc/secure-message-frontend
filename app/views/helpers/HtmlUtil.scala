@@ -16,6 +16,7 @@
 
 package views.helpers
 
+import cats.implicits.catsSyntaxEq
 import models.{ ConversationHeader, FirstReaderInformation, SenderInformation }
 import org.apache.commons.codec.binary.Base64
 import org.joda.time.DateTime
@@ -29,6 +30,7 @@ import scala.xml.{ Utility, Xhtml }
 object HtmlUtil {
 
   private val dtf = DateTimeFormat.forPattern("d MMMM yyyy")
+  private val dtfHours = DateTimeFormat.forPattern("h:mm")
   private val conversationDateTimeFormat = DateTimeFormat.forPattern("d MMMM yyyy 'at' h:mm")
   private val amOrPm = DateTimeFormat.forPattern("a")
 
@@ -39,7 +41,9 @@ object HtmlUtil {
     }
 
   def getMessageDate(conversationHeader: ConversationHeader): String =
-    dtf.print(conversationHeader.issueDate)
+    if (conversationHeader.issueDate.toLocalDate.toString === DateTime.now.toLocalDate.toString) {
+      dtfHours.print(conversationHeader.issueDate) + amOrPm.print(conversationHeader.issueDate).toLowerCase
+    } else { dtf.print(conversationHeader.issueDate) }
 
   def getConversationUrl(clientService: String, conversationHeader: ConversationHeader): String =
     s"/$clientService/conversation/${conversationHeader.client}/${conversationHeader.conversationId}"
