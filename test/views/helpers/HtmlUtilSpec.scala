@@ -49,7 +49,7 @@ class HtmlUtilSpec extends PlaySpec {
         "19 February 2021")
     }
 
-    "return just time if its today today" in {
+    "return just time if message creation is today" in {
       val dateTime = DateTime.parse(s"${DateTime.now().toLocalDate}T05:29:47.275Z")
       getMessageDate(ConversationHeader("", "", "", dateTime, None, false, 1)) mustBe ("5:29am")
     }
