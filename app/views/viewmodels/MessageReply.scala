@@ -18,4 +18,9 @@ package views.viewmodels
 
 import play.twirl.api.Html
 
-final case class MessageReply(showReplyForm: Boolean, replyFormUrl: String, replyIcon: Html, formErrors: Seq[String])
+final case class MessageReply(
+  showReplyForm: Boolean,
+  replyFormUrl: String,
+  replyIcon: Html,
+  formErrors: Seq[String],
+  content: String)

@@ -18,4 +18,9 @@ package views.viewmodels
 
 import play.twirl.api.Html
 
-final case class ConversationView(subject: String, latestMessage: Html, replyForm: Html, remainingMessages: Seq[Html])
+final case class ConversationView(
+  subject: String,
+  latestMessage: Html,
+  replyForm: Html,
+  remainingMessages: Seq[Html],
+  replyFormErrors: Seq[String])

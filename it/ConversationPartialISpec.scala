@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import controllers.Assets.CREATED
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
@@ -23,12 +22,15 @@ import play.api.libs.json.{ Json, Reads }
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.integration.ServiceSpec
 import java.io.File
-import play.api.http.Status.OK
+
+import org.jsoup.Jsoup
+import play.api.http.Status.{ BAD_REQUEST, CREATED, OK }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
   override def externalServices: Seq[String] = Seq.empty
   val secureMessagePort: Int = 9051
+  val overCharacterLimit: Int = 4001
 
   override protected def beforeEach() = {
     (wsClient
@@ -42,7 +44,9 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
   private val wsClient = app.injector.instanceOf[WSClient]
 
   "Conversation partial" must {
-    "return all information" in {
+
+    "return all messages within a conversation" in {
+
       val createConversationUrl =
         s"http://localhost:$secureMessagePort/secure-messaging/conversation/CDCM/SMF123456789"
 
@@ -52,7 +56,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
           .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
           .put(new File("./it/resources/create-conversation.json"))
           .futureValue
-      responseFromSecureMessage.status mustBe (CREATED)
+      responseFromSecureMessage.status mustBe CREATED
 
       val response = wsClient
         .url(resource("/secure-message-frontend/whatever/conversation/CDCM/SMF123456789"))
@@ -61,15 +65,92 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
         .futureValue
       response.status mustBe OK
 
-      val pageContent = response.body
-      pageContent must include(
-        "<h1 class=\"govuk-heading-l margin-top-small margin-bottom-small\">This subject needs action</h1>")
-      pageContent must include("CDS Exports Team sent")
-      pageContent must include("You read")
-      pageContent must include("You read")
-      pageContent must include("Message body!!")
-      pageContent must include("reply-link")
-      pageContent must include("Reply to this message")
+      val pageContent = Jsoup.parse(response.body)
+      pageContent
+        .select("h1.govuk-heading-l.margin-top-small.margin-bottom-small")
+        .text() mustBe "This subject needs action"
+      response.body must include("CDS Exports Team sent")
+      response.body must include("You read")
+      pageContent.select("div.govuk-body").first().text() mustBe "Message body!!"
+      pageContent
+        .select("#reply-link > a[href]")
+        .attr("href") mustBe "/whatever/conversation/CDCM/SMF123456789?showReplyForm=true#reply-form"
+      pageContent
+        .select("#reply-link > a[href]")
+        .text() mustBe "Reply to this message"
+    }
+
+    "validates a reply text is less than 4000 characters" in {
+
+      val createConversationUrl =
+        s"http://localhost:$secureMessagePort/secure-messaging/conversation/CDCM/SMF123456789"
+
+      val responseFromSecureMessage =
+        wsClient
+          .url(createConversationUrl)
+          .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
+          .put(new File("./it/resources/create-conversation.json"))
+          .futureValue
+      responseFromSecureMessage.status mustBe CREATED
+
+      val textLength4001: String = List.fill(overCharacterLimit)("a").mkString
+      val longContent =
+        s"""
+           | {
+           |  "content": "$textLength4001"
+           |  }
+        """.stripMargin
+      val replyPostResponse = wsClient
+        .url(resource("/secure-message-frontend/whatever/conversation/CDCM/SMF123456789"))
+        .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
+        .withHttpHeaders(AuthUtil.buildEoriToken)
+        .post(longContent)
+        .futureValue
+      replyPostResponse.status mustBe BAD_REQUEST
+
+      val parsedContent = Jsoup.parse(replyPostResponse.body)
+      parsedContent.select("span#reply-form-error").text() mustBe "Error: The message must be 4,000 characters or fewer"
+      val errorSummaryList =
+        parsedContent.select("div.govuk-error-summary__body ul.govuk-error-summary__list")
+      errorSummaryList.tagName("li").size() mustBe 1
+      errorSummaryList.select("li a").text() mustBe "The message must be 4,000 characters or fewer"
+      errorSummaryList.select("li a").attr("href") mustBe "#reply-form"
+    }
+
+    "validates a reply text is non-empty" in {
+
+      val createConversationUrl =
+        s"http://localhost:$secureMessagePort/secure-messaging/conversation/CDCM/SMF123456789"
+
+      val responseFromSecureMessage =
+        wsClient
+          .url(createConversationUrl)
+          .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
+          .put(new File("./it/resources/create-conversation.json"))
+          .futureValue
+      responseFromSecureMessage.status mustBe CREATED
+
+      val emptyContent =
+        s"""
+           | {
+           |  "content": ""
+           |  }
+        """.stripMargin
+      val replyEmptyPostReponse = wsClient
+        .url(resource("/secure-message-frontend/whatever/conversation/CDCM/SMF123456789"))
+        .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
+        .withHttpHeaders(AuthUtil.buildEoriToken)
+        .post(emptyContent)
+        .futureValue
+      replyEmptyPostReponse.status mustBe BAD_REQUEST
+
+      val parsedEmptyContent = Jsoup.parse(replyEmptyPostReponse.body)
+      parsedEmptyContent.select("span#reply-form-error").text() mustBe "Error: You must write a message to reply"
+      val errorSummaryListEmptyContent =
+        parsedEmptyContent.select("div.govuk-error-summary__body ul.govuk-error-summary__list")
+      errorSummaryListEmptyContent.tagName("li").size() mustBe 1
+      errorSummaryListEmptyContent.select("li a").text() mustBe "You must write a message to reply"
+      errorSummaryListEmptyContent.select("li a").attr("href") mustBe "#reply-form"
     }
   }
 

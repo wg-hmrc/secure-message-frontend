@@ -22,7 +22,7 @@ import play.api.i18n.{ Lang, MessagesApi, MessagesImpl }
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.Html
-import uk.gov.hmrc.govukfrontend.views.html.components.{ GovukBackLink, GovukPanel }
+import uk.gov.hmrc.govukfrontend.views.html.components.{ GovukBackLink, GovukErrorSummary, GovukPanel }
 import views.html.Layout
 import views.html.partials.conversationView
 import views.viewmodels.ConversationView
@@ -32,11 +32,13 @@ class conversationSpec extends PlaySpec {
   "conversation template" must {
     "have message content with subject and back link" in new TestClass {
       private val conversationContent =
-        new conversationView(layout, new GovukPanel, new GovukBackLink)(ConversationView(
-          "subject",
-          Html("first message"),
-          Html("reply form"),
-          Seq(Html("message content one")))).toString
+        new conversationView(layout, new GovukPanel, new GovukBackLink, new GovukErrorSummary)(
+          ConversationView(
+            "subject",
+            Html("first message"),
+            Html("reply form"),
+            Seq(Html("message content one")),
+            Seq())).toString
       conversationContent must include("subject")
       conversationContent must include("message content one")
     }

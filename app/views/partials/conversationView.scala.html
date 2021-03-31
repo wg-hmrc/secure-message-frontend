@@ -17,10 +17,13 @@
 @import views.html._
 @import play.twirl.api.HtmlFormat
 @import views.viewmodels.ConversationView
-@this(layout: Layout, govukPanel: GovukPanel,govukBackLink : GovukBackLink)
+@this(
+    layout: Layout,
+    govukPanel: GovukPanel,
+    govukBackLink: GovukBackLink,
+    govukErrorSummary: GovukErrorSummary)
 
 @(conversation: ConversationView)(implicit messages: Messages)
-
 <style>
     .govuk-heading-l {
      margin-bottom: -15px;
@@ -31,13 +34,24 @@
 }
 </style>
 
-            <div class="govuk-body-l">
-                <h1 class="govuk-heading-l margin-top-small margin-bottom-small">@conversation.subject</h1>
-                @conversation.latestMessage
-                @conversation.replyForm
-                @for(message <- conversation.remainingMessages) {
-                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-                <h2 class="govuk-heading-l">@conversation.subject</h2>
-                @message
-                }
-            </div>
+<div class="govuk-body-l">
+    @if(conversation.replyFormErrors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary(
+            errorList = conversation.replyFormErrors.map(error =>
+                ErrorLink(
+                    href = Some("#reply-form"),
+                    content = Text(messages(error))
+                )
+            ),
+            title = Text(messages(messages("conversation.reply.form.error_summary.heading")))
+        ))
+    }
+    <h1 class="govuk-heading-l margin-top-small margin-bottom-small">@conversation.subject</h1>
+    @conversation.latestMessage
+    @conversation.replyForm
+    @for(message <- conversation.remainingMessages) {
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        <h2 class="govuk-heading-l">@conversation.subject</h2>
+        @message
+    }
+</div>

@@ -33,7 +33,6 @@ lazy val externalServices = List(
   ExternalService("AUTH_LOGIN_API"),
   ExternalService("IDENTITY_VERIFICATION"),
   ExternalService("USER_DETAILS"),
-  ExternalService("SECURE_MESSAGE_FRONTEND"),
   ExternalService("SECURE_MESSAGE"),
   ExternalService("EMAIL"),
   ExternalService("CHANNEL_PREFERENCES"),

@@ -142,5 +142,4 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
     val mockServicesConfig: ServicesConfig = mock[ServicesConfig]
     val connector = new SecureMessageConnector(mockHttpClient, mockServicesConfig)
   }
-
 }
