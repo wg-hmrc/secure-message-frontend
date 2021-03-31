@@ -72,7 +72,15 @@ class ConversationController @Inject()(
             messageReply(
               MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormUrl), Seq.empty[String], ""))
           Future.successful(
-            Ok(conversationView(ConversationView(conversation.subject, firstMessage, replyForm, messages.tail, Seq()))))
+            Ok(
+              conversationView(
+                ConversationView(
+                  conversation.subject,
+                  firstMessage,
+                  replyForm,
+                  messages.tail,
+                  Seq.empty[String]
+                ))))
         }
     }
   }
