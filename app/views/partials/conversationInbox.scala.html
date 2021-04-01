@@ -93,46 +93,51 @@
 <span  class="govuk-visually-hidden"> @params.total in total </span>
 
 <div class="govuk-body">
-  <div class="messages" style="display:grid;grid-template-columns:auto auto auto auto auto auto;">
-    <!-- status header -->
-    <div class="header-status"><span aria-hidden="true" class="govuk-visually-hidden" >@messages("conversation.inbox.heading.status")</span></div>
-    <!-- sender header -->
-    <div class="govuk-!-font-weight-bold header-subject">@messages("conversation.inbox.heading.subject")</div>
-    <!-- date header -->
-    <div class="govuk-!-font-weight-bold header-date">@messages("conversation.inbox.heading.date")</div>
-    @for(conversationHeader <- conversationHeaders) {
-      <!-- status -->
-      <div class="conversation-status">@{
-        if(conversationHeader.unreadMessages) {
-          <a href={getConversationUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="no--underline" aria-hidden="true">
-              <span class="dot-unread">Unread</span>
-          </a>
-          <span class="govuk-visually-hidden">unread message</span>
-        } else {
-          <span class="govuk-visually-hidden">previously viewed message</span>
-        }
-      }</div>
-      <!-- sender -->
-      <div class="last-message-sender">@{
-        val senderSpan = if(conversationHeader.unreadMessages){
-          <span class="govuk-visually-hidden">from</span><span class="govuk-!-font-weight-bold black-text">{getSenderName(conversationHeader)}</span>
-        } else {
-          <span class="govuk-visually-hidden">from</span><span class='black-text'>{getSenderName(conversationHeader)}</span>
-        }
-        Link.toInternalPage(
-          url = getConversationUrl(clientService,conversationHeader),
-          Some(senderSpan.mkString),
-          None,
-          Some("no-underline")
-        ).toHtml
-      }</div>
-      <!-- date -->
-      <div class="last-message-date">
-        <span class='@{if(conversationHeader.unreadMessages){"govuk-!-font-weight-bold"}} black-text'>@{getMessageDate(conversationHeader)}</span>
-      </div>
-      <!-- subject -->
-      <div class="conversation-subject">
-        <span>@{
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header"></th>
+            <th scope="col" class="govuk-table__header">Subject</th>
+            <th scope="col" class="govuk-table__header">Date</th>
+        </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+        @for(conversationHeader <- conversationHeaders) {
+        <tr class="govuk-table__row" >
+            <!--status-->
+            <td class="govuk-table__cell" style="border-bottom:none;" >
+                <span class="govuk-visually-hidden">from</span>
+
+                @if(conversationHeader.unreadMessages) {
+                <a href={getConversationUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="no--underline" aria-hidden="true">
+                    <span class="dot-unread">Unread</span>
+                </a>
+                <span class="govuk-visually-hidden">unread message</span>
+                } else {
+                <span class="govuk-visually-hidden">previously viewed message</span>
+                }
+            </td>
+
+            <!--subject line 1-->
+            <td class="govuk-table__cell" style="border-bottom:none;" >
+                @{
+                val senderSpan = if(conversationHeader.unreadMessages){
+                <span class="govuk-visually-hidden">from</span><span class="govuk-!-font-weight-bold black-text">{getSenderName(conversationHeader)}</span>
+                } else {
+                <span class="govuk-visually-hidden">from</span><span class='black-text'>{getSenderName(conversationHeader)}</span>
+                }
+
+                Link.toInternalPage(
+                url = getConversationUrl(clientService,conversationHeader),
+                Some(senderSpan.mkString),
+                None,
+                Some("no-underline")
+                ).toHtml
+                }
+
+           <br/>
+                <!--subject line 2-->
+           <span>@{
           val subjectMaybeRead = if(conversationHeader.unreadMessages){
             <span class="govuk-visually-hidden">Subject</span><span class="govuk-!-font-weight-bold underline black-text">{conversationHeader.subject}</span>
           } else {
@@ -150,7 +155,15 @@
             Some("no-underline conversation-subject")
           ).toHtml
         }</span>
-      </div>
-    }
-  </div>
+
+           <!--date-->
+            </td>
+            <td class="govuk-table__cell" style="border-bottom:none;">
+                <span class='@{if(conversationHeader.unreadMessages){"govuk-!-font-weight-bold"}} black-text'>@{getMessageDate(conversationHeader)}</span>
+
+            </td>
+        </tr>
+        }
+        </tbody>
+    </table>
 </div>
