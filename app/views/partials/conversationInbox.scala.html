@@ -86,6 +86,14 @@
     font-size: 90%;
     color: #6F777B;
 }
+.govuk-table__cell {
+border-bottom:none;
+}
+
+.status-align {
+text-align: center;
+}
+
 </style>
 <h1 class="govuk-heading-xl">@heading</h1>
 
@@ -105,7 +113,7 @@
         @for(conversationHeader <- conversationHeaders) {
         <tr class="govuk-table__row" >
             <!--status-->
-            <td class="govuk-table__cell" style="border-bottom:none;" >
+            <td class="govuk-table__cell status-align">
                 <span class="govuk-visually-hidden">from</span>
 
                 @if(conversationHeader.unreadMessages) {
@@ -119,7 +127,7 @@
             </td>
 
             <!--subject line 1-->
-            <td class="govuk-table__cell" style="border-bottom:none;" >
+            <td class="govuk-table__cell" >
                 @{
                 val senderSpan = if(conversationHeader.unreadMessages){
                 <span class="govuk-visually-hidden">from</span><span class="govuk-!-font-weight-bold black-text">{getSenderName(conversationHeader)}</span>
@@ -158,9 +166,8 @@
 
            <!--date-->
             </td>
-            <td class="govuk-table__cell" style="border-bottom:none;">
+            <td class="govuk-table__cell">
                 <span class='@{if(conversationHeader.unreadMessages){"govuk-!-font-weight-bold"}} black-text'>@{getMessageDate(conversationHeader)}</span>
-
             </td>
         </tr>
         }
