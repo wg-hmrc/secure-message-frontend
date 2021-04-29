@@ -86,6 +86,10 @@
     font-size: 90%;
     color: #6F777B;
 }
+.messages {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto;
+}
 </style>
 <h1 class="govuk-heading-xl">@heading</h1>
 
@@ -93,7 +97,7 @@
 <span  class="govuk-visually-hidden"> @params.total in total </span>
 
 <div class="govuk-body">
-  <div class="messages" style="display:grid;grid-template-columns:auto auto auto auto auto auto;">
+  <div class="messages">
     <!-- status header -->
     <div class="header-status"><span aria-hidden="true" class="govuk-visually-hidden" >@messages("conversation.inbox.heading.status")</span></div>
     <!-- sender header -->
