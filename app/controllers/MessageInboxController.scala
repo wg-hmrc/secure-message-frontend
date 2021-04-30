@@ -26,17 +26,17 @@ import uk.gov.hmrc.auth.core.{ AuthConnector, AuthorisedFunctions }
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import views.html.partials.conversationInbox
-import views.viewmodels.ConversationInbox
+import views.html.partials.messagesInbox
+import views.viewmodels.MessageInbox
 
 import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class ConversationInboxController @Inject()(
+class MessageInboxController @Inject()(
   appConfig: AppConfig,
   controllerComponents: MessagesControllerComponents,
-  inbox: conversationInbox,
+  inbox: messagesInbox,
   secureMessageConnector: SecureMessageConnector,
   val authConnector: AuthConnector)(implicit ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport with AuthorisedFunctions
@@ -54,12 +54,12 @@ class ConversationInboxController @Inject()(
       case Left(e) => Future.successful(BadRequest(e.getMessage))
       case _ =>
         authorised() {
-          secureMessageConnector.getConversationList(enrolmentKeys, customerEnrolments, tags).flatMap { conversations =>
+          secureMessageConnector.getMessages(enrolmentKeys, customerEnrolments, tags).flatMap { conversations =>
             val messages = this.messagesApi.preferred(request)
             Future.successful(
               Ok(
                 inbox.apply(
-                  ConversationInbox(
+                  MessageInbox(
                     clientService,
                     messages("conversation.inbox.title"),
                     conversations.size,

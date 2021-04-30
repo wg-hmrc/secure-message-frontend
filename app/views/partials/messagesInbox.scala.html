@@ -14,13 +14,13 @@
  * limitations under the License.
  *@
 
-@import models.ConversationHeader
+@import models.MessageHeader
 @import views.helpers.HtmlUtil._
 @import uk.gov.hmrc.urls.Link
-@import views.viewmodels.ConversationInbox
+@import views.viewmodels.MessageInbox
 
 @this()
-@(params: ConversationInbox)(implicit messages: Messages)
+@(params: MessageInbox)(implicit messages: Messages)
 @import params._
 <style>
 .header-status {
@@ -104,7 +104,7 @@
       <!-- status -->
       <div class="conversation-status">@{
         if(conversationHeader.unreadMessages) {
-          <a href={getConversationUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="no--underline" aria-hidden="true">
+          <a href={getMessageUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="no--underline" aria-hidden="true">
               <span class="dot-unread">Unread</span>
           </a>
           <span class="govuk-visually-hidden">unread message</span>
@@ -120,7 +120,7 @@
           <span class="govuk-visually-hidden">from</span><span class='black-text'>{getSenderName(conversationHeader)}</span>
         }
         Link.toInternalPage(
-          url = getConversationUrl(clientService,conversationHeader),
+          url = getMessageUrl(clientService,conversationHeader),
           Some(senderSpan.mkString),
           None,
           Some("no-underline")
@@ -144,7 +144,7 @@
             subjectMaybeRead
           }
           Link.toInternalPage(
-            url = getConversationUrl(clientService,conversationHeader),
+            url = getMessageUrl(clientService,conversationHeader),
             Some(subjectMaybeWithCount.mkString),
             None,
             Some("no-underline conversation-subject")

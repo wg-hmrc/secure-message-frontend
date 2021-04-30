@@ -17,7 +17,7 @@
 package views.helpers
 
 import cats.implicits.catsSyntaxEq
-import models.{ ConversationHeader, FirstReaderInformation, SenderInformation }
+import models.{ FirstReaderInformation, MessageHeader, SenderInformation }
 import org.apache.commons.codec.binary.Base64
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -34,19 +34,19 @@ object HtmlUtil {
   private val conversationDateTimeFormat = DateTimeFormat.forPattern("d MMMM yyyy 'at' h:mm")
   private val amOrPm = DateTimeFormat.forPattern("a")
 
-  def getSenderName(conversationHeader: ConversationHeader)(implicit messages: Messages): String =
+  def getSenderName(conversationHeader: MessageHeader)(implicit messages: Messages): String =
     conversationHeader.senderName match {
       case Some(name) => name
       case _          => messages("conversation.inbox.default.sender")
     }
 
-  def getMessageDate(conversationHeader: ConversationHeader): String =
+  def getMessageDate(conversationHeader: MessageHeader): String =
     if (conversationHeader.issueDate.toLocalDate.toString === DateTime.now.toLocalDate.toString) {
       dtfHours.print(conversationHeader.issueDate) + amOrPm.print(conversationHeader.issueDate).toLowerCase
     } else { dtf.print(conversationHeader.issueDate) }
 
-  def getConversationUrl(clientService: String, conversationHeader: ConversationHeader): String =
-    s"/$clientService/conversation/${conversationHeader.client}/${conversationHeader.conversationId}"
+  def getMessageUrl(clientService: String, messageHeader: MessageHeader): String =
+    s"/$clientService/messages/${messageHeader.messageType}/${messageHeader.id}"
 
   def readableTime(dateTime: DateTime): String =
     conversationDateTimeFormat.print(dateTime) + amOrPm.print(dateTime).toLowerCase

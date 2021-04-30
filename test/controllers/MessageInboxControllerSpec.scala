@@ -20,7 +20,7 @@ import akka.util.Timeout
 import config.AppConfig
 import connectors.SecureMessageConnector
 import controllers.generic.models.{ CustomerEnrolment, Tag }
-import models.ConversationHeader
+import models.{ MessageHeader, MessageType }
 import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -33,21 +33,21 @@ import play.api.test.Helpers.{ GET, contentAsString, status }
 import play.api.test.{ FakeRequest, Helpers }
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.partials.conversationInbox
-import views.viewmodels.{ ConversationInbox }
+import views.html.partials.messagesInbox
+import views.viewmodels.MessageInbox
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
-class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with MockAuthConnector {
+class MessageInboxControllerSpec extends PlaySpec with MockitoSugar with MockAuthConnector {
 
   "ConversationInbox Controller" must {
     "return 200 when secure message connector returns valid data" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
       when(
-        mockSecureMessageConnector.getConversationList(
+        mockSecureMessageConnector.getMessages(
           ArgumentMatchers.eq(Some(List("HMRC-CUS-ORG"))),
           ArgumentMatchers.eq(Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777")))),
           ArgumentMatchers.eq(Some(List(Tag("notificationType", "CDS Exports"))))
@@ -55,16 +55,17 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
         .thenReturn(
           Future(
             List(
-              ConversationHeader(
+              MessageHeader(
                 "cdcm",
                 "D-80542-20201120",
+                MessageType.Conversation,
                 "DMS7324874993",
                 new DateTime(),
                 Some("CDS Exports Team"),
                 unreadMessages = true,
                 1))))
-      when(mockConversationsInboxPartial.apply(any[ConversationInbox])(any[Messages])).thenReturn(new Html("test"))
-      private val controller = new ConversationInboxController(
+      when(mockConversationsInboxPartial.apply(any[MessageInbox])(any[Messages])).thenReturn(new Html("test"))
+      private val controller = new MessageInboxController(
         mockAppConfig,
         Helpers.stubMessagesControllerComponents(),
         mockConversationsInboxPartial,
@@ -82,13 +83,13 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
     "return BAD REQUEST when query filter parameters are not valid" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
       when(
-        mockSecureMessageConnector.getConversationList(
+        mockSecureMessageConnector.getMessages(
           ArgumentMatchers.eq(None),
           ArgumentMatchers.eq(None),
           ArgumentMatchers.eq(None)
         )(any[ExecutionContext], any[HeaderCarrier])).thenReturn(Future(List()))
-      when(mockConversationsInboxPartial.apply(any[ConversationInbox])(any[Messages])).thenReturn(new Html("test"))
-      private val controller = new ConversationInboxController(
+      when(mockConversationsInboxPartial.apply(any[MessageInbox])(any[Messages])).thenReturn(new Html("test"))
+      private val controller = new MessageInboxController(
         mockAppConfig,
         Helpers.stubMessagesControllerComponents(),
         mockConversationsInboxPartial,
@@ -106,7 +107,7 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
     implicit val mockAppConfig: AppConfig = mock[AppConfig]
     val mockMessagesApi: MessagesApi = mock[MessagesApi]
     implicit val messages: MessagesImpl = MessagesImpl(Lang("en"), mockMessagesApi)
-    val mockConversationsInboxPartial: conversationInbox = mock[conversationInbox]
+    val mockConversationsInboxPartial: messagesInbox = mock[messagesInbox]
     val mockSecureMessageConnector: SecureMessageConnector = mock[SecureMessageConnector]
 
   }

@@ -17,7 +17,7 @@
 package connectors
 
 import controllers.generic.models.{ CustomerEnrolment, Tag }
-import models.{ Conversation, ConversationHeader, CustomerMessage, Message, ReadTime, SenderInformation }
+import models._
 import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{ any, anyString }
@@ -28,7 +28,6 @@ import play.api.libs.json.Writes
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient, HttpReads, HttpResponse }
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -44,17 +43,24 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
       )
       when(
         mockHttpClient
-          .GET[List[ConversationHeader]](
-            any[String],
-            ArgumentMatchers.eq(expectedQueryParams),
-            any[Seq[(String, String)]])(
-            any[HttpReads[List[ConversationHeader]]],
+          .GET[List[MessageHeader]](any[String], ArgumentMatchers.eq(expectedQueryParams), any[Seq[(String, String)]])(
+            any[HttpReads[List[MessageHeader]]],
             any[HeaderCarrier],
             any[ExecutionContext]))
         .thenReturn(
-          Future(List(ConversationHeader("cdcm", "123", "ABC", new DateTime(), None, unreadMessages = true, 1))))
+          Future(
+            List(
+              MessageHeader(
+                "cdcm",
+                "123",
+                models.MessageType.Conversation,
+                "ABC",
+                new DateTime(),
+                None,
+                unreadMessages = true,
+                1))))
       private val result = await(
-        connector.getConversationList(
+        connector.getMessages(
           Some(List("HMRC-CUS-ORG")),
           Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777"))),
           Some(List(Tag("notificationType", "CDS Exports")))))

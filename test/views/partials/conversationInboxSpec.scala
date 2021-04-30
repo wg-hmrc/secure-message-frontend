@@ -17,17 +17,17 @@
 package views.partials
 
 import play.twirl.api.HtmlFormat
-import views.html.partials.conversationInbox
-import views.viewmodels.ConversationInbox
+import views.html.partials.{ messagesInbox }
+import views.viewmodels.MessageInbox
 
 import scala.util.{ Success, Try }
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
-class conversationInboxSpec extends TemplateUnitSpec[ConversationInbox] {
+class conversationInboxSpec extends TemplateUnitSpec[MessageInbox] {
 
   "A conversation inbox template" must {
     "have all mandatory information" in {
-      render(ConversationInbox("cds-frontend", "test", 5, 1, List.empty)) match {
+      render(MessageInbox("cds-frontend", "test", 5, 1, List.empty)) match {
         case Success(component) => {
           val pageContent = component.body
           pageContent must include("""<h1 class="govuk-heading-xl">test</h1>""")
@@ -49,8 +49,8 @@ class conversationInboxSpec extends TemplateUnitSpec[ConversationInbox] {
     * @param templateParams
     * @return [[Try[HtmlFormat.Appendable]]] containing the markup
     */
-  override def render(templateParams: ConversationInbox): Try[HtmlFormat.Appendable] = {
-    val inbox = new conversationInbox
+  override def render(templateParams: MessageInbox): Try[HtmlFormat.Appendable] = {
+    val inbox = new messagesInbox
     Try(inbox(templateParams))
   }
 

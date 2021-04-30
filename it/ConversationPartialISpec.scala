@@ -33,11 +33,12 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
   val overCharacterLimit: Int = 4001
 
   override protected def beforeEach() = {
-    (wsClient
+    val response = wsClient
       .url(s"http://localhost:$secureMessagePort/test-only/delete/conversation/SMF123456789/CDCM")
       .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
       .delete
-      .futureValue)
+      .futureValue
+    response.status mustBe 200
     ()
   }
 

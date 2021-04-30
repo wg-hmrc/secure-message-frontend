@@ -28,8 +28,9 @@ object AppDependencies {
     "uk.gov.hmrc"             %% "url-builder"                % "3.4.0-play-27",
     "com.typesafe.play"       %% "play-json-joda"             % "2.9.1",
     "com.iheart"              %% "play-swagger"               % "0.10.2",
-    "org.typelevel"           %% "cats-core"                  % "2.5.0",
-    "org.scala-lang.modules"  %% "scala-xml"                  % "1.3.0"
+    "org.typelevel"           %% "cats-core"                  % "2.6.0",
+    "org.scala-lang.modules"  %% "scala-xml"                  % "1.3.0",
+    "com.beachape"            %% "enumeratum-play"            % "1.5.17"
   )
 
   val test = Seq(
@@ -40,7 +41,7 @@ object AppDependencies {
     "uk.gov.hmrc"             %% "service-integration-test"  % "0.13.0-play-27"  % "test, it",
     "org.scalatestplus.play"  %% "scalatestplus-play"        % "4.0.3"           % "test, it",
     "org.jsoup"               % "jsoup"                      % "1.13.1"          % "test, it",
-    "org.mockito"             % "mockito-core"               % "3.8.0"           % "test, it",
+    "org.mockito"             % "mockito-core"               % "3.9.0"           % "test, it",
     "com.vladsch.flexmark"    % "flexmark-all"               % "0.36.8"          % "test, it",
     "org.pegdown"             % "pegdown"                    % "1.6.0"           % "test, it",
     "net.codingwell"          %% "scala-guice"               % "5.0.0"           % "test, it"

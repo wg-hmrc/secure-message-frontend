@@ -18,7 +18,7 @@ package connectors
 
 import controllers.generic.models.{ CustomerEnrolment, Tag }
 import javax.inject.Inject
-import models.{ Conversation, ConversationHeader, CustomerMessage, ReadTime }
+import models.{ Conversation, CustomerMessage, MessageHeader, ReadTime }
 import org.joda.time.DateTime
 import play.api.Logging
 import play.mvc.Http.Status.CREATED
@@ -32,15 +32,13 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
 
   private val secureMessageBaseUrl = servicesConfig.baseUrl("secure-message")
 
-  def getConversationList(
+  def getMessages(
     enrolmentKeys: Option[List[String]],
     customerEnrolments: Option[List[CustomerEnrolment]],
-    tags: Option[List[Tag]])(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[List[ConversationHeader]] = {
+    tags: Option[List[Tag]])(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[List[MessageHeader]] = {
     val queryParams = queryParamsBuilder(enrolmentKeys, customerEnrolments, tags)
     httpClient
-      .GET[List[ConversationHeader]](
-        s"$secureMessageBaseUrl/secure-messaging/conversations",
-        queryParams.getOrElse(List()))
+      .GET[List[MessageHeader]](s"$secureMessageBaseUrl/secure-messaging/conversations", queryParams.getOrElse(List()))
   }
 
   private def queryParamsBuilder(

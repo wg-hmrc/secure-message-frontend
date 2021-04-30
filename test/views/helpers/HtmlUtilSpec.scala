@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models.{ ConversationHeader, FirstReaderInformation }
+import models.{ FirstReaderInformation, MessageHeader, MessageType }
 import org.joda.time.DateTime
 import org.scalatestplus.play.PlaySpec
 import views.helpers.HtmlUtil._
@@ -43,15 +43,35 @@ class HtmlUtilSpec extends PlaySpec {
     decodeBase64String("V2hhdCBhIGRheSE=") mustBe "What a day!"
   }
 
-  "conversation Inbox creation date" must {
+  "Inbox creation date" must {
     "return correct date if date is not today" in {
-      getMessageDate(ConversationHeader("", "", "", DateTime.parse("2021-02-19T10:29:47.275Z"), None, false, 1)) must be(
-        "19 February 2021")
+      getMessageDate(MessageHeader(
+        "",
+        "",
+        MessageType.Conversation,
+        "",
+        DateTime.parse("2021-02-19T10:29:47.275Z"),
+        None,
+        false,
+        1)) must be("19 February 2021")
     }
 
     "return just time if message creation is today" in {
       val dateTime = DateTime.parse(s"${DateTime.now().toLocalDate}T05:29:47.275Z")
-      getMessageDate(ConversationHeader("", "", "", dateTime, None, false, 1)) mustBe ("5:29am")
+      getMessageDate(MessageHeader("", "", MessageType.Conversation, "", dateTime, None, false, 1)) mustBe ("5:29am")
+    }
+  }
+
+  "Inbox item" must {
+    "return correct url for conversation" in {
+      getMessageUrl(
+        "someclient",
+        MessageHeader("client", "111", MessageType.Conversation, "subject", DateTime.now(), None, false, 1)) mustBe "/someclient/messages/Conversation/111"
+    }
+    "return correct url for letter" in {
+      getMessageUrl(
+        "someclient",
+        MessageHeader("client", "111", MessageType.Letter, "subject", DateTime.now(), None, false, 1)) mustBe "/someclient/messages/Letter/111"
     }
   }
 }

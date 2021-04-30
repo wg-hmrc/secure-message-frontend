@@ -17,7 +17,7 @@
 import com.google.inject.AbstractModule
 import connectors.SecureMessageConnector
 import controllers.generic.models.{ CustomerEnrolment, Tag }
-import models.ConversationHeader
+import models.{ MessageHeader, MessageType }
 import net.codingwell.scalaguice.ScalaModule
 import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers
@@ -36,7 +36,7 @@ import uk.gov.hmrc.integration.ServiceSpec
 import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
-class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
+class MessagesInboxPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
 
   override def externalServices: Seq[String] = Seq.empty
 
@@ -53,16 +53,17 @@ class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with Mocki
   "Getting the conversation list partial" should {
     "return status code OK 200" in {
       when(
-        mockSecureMessageConnector.getConversationList(
+        mockSecureMessageConnector.getMessages(
           ArgumentMatchers.eq(Some(List("HMRC-CUS-ORG"))),
           ArgumentMatchers.eq(Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777")))),
           ArgumentMatchers.eq(Some(List(Tag("notificationType", "CDS Exports"))))
         )(any[ExecutionContext], any[HeaderCarrier])).thenReturn(
         Future.successful(
           List(
-            ConversationHeader(
+            MessageHeader(
               "cdcm",
               "D-80542-20201120",
+              MessageType.Conversation,
               "DMS7324874993",
               new DateTime(),
               Some("CDS Exports Team"),
@@ -80,7 +81,7 @@ class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with Mocki
 
     "return status code BAD REQUEST 400 when provided with filter parameters that are invalid (not allowed)" in {
       when(
-        mockSecureMessageConnector.getConversationList(
+        mockSecureMessageConnector.getMessages(
           ArgumentMatchers.eq(None),
           ArgumentMatchers.eq(None),
           ArgumentMatchers.eq(None)
