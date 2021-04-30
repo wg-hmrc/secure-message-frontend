@@ -86,11 +86,13 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
     "return message partial with multiple messages" in new TestCase {
 
       val messages = List(
+        // This message is before DST switch
         Message(
           SenderInformation(Some("senderName"), DateTime.parse("2021-02-19T10:29:47.275Z"), self = false),
           Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-03-01T10:29:47.275Z"))),
           "TWVzc2FnZSBib2R5IQ=="
         ),
+        // This message is after DST
         Message(
           SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), self = false),
           Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-05-01T10:29:47.275Z"))),
@@ -104,8 +106,8 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       messagesContent must include("on 1 March 2021 at 10:29am")
       messagesContent must include("You read")
       messagesContent must include("Message body!")
-      messagesContent must include("this on 19 April 2021 at 10:29am")
-      messagesContent must include("on 1 May 2021 at 10:29am")
+      messagesContent must include("this on 19 April 2021 at 11:29am")
+      messagesContent must include("on 1 May 2021 at 11:29am")
       messagesContent must include("You read")
       messagesContent must include("Message body!")
 
