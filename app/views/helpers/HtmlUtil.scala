@@ -19,7 +19,7 @@ package views.helpers
 import cats.implicits.catsSyntaxEq
 import models.{ ConversationHeader, FirstReaderInformation, SenderInformation }
 import org.apache.commons.codec.binary.Base64
-import org.joda.time.DateTime
+import org.joda.time._
 import org.joda.time.format.DateTimeFormat
 import play.api.i18n.Messages
 import play.twirl.api.Html
@@ -29,10 +29,13 @@ import scala.xml.{ Utility, Xhtml }
 @SuppressWarnings(Array("org.wartremover.warts.PlatformDefault"))
 object HtmlUtil {
 
-  private val dtf = DateTimeFormat.forPattern("d MMMM yyyy")
-  private val dtfHours = DateTimeFormat.forPattern("h:mm")
-  private val conversationDateTimeFormat = DateTimeFormat.forPattern("d MMMM yyyy 'at' h:mm")
-  private val amOrPm = DateTimeFormat.forPattern("a")
+  private val dtf = dateTimeFormatWithLondonZone("d MMMM yyyy")
+  private val dtfHours = dateTimeFormatWithLondonZone("h:mm")
+  private val conversationDateTimeFormat = dateTimeFormatWithLondonZone("d MMMM yyyy 'at' h:mm")
+  private val amOrPm = dateTimeFormatWithLondonZone("a")
+
+  private def dateTimeFormatWithLondonZone(pattern: String) =
+    DateTimeFormat.forPattern(pattern).withZone(DateTimeZone.forID("Europe/London"))
 
   def getSenderName(conversationHeader: ConversationHeader)(implicit messages: Messages): String =
     conversationHeader.senderName match {
