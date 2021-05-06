@@ -17,15 +17,14 @@
 package connectors
 
 import controllers.generic.models.{ CustomerEnrolment, Tag }
-import javax.inject.Inject
-import models.{ Conversation, ConversationHeader, CustomerMessage, ReadTime }
-import org.joda.time.DateTime
+import models.{ Conversation, ConversationHeader, CustomerMessage }
 import play.api.Logging
 import play.mvc.Http.Status.CREATED
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient, HttpResponse }
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import javax.inject.Inject
 import scala.concurrent.{ ExecutionContext, Future }
 
 class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: ServicesConfig) extends Logging {
@@ -60,15 +59,6 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
     implicit ec: ExecutionContext,
     hc: HeaderCarrier): Future[Conversation] =
     httpClient.GET[Conversation](s"$secureMessageBaseUrl/secure-messaging/conversation/$clientName/$conversationId")
-
-  def recordReadTime(client: String, conversationId: String)(
-    implicit ec: ExecutionContext,
-    hc: HeaderCarrier): Future[HttpResponse] = {
-    val dateTime = ReadTime(DateTime.now)
-    httpClient.POST[ReadTime, HttpResponse](
-      s"$secureMessageBaseUrl/secure-messaging/conversation/$client/$conversationId/read-time",
-      dateTime)
-  }
 
   def postCustomerMessage(client: String, conversationId: String, message: CustomerMessage)(
     implicit ec: ExecutionContext,

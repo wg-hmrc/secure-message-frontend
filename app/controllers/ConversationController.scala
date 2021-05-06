@@ -62,7 +62,6 @@ class ConversationController @Inject()(
       secureMessageConnector
         .getConversation(client, conversationId)
         .flatMap { conversation =>
-          secureMessageConnector.recordReadTime(client, conversationId)
           val messages = {
             messagePartial(conversation.messages)
           }
@@ -101,7 +100,6 @@ class ConversationController @Inject()(
                 .getConversation(client, conversationId)
                 .flatMap {
                   conversation =>
-                    secureMessageConnector.recordReadTime(client, conversationId)
                     val messages = {
                       messagePartial(conversation.messages)
                     }
