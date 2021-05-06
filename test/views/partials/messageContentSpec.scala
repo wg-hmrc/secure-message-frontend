@@ -39,9 +39,7 @@ class messageContentSpec extends PlaySpec {
 
       messageContent must include("Mike")
       messageContent must include("sent text")
-      messageContent must include("read text")
       messageContent must include("First read")
-      messageContent must include("You read")
       messageContent must include("message body")
     }
     "be handled without first read information" in new TestClass {
@@ -50,9 +48,7 @@ class messageContentSpec extends PlaySpec {
 
       messageContent must include("Mike")
       messageContent must include("sent text")
-      messageContent must include("read text")
       messageContent must not include ("First read")
-      messageContent must include("You read")
       messageContent must include("message body")
     }
   }

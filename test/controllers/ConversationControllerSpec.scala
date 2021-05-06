@@ -61,7 +61,6 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
       messagesContent must include("this on 19 February 2021 at 10:29am")
       messagesContent must include("on 1 March 2021 at 10:29am")
-      messagesContent must include("You read")
       messagesContent must include("senderName sent")
       messagesContent must include("Message body!")
     }
@@ -78,7 +77,6 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
       messagesContent must include("this on 19 February 2021 at 10:29am")
       messagesContent must include("on 1 March 2021 at 10:29am")
-      messagesContent must include("You read")
       messagesContent must include("You sent")
       messagesContent must include("Message body!")
     }
@@ -104,11 +102,9 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
       messagesContent must include("this on 19 February 2021 at 10:29am")
       messagesContent must include("on 1 March 2021 at 10:29am")
-      messagesContent must include("You read")
       messagesContent must include("Message body!")
       messagesContent must include("this on 19 April 2021 at 11:29am")
       messagesContent must include("on 1 May 2021 at 11:29am")
-      messagesContent must include("You read")
       messagesContent must include("Message body!")
 
     }
@@ -125,7 +121,6 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       private val messagesContent = controller.messagePartial(messages).toString()
       messagesContent must include("this on 19 February 2021 at 10:29am")
       messagesContent must not include "First read"
-      messagesContent must include("You read")
       messagesContent must include("Message body!")
     }
 
