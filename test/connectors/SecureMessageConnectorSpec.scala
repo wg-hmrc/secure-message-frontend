@@ -17,7 +17,7 @@
 package connectors
 
 import controllers.generic.models.{ CustomerEnrolment, Tag }
-import models.{ Conversation, ConversationHeader, CustomerMessage, Message, ReadTime, SenderInformation }
+import models._
 import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{ any, anyString }
@@ -91,20 +91,6 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
         "en",
         List(Message(SenderInformation(Some("name"), testDate, self = false), None, "content"))
       )
-    }
-  }
-
-  "SecureMessageConnector.recordReadTime" must {
-    "return" in new TestCase {
-      when(
-        mockHttpClient.POST[ReadTime, HttpResponse](anyString, any[ReadTime], any[Seq[(String, String)]])(
-          any[Writes[ReadTime]],
-          any[HttpReads[HttpResponse]],
-          any[HeaderCarrier],
-          any[ExecutionContext])).thenReturn(Future.successful(HttpResponse(OK, "")))
-
-      private val result = await(connector.recordReadTime("client", "conversationId"))
-      result.status must be(OK)
     }
   }
 

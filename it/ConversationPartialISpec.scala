@@ -70,7 +70,6 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
         .select("h1.govuk-heading-l.margin-top-small.margin-bottom-small")
         .text() mustBe "This subject needs action"
       response.body must include("CDS Exports Team sent")
-      response.body must include("You read")
       pageContent.select("div.govuk-body").first().text() mustBe "Message body!!"
       pageContent
         .select("#reply-link > a[href]")
