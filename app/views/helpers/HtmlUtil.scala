@@ -74,6 +74,9 @@ object HtmlUtil {
   def decodeBase64String(input: String): String =
     new String(Base64.decodeBase64(input.getBytes("UTF-8")))
 
+  def encodeBase64String(input: String): String =
+    Base64.encodeBase64String(input.getBytes("UTF-8"))
+
   // scalastyle:off
   def getReplyIcon(replyFormUrl: String): Html =
     Html.apply(Xhtml.toXhtml(Utility.trim(<span>

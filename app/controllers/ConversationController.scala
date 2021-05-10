@@ -21,7 +21,6 @@ import connectors.SecureMessageConnector
 import forms.MessageFormProvider
 import javax.inject.Singleton
 import models.{ Conversation, CustomerMessage, Message }
-import org.apache.commons.codec.binary.Base64
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -207,7 +206,8 @@ class ConversationController @Inject()(
 
   object Id {
     def apply(messageType: String, id: String): String =
-      Base64.encodeBase64String(s"$messageType/$id".getBytes("UTF-8"))
+      encodeBase64String(s"$messageType/$id")
+
     def unapply(s: String): Option[(String, String)] = decodeBase64String(s).split("/").toList match {
       case messageType :: id :: _ => Some((messageType, id))
       case _                      => None
