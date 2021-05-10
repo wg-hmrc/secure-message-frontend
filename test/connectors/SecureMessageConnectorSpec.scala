@@ -51,8 +51,8 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
             any[HttpReads[List[ConversationHeader]]],
             any[HeaderCarrier],
             any[ExecutionContext]))
-        .thenReturn(
-          Future(List(ConversationHeader("cdcm", "123", "ABC", new DateTime(), None, unreadMessages = true, 1))))
+        .thenReturn(Future.successful(
+          List(ConversationHeader("cdcm", "123", "ABC", new DateTime(), None, unreadMessages = true, 1))))
       private val result = await(
         connector.getConversationList(
           Some(List("HMRC-CUS-ORG")),
@@ -72,7 +72,7 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
             any[HeaderCarrier],
             any[ExecutionContext]))
         .thenReturn(
-          Future(
+          Future.successful(
             Conversation(
               "client",
               "conversationId",
@@ -104,7 +104,7 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
             any[HeaderCarrier],
             any[ExecutionContext]))
         .thenReturn(
-          Future(
+          Future.successful(
             Conversation(
               "client",
               "conversationId",
@@ -137,7 +137,7 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
             any[HttpReads[Letter]],
             any[HeaderCarrier],
             any[ExecutionContext]))
-        .thenReturn(Future(letter))
+        .thenReturn(Future.successful(letter))
       private val result = await(connector.getLetterContent("someId"))
       result mustBe letter
     }
