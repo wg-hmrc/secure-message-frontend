@@ -16,15 +16,15 @@
 
 package views.partials
 
-import models.{ Letter, Sender }
-import org.joda.time.LocalDate
+import models.{ FirstReaderInformation, Letter, Sender }
+import org.joda.time.{ DateTime, LocalDate }
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.{ Lang, MessagesApi, MessagesImpl }
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.html.components.{ GovukBackLink, GovukPanel }
-import views.helpers.HtmlUtil.readableDate
+import views.helpers.HtmlUtil.{ readableDate, readableTime }
 import views.html.Layout
 import views.html.partials.letterView
 
@@ -41,6 +41,22 @@ class letterViewSpec extends PlaySpec {
       conversationContent must include("CDS message")
       conversationContent must include("HMRC")
       conversationContent must include(readableDate(localDate))
+    }
+
+    "have message read time if it is available" in new TestClass {
+      private val dateTime = DateTime.now()
+      private val localDate = LocalDate.now()
+      private val conversationContent =
+        new letterView(layout, new GovukPanel, new GovukBackLink)(
+          Letter(
+            "MRN 123",
+            "CDS message",
+            Some(FirstReaderInformation(None, dateTime)),
+            Sender("HMRC", localDate),
+            None)
+        ).toString
+
+      conversationContent must include(readableTime(dateTime))
     }
   }
 

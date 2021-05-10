@@ -334,6 +334,12 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       private val pageContent = contentAsString(result)
       pageContent must include("MRN 20GB16046891253600 needs action")
     }
+
+    "Controller Id should be able to patter match on encoded message type and ID" in new TestCase {
+      controller.Id("letter", "123") mustBe encodeBase64String("letter/123")
+      controller.Id.unapply(encodeBase64String("letter/123")) mustBe Some(("letter", "123"))
+      controller.Id.unapply("letter/1233") mustBe None
+    }
   }
 
   class TestCase {
