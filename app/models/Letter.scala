@@ -21,7 +21,7 @@ import play.api.libs.json.{ Format, Json }
 import play.api.libs.json.JodaReads.{ jodaDateReads, jodaLocalDateReads }
 import play.api.libs.json.JodaWrites.{ jodaDateWrites, jodaLocalDateWrites }
 
-@SuppressWarnings(Array("org.wartremover.warts.All"))
+@SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
 final case class Letter(
   subject: String,
   content: String,

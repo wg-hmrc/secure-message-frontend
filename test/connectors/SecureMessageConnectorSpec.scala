@@ -94,7 +94,7 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
     }
   }
 
-  "SecureMessgaeConnector.getConversationContent" must {
+  "SecureMessageConnector.getConversationContent" must {
     "return a conversation" in new TestCase {
       private val testDate = DateTime.now()
       when(
