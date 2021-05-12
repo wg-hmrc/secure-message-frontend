@@ -21,8 +21,8 @@ import akka.util.Timeout
 import config.AppConfig
 import connectors.SecureMessageConnector
 import forms.MessageFormProvider
-import models.{ Conversation, CustomerMessage, FirstReaderInformation, Message, SenderInformation }
-import org.joda.time.DateTime
+import models.{ Conversation, CustomerMessage, FirstReaderInformation, Letter, Message, Sender, SenderInformation }
+import org.joda.time.{ DateTime, LocalDate }
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.play.PlaySpec
@@ -34,7 +34,8 @@ import play.api.test.{ FakeRequest, NoMaterializer }
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.viewmodels.panel.Panel
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.partials.{ conversationView, messageContent, messageReply, messageResult }
+import views.helpers.HtmlUtil.encodeBase64String
+import views.html.partials.{ conversationView, letterView, messageContent, messageReply, messageResult }
 import views.viewmodels.ConversationView
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -278,6 +279,67 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       private val pageContent = contentAsString(result)
       pageContent must include("result")
     }
+
+    "return BAD REQUEST when MesssageType not letter or conversation" in new TestCase {
+      private val id = encodeBase64String("messageType/someId")
+
+      private val result = controller.displayMessage("some-service", id)(
+        FakeRequest("GET", s"/some-service/messages/$id")
+      )
+      status(result) mustBe Status.BAD_REQUEST
+    }
+
+    "return a letter partial when MessageType letter" in new TestCase {
+      mockAuthorise[Unit]()(Future.successful(()))
+      private val id = encodeBase64String("letter/someId")
+      private val letter = Letter("MRN 123", "CDS message", None, Sender("HMRC", LocalDate.now()), None)
+      when(mockSecureMessageConnector.getLetterContent(any[String])(any[ExecutionContext], any[HeaderCarrier]))
+        .thenReturn(Future.successful(letter))
+      when(mockletterView.apply(any[Letter])(any[Messages]))
+        .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
+      private val result = controller.displayMessage("some-service", id)(
+        FakeRequest("GET", s"/some-service/messages/$id")
+      )
+      status(result) mustBe Status.OK
+      private val pageContent = contentAsString(result)
+      pageContent must include("MRN 20GB16046891253600 needs action")
+    }
+
+    "return a conversation partial when MessageType conversation" in new TestCase {
+      mockAuthorise[Unit]()(Future.successful(()))
+      private val id = encodeBase64String("conversation/someId")
+      when(mockSecureMessageConnector.getConversationContent(any[String])(any[ExecutionContext], any[HeaderCarrier]))
+        .thenReturn(Future.successful(Conversation(
+          client,
+          conversationId,
+          "",
+          None,
+          "",
+          "",
+          List(Message(
+            SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), self = false),
+            Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-05-01T10:29:47.275Z"))),
+            "TWVzc2FnZSBib2R5IQ=="
+          ))
+        )))
+
+      when(mockConversationView.apply(any[ConversationView])(any[Messages]))
+        .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
+
+      private val result = controller.displayMessage("some-service", id)(
+        FakeRequest("GET", s"/some-service/messages/$id")
+      )
+
+      status(result) mustBe Status.OK
+      private val pageContent = contentAsString(result)
+      pageContent must include("MRN 20GB16046891253600 needs action")
+    }
+
+    "Controller Id should be able to patter match on encoded message type and ID" in new TestCase {
+      controller.Id("letter", "123") mustBe encodeBase64String("letter/123")
+      controller.Id.unapply(encodeBase64String("letter/123")) mustBe Some(("letter", "123"))
+      controller.Id.unapply("letter/1233") mustBe None
+    }
   }
 
   class TestCase {
@@ -293,6 +355,7 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
     val mockMessageReply: messageReply = mock[messageReply]
     val mockMessageResult: messageResult = mock[messageResult]
     val mockConversationView: conversationView = mock[conversationView]
+    val mockletterView: letterView = mock[letterView]
 
     implicit val request: FakeRequest[_] = FakeRequest("POST", "/some-service/conversation-message/111/DA123")
     implicit val appConfig: AppConfig = app.injector.instanceOf[AppConfig]
@@ -308,6 +371,7 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       mockMessageReply,
       mockMessageResult,
       mockConversationView,
+      mockletterView,
       mockAuthConnector,
       messageFormProvider
     )

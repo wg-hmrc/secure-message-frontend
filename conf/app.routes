@@ -9,6 +9,8 @@ GET         /:clientService/messages                                           c
 
 GET         /:clientService/conversation/:client/:conversationId               controllers.ConversationController.display(clientService, client, conversationId, showReplyForm: Boolean ?= false)
 
+GET         /:clientService/messages/:id                                       controllers.ConversationController.displayMessage(clientService, id)
+
 + nocsrf
 POST        /:clientService/conversation/:client/:conversationId               controllers.ConversationController.saveReply(clientService, client, conversationId)
 

@@ -54,6 +54,9 @@ object HtmlUtil {
   def readableTime(dateTime: DateTime): String =
     conversationDateTimeFormat.print(dateTime) + amOrPm.print(dateTime).toLowerCase
 
+  def readableDate(date: LocalDate): String =
+    dtf.print(date)
+
 // sender information for an org is mandatory. if for any reason if its missing we are putting as you, this will be covered in diff story
   def senderName(sender: SenderInformation): String = sender.name match {
     case Some(name)       => name
@@ -70,6 +73,9 @@ object HtmlUtil {
 
   def decodeBase64String(input: String): String =
     new String(Base64.decodeBase64(input.getBytes("UTF-8")))
+
+  def encodeBase64String(input: String): String =
+    Base64.encodeBase64String(input.getBytes("UTF-8"))
 
   // scalastyle:off
   def getReplyIcon(replyFormUrl: String): Html =

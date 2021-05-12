@@ -18,7 +18,7 @@ package connectors
 
 import controllers.generic.models.{ CustomerEnrolment, Tag }
 import models._
-import org.joda.time.DateTime
+import org.joda.time.{ DateTime, LocalDate }
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{ any, anyString }
 import org.mockito.Mockito.when
@@ -51,8 +51,8 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
             any[HttpReads[List[ConversationHeader]]],
             any[HeaderCarrier],
             any[ExecutionContext]))
-        .thenReturn(
-          Future(List(ConversationHeader("cdcm", "123", "ABC", new DateTime(), None, unreadMessages = true, 1))))
+        .thenReturn(Future.successful(
+          List(ConversationHeader("cdcm", "123", "ABC", new DateTime(), None, unreadMessages = true, 1))))
       private val result = await(
         connector.getConversationList(
           Some(List("HMRC-CUS-ORG")),
@@ -72,7 +72,7 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
             any[HeaderCarrier],
             any[ExecutionContext]))
         .thenReturn(
-          Future(
+          Future.successful(
             Conversation(
               "client",
               "conversationId",
@@ -91,6 +91,55 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
         "en",
         List(Message(SenderInformation(Some("name"), testDate, self = false), None, "content"))
       )
+    }
+  }
+
+  "SecureMessageConnector.getConversationContent" must {
+    "return a conversation" in new TestCase {
+      private val testDate = DateTime.now()
+      when(
+        mockHttpClient
+          .GET[Conversation](any[String], any[Seq[(String, String)]], any[Seq[(String, String)]])(
+            any[HttpReads[Conversation]],
+            any[HeaderCarrier],
+            any[ExecutionContext]))
+        .thenReturn(
+          Future.successful(
+            Conversation(
+              "client",
+              "conversationId",
+              "status",
+              None,
+              "subject",
+              "en",
+              List(Message(SenderInformation(Some("name"), testDate, self = false), None, "content")))))
+      private val result = await(connector.getConversationContent("someID"))
+      result mustBe Conversation(
+        "client",
+        "conversationId",
+        "status",
+        None,
+        "subject",
+        "en",
+        List(Message(SenderInformation(Some("name"), testDate, self = false), None, "content"))
+      )
+    }
+  }
+
+  "SecureMessgaeConnector.getLetterContent" must {
+    "return a conversation" in new TestCase {
+
+      private val localDate = LocalDate.now()
+      private val letter = Letter("MRN 123", "CDS message", None, Sender("HMRC", localDate), None)
+      when(
+        mockHttpClient
+          .GET[Letter](any[String], any[Seq[(String, String)]], any[Seq[(String, String)]])(
+            any[HttpReads[Letter]],
+            any[HeaderCarrier],
+            any[ExecutionContext]))
+        .thenReturn(Future.successful(letter))
+      private val result = await(connector.getLetterContent("someId"))
+      result mustBe letter
     }
   }
 

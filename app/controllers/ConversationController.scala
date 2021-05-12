@@ -20,11 +20,12 @@ import com.google.inject.Inject
 import connectors.SecureMessageConnector
 import forms.MessageFormProvider
 import javax.inject.Singleton
-import models.{ CustomerMessage, Message }
+import models.{ Conversation, CustomerMessage, Message }
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents, Request }
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents, Request, Result }
+import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.{ AuthConnector, AuthorisedFunctions }
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.panel.Panel
@@ -32,7 +33,7 @@ import uk.gov.hmrc.http.{ HeaderCarrier, NotFoundException }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.helpers.HtmlUtil._
-import views.html.partials.{ conversationView, messageContent, messageReply, messageResult }
+import views.html.partials.{ conversationView, letterView, messageContent, messageReply, messageResult }
 import views.viewmodels.{ ConversationView, MessageReply, MessageView }
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -45,6 +46,7 @@ class ConversationController @Inject()(
   messageReply: messageReply,
   messageResult: messageResult,
   conversationView: conversationView,
+  letterView: letterView,
   val authConnector: AuthConnector,
   formProvider: MessageFormProvider)(implicit ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport with AuthorisedFunctions with Logging {
@@ -82,6 +84,23 @@ class ConversationController @Inject()(
                 ))))
         }
     }
+  }
+
+  private def getConversationView(conversation: Conversation, replyForm: Html)(
+    implicit request: Request[_]): ConversationView = {
+
+    val messages = {
+      messagePartial(conversation.messages)
+    }
+    val firstMessage =
+      messages.headOption.getOrElse(throw new NotFoundException("There can't be a conversation without a message"))
+    ConversationView(
+      conversation.subject,
+      firstMessage,
+      replyForm,
+      messages.tail,
+      Seq.empty[String]
+    )
   }
 
   val form: Form[CustomerMessage] = formProvider()
@@ -146,6 +165,32 @@ class ConversationController @Inject()(
         )))
   }
 
+  def displayMessage(
+    clientService: String,
+    rawId: String
+  ): Action[AnyContent] = Action.async { implicit request =>
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+    logger.debug(s"service: $clientService")
+
+    def contentHelper[A](content: String => Future[A], view: A => Html): Future[Result] =
+      content(rawId).map { a =>
+        Ok(view(a))
+      }
+
+    rawId match {
+      case Id("letter", _) =>
+        authorised() { contentHelper(secureMessageConnector.getLetterContent _, letterView.apply _) }
+      case Id("conversation", _) =>
+        authorised() {
+          contentHelper((s: String) => {
+            secureMessageConnector.getConversationContent(s).map(getConversationView(_, Html("")))
+          }, conversationView.apply _)
+        }
+      case _ => Future.successful(BadRequest("Invalid URL path"))
+    }
+
+  }
+
   private[controllers] def messagePartial(messages: List[Message])(implicit request: Request[_]) =
     messages
       .sortBy(_.senderInformation.sent.getMillis)(Ordering[Long].reverse)
@@ -158,5 +203,15 @@ class ConversationController @Inject()(
           decodeBase64String(message.content),
           message.senderInformation.self
         )))
+
+  object Id {
+    def apply(messageType: String, id: String): String =
+      encodeBase64String(s"$messageType/$id")
+
+    def unapply(s: String): Option[(String, String)] = decodeBase64String(s).split("/").toList match {
+      case messageType :: id :: _ => Some((messageType, id))
+      case _                      => None
+    }
+  }
 
 }

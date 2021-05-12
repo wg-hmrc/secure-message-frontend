@@ -50,7 +50,7 @@ object FirstReaderInformation {
   private val dateFormatString = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 
   implicit val dateFormat: Format[DateTime] = Format(jodaDateReads(dateFormatString), jodaDateWrites(dateFormatString))
-  implicit val firstReaderFormat: Reads[FirstReaderInformation] = Json.reads[FirstReaderInformation]
+  implicit val firstReaderFormat: Format[FirstReaderInformation] = Json.format[FirstReaderInformation]
 }
 
 final case class SenderInformation(name: Option[String], sent: DateTime, self: Boolean)

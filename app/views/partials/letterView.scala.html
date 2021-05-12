@@ -1,0 +1,71 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html._
+@import play.twirl.api.HtmlFormat
+@import views.viewmodels.ConversationView
+@import views.helpers.HtmlUtil._
+@this(
+        layout: Layout,
+        govukPanel: GovukPanel,
+        govukBackLink: GovukBackLink
+)
+
+@(letter: Letter)(implicit messages: Messages)
+<style>
+        .govuk-heading-l {
+         margin-bottom: -15px;
+        }
+        .govuk-caption-m {
+         font-size: 16px;
+         padding-top: 0px;
+         margin-top: 0px;
+         margin-bottom: 0px;
+        }
+</style>
+
+<div class="govuk-body-l">
+ <h1 class="govuk-heading-l govuk-!-margin-top-0 govuk-!-margin-bottom-2">@letter.subject</h1>
+
+ @if(letter.firstReaderInformation.isDefined ) {
+  <p class="message_time faded-text--small  govuk-!-margin-0">
+ } else {
+  <p class="message_time faded-text--small govuk-!-margin-top-0 govuk-!-margin-bottom-6">
+ }
+  <span aria-hidden="true" class="govuk-caption-m">
+   <span class="govuk-!-font-weight-bold">@letter.senderInformation.name @messages("message.sent_on")</span> @readableDate(letter.senderInformation.sent)
+  </span>
+ </p>
+
+  @letter.firstReaderInformation.map{s =>
+   <p class="message_time faded-text--small govuk-!-margin-top-0 govuk-!-margin-bottom-6">
+    <span aria-hidden="true" class="govuk-caption-m">
+     <span class="govuk-!-font-weight-bold">@messages("message.first_read_on")</span> @readableTime(s.read)
+    </span>
+   </p>
+  }
+
+
+
+ <div class="govuk-body">
+  @messages("message.salutation")
+  <br/>
+  @HtmlFormat.raw(letter.content)
+   <br/>
+  @letter.senderInformation.name
+ </div>
+
+</div>

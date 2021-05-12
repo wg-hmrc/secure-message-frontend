@@ -17,7 +17,7 @@
 package connectors
 
 import controllers.generic.models.{ CustomerEnrolment, Tag }
-import models.{ Conversation, ConversationHeader, CustomerMessage }
+import models.{ Conversation, ConversationHeader, CustomerMessage, Letter }
 import play.api.Logging
 import play.mvc.Http.Status.CREATED
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -59,6 +59,12 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
     implicit ec: ExecutionContext,
     hc: HeaderCarrier): Future[Conversation] =
     httpClient.GET[Conversation](s"$secureMessageBaseUrl/secure-messaging/conversation/$clientName/$conversationId")
+
+  def getLetterContent(rawId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Letter] =
+    httpClient.GET[Letter](s"$secureMessageBaseUrl/secure-messaging/messages/$rawId")
+
+  def getConversationContent(rawId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Conversation] =
+    httpClient.GET[Conversation](s"$secureMessageBaseUrl/secure-messaging/messages/$rawId")
 
   def postCustomerMessage(client: String, conversationId: String, message: CustomerMessage)(
     implicit ec: ExecutionContext,
