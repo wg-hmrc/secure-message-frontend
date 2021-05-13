@@ -56,14 +56,15 @@ class MessageInboxControllerSpec extends PlaySpec with MockitoSugar with MockAut
           Future(
             List(
               MessageHeader(
-                "cdcm",
-                "D-80542-20201120",
                 MessageType.Conversation,
+                "123456",
                 "DMS7324874993",
                 new DateTime(),
                 Some("CDS Exports Team"),
                 unreadMessages = true,
-                1))))
+                1,
+                Some("D-80542-20201120"),
+                Some("cdcm")))))
       when(mockConversationsInboxPartial.apply(any[MessageInbox])(any[Messages])).thenReturn(new Html("test"))
       private val controller = new MessageInboxController(
         mockAppConfig,

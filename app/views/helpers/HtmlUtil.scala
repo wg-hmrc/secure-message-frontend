@@ -16,14 +16,13 @@
 
 package views.helpers
 
-import cats.implicits.catsSyntaxEq
-import models.{ FirstReaderInformation, MessageHeader, SenderInformation }
+import models.{ FirstReaderInformation, MessageHeader, MessageType, SenderInformation }
 import org.apache.commons.codec.binary.Base64
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import play.api.i18n.Messages
 import play.twirl.api.Html
-
+import cats.implicits.catsSyntaxEq
 import scala.xml.{ Utility, Xhtml }
 
 @SuppressWarnings(Array("org.wartremover.warts.PlatformDefault"))
@@ -46,8 +45,14 @@ object HtmlUtil {
     } else { dtf.print(conversationHeader.issueDate) }
 
   def getMessageUrl(clientService: String, messageHeader: MessageHeader): String =
-    s"/$clientService/messages/${messageHeader.messageType}/${messageHeader.id}"
-
+    if (messageHeader.messageType.entryName === MessageType.Conversation.entryName) {
+      (messageHeader.client, messageHeader.conversationId) match {
+        case (Some(client), Some(conversationId)) => s"/$clientService/conversation/$client/$conversationId"
+        case _                                    => ""
+      }
+    } else {
+      s"/$clientService/messages/${messageHeader.id}"
+    }
   def readableTime(dateTime: DateTime): String =
     conversationDateTimeFormat.print(dateTime) + amOrPm.print(dateTime).toLowerCase
 

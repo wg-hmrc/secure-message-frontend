@@ -38,7 +38,7 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
     tags: Option[List[Tag]])(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[List[MessageHeader]] = {
     val queryParams = queryParamsBuilder(enrolmentKeys, customerEnrolments, tags)
     httpClient
-      .GET[List[MessageHeader]](s"$secureMessageBaseUrl/secure-messaging/conversations", queryParams.getOrElse(List()))
+      .GET[List[MessageHeader]](s"$secureMessageBaseUrl/secure-messaging/messages", queryParams.getOrElse(List()))
   }
 
   private def queryParamsBuilder(

@@ -51,14 +51,15 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
           Future(
             List(
               MessageHeader(
-                "cdcm",
+                MessageType.Conversation,
                 "123",
-                models.MessageType.Conversation,
                 "ABC",
                 new DateTime(),
                 None,
                 unreadMessages = true,
-                1))))
+                1,
+                Some("123"),
+                Some("CDCM")))))
       private val result = await(
         connector.getMessages(
           Some(List("HMRC-CUS-ORG")),

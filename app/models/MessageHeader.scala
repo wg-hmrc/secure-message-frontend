@@ -22,14 +22,16 @@ import play.api.libs.json.JodaWrites.jodaDateWrites
 import play.api.libs.json.{ Format, Json, OFormat }
 
 final case class MessageHeader(
-  client: String,
-  id: String,
   messageType: MessageType,
+  id: String,
   subject: String,
   issueDate: DateTime,
   senderName: Option[String],
   unreadMessages: Boolean,
-  count: Int)
+  count: Int,
+  conversationId: Option[String],
+  client: Option[String]
+)
 
 object MessageHeader {
 

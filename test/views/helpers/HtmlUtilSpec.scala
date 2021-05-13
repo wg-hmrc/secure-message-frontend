@@ -45,33 +45,45 @@ class HtmlUtilSpec extends PlaySpec {
 
   "Inbox creation date" must {
     "return correct date if date is not today" in {
-      getMessageDate(MessageHeader(
-        "",
-        "",
-        MessageType.Conversation,
-        "",
-        DateTime.parse("2021-02-19T10:29:47.275Z"),
-        None,
-        false,
-        1)) must be("19 February 2021")
+      getMessageDate(
+        MessageHeader(
+          MessageType.Conversation,
+          "",
+          "",
+          DateTime.parse("2021-02-19T10:29:47.275Z"),
+          None,
+          false,
+          1,
+          Some(""),
+          Some(""))) must be("19 February 2021")
     }
 
     "return just time if message creation is today" in {
       val dateTime = DateTime.parse(s"${DateTime.now().toLocalDate}T05:29:47.275Z")
-      getMessageDate(MessageHeader("", "", MessageType.Conversation, "", dateTime, None, false, 1)) mustBe ("5:29am")
+      getMessageDate(MessageHeader(MessageType.Conversation, "", "", dateTime, None, false, 1, Some(""), Some(""))) mustBe ("5:29am")
     }
   }
 
   "Inbox item" must {
-    "return correct url for conversation" in {
+    val id = "60995694180000c223edb0b9"
+    "return url with clientName and  conversation" in {
       getMessageUrl(
         "someclient",
-        MessageHeader("client", "111", MessageType.Conversation, "subject", DateTime.now(), None, false, 1)) mustBe "/someclient/messages/Conversation/111"
+        MessageHeader(
+          MessageType.Conversation,
+          id,
+          "subject",
+          DateTime.now(),
+          None,
+          false,
+          1,
+          Some("111"),
+          Some("CDCM"))) mustBe "/someclient/conversation/CDCM/111"
     }
-    "return correct url for letter" in {
+    "return url with id for letter" in {
       getMessageUrl(
         "someclient",
-        MessageHeader("client", "111", MessageType.Letter, "subject", DateTime.now(), None, false, 1)) mustBe "/someclient/messages/Letter/111"
+        MessageHeader(MessageType.Letter, id, "subject", DateTime.now(), None, false, 1, None, None)) mustBe s"/someclient/messages/$id"
     }
   }
 }

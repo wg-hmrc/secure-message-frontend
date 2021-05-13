@@ -15,10 +15,10 @@
  */
 
 package models
-import enumeratum.EnumEntry.Snakecase
+import enumeratum.EnumEntry.{ Lowercase }
 import enumeratum.{ Enum, EnumEntry, PlayEnum }
 
-sealed trait MessageType extends EnumEntry with Snakecase
+sealed trait MessageType extends EnumEntry with Lowercase
 
 object MessageType extends Enum[MessageType] with PlayEnum[MessageType] {
   val values = findValues
