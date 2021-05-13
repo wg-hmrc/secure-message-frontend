@@ -23,6 +23,5 @@ conversation.reply.form.empty = You must write a message to reply
 conversation.reply.form.exceeded.length = The message must be 4,000 characters or fewer
 conversation.reply.form.send.button = Send
 
-message.salutation = Dear Customer
 message.sent_on = sent this on
 message.first_read_on = First read on
