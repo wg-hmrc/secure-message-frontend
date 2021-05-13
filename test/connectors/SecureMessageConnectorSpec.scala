@@ -35,7 +35,8 @@ import scala.concurrent.{ ExecutionContext, Future }
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
 
-  "SecureMessgaeConnector.getConversationList" must {
+  "SecureMessageConnector.getConversationList" must {
+
     "return a list with one conversation" in new TestCase {
       val expectedQueryParams = Seq(
         ("enrolmentKey", "HMRC-CUS-ORG"),
@@ -59,6 +60,29 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
           Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777"))),
           Some(List(Tag("notificationType", "CDS Exports")))))
       result.size mustBe 1
+    }
+
+    "return a count of messages" in new TestCase {
+      val totalMessagesCount: Long = 5
+      val unreadMessagesCount: Long = 2
+      val expectedQueryParams = Seq(
+        ("enrolmentKey", "HMRC-CUS-ORG"),
+        ("enrolment", "HMRC-CUS-ORG~EORIName~GB7777777777"),
+        ("tag", "notificationType~CDS Exports")
+      )
+      when(
+        mockHttpClient
+          .GET[Count](any[String], ArgumentMatchers.eq(expectedQueryParams), any[Seq[(String, String)]])(
+            any[HttpReads[Count]],
+            any[HeaderCarrier],
+            any[ExecutionContext]))
+        .thenReturn(Future(Count(total = totalMessagesCount, unread = unreadMessagesCount)))
+      private val result = await(
+        connector.getCount(
+          Some(List("HMRC-CUS-ORG")),
+          Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777"))),
+          Some(List(Tag("notificationType", "CDS Exports")))))
+      result mustBe Count(total = totalMessagesCount, unread = unreadMessagesCount)
     }
   }
 

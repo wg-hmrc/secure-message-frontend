@@ -17,14 +17,14 @@
 package connectors
 
 import controllers.generic.models.{ CustomerEnrolment, Tag }
-import models.{ Conversation, ConversationHeader, CustomerMessage, Letter }
+import models.{ Conversation, ConversationHeader, Count, CustomerMessage, Letter }
 import play.api.Logging
 import play.mvc.Http.Status.CREATED
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient, HttpResponse }
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
 import javax.inject.Inject
+
 import scala.concurrent.{ ExecutionContext, Future }
 
 class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: ServicesConfig) extends Logging {
@@ -40,6 +40,15 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
       .GET[List[ConversationHeader]](
         s"$secureMessageBaseUrl/secure-messaging/conversations",
         queryParams.getOrElse(List()))
+  }
+
+  def getCount(
+    enrolmentKeys: Option[List[String]],
+    customerEnrolments: Option[List[CustomerEnrolment]],
+    tags: Option[List[Tag]])(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Count] = {
+    val queryParams = queryParamsBuilder(enrolmentKeys, customerEnrolments, tags)
+    httpClient
+      .GET[Count](s"$secureMessageBaseUrl/secure-messaging/messages/count", queryParams.getOrElse(List()))
   }
 
   private def queryParamsBuilder(
