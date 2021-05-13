@@ -45,15 +45,23 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
       )
       when(
         mockHttpClient
-          .GET[List[ConversationHeader]](
-            any[String],
-            ArgumentMatchers.eq(expectedQueryParams),
-            any[Seq[(String, String)]])(
-            any[HttpReads[List[ConversationHeader]]],
+          .GET[List[MessageHeader]](any[String], ArgumentMatchers.eq(expectedQueryParams), any[Seq[(String, String)]])(
+            any[HttpReads[List[MessageHeader]]],
             any[HeaderCarrier],
             any[ExecutionContext]))
-        .thenReturn(Future.successful(
-          List(ConversationHeader("cdcm", "123", "ABC", new DateTime(), None, unreadMessages = true, 1))))
+        .thenReturn(
+          Future.successful(
+            List(
+              MessageHeader(
+                MessageType.Conversation,
+                "123",
+                "ABC",
+                new DateTime(),
+                None,
+                unreadMessages = true,
+                1,
+                Some("123"),
+                Some("CDCM")))))
       private val result = await(
         connector.getConversationList(
           Some(List("HMRC-CUS-ORG")),
