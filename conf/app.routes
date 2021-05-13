@@ -7,6 +7,8 @@
 
 GET         /:clientService/messages                                           controllers.ConversationInboxController.display(clientService: String, enrolmentKey: Option[List[String]], enrolment: Option[List[CustomerEnrolment]], tag: Option[List[Tag]])
 
+GET         /messages/count                                                    controllers.ApiController.count(enrolmentKey: Option[List[String]], enrolment: Option[List[CustomerEnrolment]], tag: Option[List[Tag]])
+
 GET         /:clientService/conversation/:client/:conversationId               controllers.ConversationController.display(clientService, client, conversationId, showReplyForm: Boolean ?= false)
 
 GET         /:clientService/messages/:id                                       controllers.ConversationController.displayMessage(clientService, id)
