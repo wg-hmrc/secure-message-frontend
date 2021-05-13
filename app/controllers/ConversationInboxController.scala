@@ -26,8 +26,8 @@ import uk.gov.hmrc.auth.core.{ AuthConnector, AuthorisedFunctions }
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import views.html.partials.conversationInbox
-import views.viewmodels.ConversationInbox
+import views.html.partials.messageInbox
+import views.viewmodels.MessageInbox
 
 import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
@@ -36,7 +36,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 class ConversationInboxController @Inject()(
   appConfig: AppConfig,
   controllerComponents: MessagesControllerComponents,
-  inbox: conversationInbox,
+  inbox: messageInbox,
   secureMessageConnector: SecureMessageConnector,
   val authConnector: AuthConnector)(implicit ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport with AuthorisedFunctions
@@ -59,7 +59,7 @@ class ConversationInboxController @Inject()(
             Future.successful(
               Ok(
                 inbox.apply(
-                  ConversationInbox(
+                  MessageInbox(
                     clientService,
                     messages("conversation.inbox.title"),
                     conversations.size,

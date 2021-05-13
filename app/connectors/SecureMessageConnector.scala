@@ -17,7 +17,7 @@
 package connectors
 
 import controllers.generic.models.{ CustomerEnrolment, Tag }
-import models.{ Conversation, ConversationHeader, Count, CustomerMessage, Letter }
+import models.{ Conversation, Count, CustomerMessage, Letter, MessageHeader }
 import play.api.Logging
 import play.mvc.Http.Status.CREATED
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -34,12 +34,10 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
   def getConversationList(
     enrolmentKeys: Option[List[String]],
     customerEnrolments: Option[List[CustomerEnrolment]],
-    tags: Option[List[Tag]])(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[List[ConversationHeader]] = {
+    tags: Option[List[Tag]])(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[List[MessageHeader]] = {
     val queryParams = queryParamsBuilder(enrolmentKeys, customerEnrolments, tags)
     httpClient
-      .GET[List[ConversationHeader]](
-        s"$secureMessageBaseUrl/secure-messaging/conversations",
-        queryParams.getOrElse(List()))
+      .GET[List[MessageHeader]](s"$secureMessageBaseUrl/secure-messaging/messages", queryParams.getOrElse(List()))
   }
 
   def getCount(

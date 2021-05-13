@@ -29,7 +29,8 @@ object AppDependencies {
     "com.typesafe.play"       %% "play-json-joda"             % "2.9.1",
     "com.iheart"              %% "play-swagger"               % "0.10.4",
     "org.typelevel"           %% "cats-core"                  % "2.6.0",
-    "org.scala-lang.modules"  %% "scala-xml"                  % "1.3.0"
+    "org.scala-lang.modules"  %% "scala-xml"                  % "1.3.0",
+    "com.beachape"            %% "enumeratum-play"            % "1.5.17"
   )
 
   val test = Seq(

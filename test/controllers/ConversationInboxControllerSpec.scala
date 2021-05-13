@@ -20,7 +20,7 @@ import akka.util.Timeout
 import config.AppConfig
 import connectors.SecureMessageConnector
 import controllers.generic.models.{ CustomerEnrolment, Tag }
-import models.ConversationHeader
+import models.{ MessageHeader, MessageType }
 import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -33,8 +33,8 @@ import play.api.test.Helpers.{ GET, contentAsString, status }
 import play.api.test.{ FakeRequest, Helpers }
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.partials.conversationInbox
-import views.viewmodels.{ ConversationInbox }
+import views.html.partials.messageInbox
+import views.viewmodels.MessageInbox
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -55,15 +55,17 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
         .thenReturn(
           Future(
             List(
-              ConversationHeader(
-                "cdcm",
-                "D-80542-20201120",
+              MessageHeader(
+                MessageType.Conversation,
+                "123456",
                 "DMS7324874993",
                 new DateTime(),
                 Some("CDS Exports Team"),
                 unreadMessages = true,
-                1))))
-      when(mockConversationsInboxPartial.apply(any[ConversationInbox])(any[Messages])).thenReturn(new Html("test"))
+                1,
+                Some("D-80542-20201120"),
+                Some("cdcm")))))
+      when(mockConversationsInboxPartial.apply(any[MessageInbox])(any[Messages])).thenReturn(new Html("test"))
       private val controller = new ConversationInboxController(
         mockAppConfig,
         Helpers.stubMessagesControllerComponents(),
@@ -87,7 +89,7 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
           ArgumentMatchers.eq(None),
           ArgumentMatchers.eq(None)
         )(any[ExecutionContext], any[HeaderCarrier])).thenReturn(Future(List()))
-      when(mockConversationsInboxPartial.apply(any[ConversationInbox])(any[Messages])).thenReturn(new Html("test"))
+      when(mockConversationsInboxPartial.apply(any[MessageInbox])(any[Messages])).thenReturn(new Html("test"))
       private val controller = new ConversationInboxController(
         mockAppConfig,
         Helpers.stubMessagesControllerComponents(),
@@ -106,7 +108,7 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
     implicit val mockAppConfig: AppConfig = mock[AppConfig]
     val mockMessagesApi: MessagesApi = mock[MessagesApi]
     implicit val messages: MessagesImpl = MessagesImpl(Lang("en"), mockMessagesApi)
-    val mockConversationsInboxPartial: conversationInbox = mock[conversationInbox]
+    val mockConversationsInboxPartial: messageInbox = mock[messageInbox]
     val mockSecureMessageConnector: SecureMessageConnector = mock[SecureMessageConnector]
 
   }

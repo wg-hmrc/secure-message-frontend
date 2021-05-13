@@ -21,21 +21,24 @@ import play.api.libs.json.JodaReads.jodaDateReads
 import play.api.libs.json.JodaWrites.jodaDateWrites
 import play.api.libs.json.{ Format, Json, OFormat }
 
-final case class ConversationHeader(
-  client: String,
-  conversationId: String,
+final case class MessageHeader(
+  messageType: MessageType,
+  id: String,
   subject: String,
   issueDate: DateTime,
   senderName: Option[String],
   unreadMessages: Boolean,
-  count: Int)
+  count: Int,
+  conversationId: Option[String],
+  client: Option[String]
+)
 
-object ConversationHeader {
+object MessageHeader {
 
   private val dateFormatString = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 
   implicit val dateFormat: Format[DateTime] = Format(jodaDateReads(dateFormatString), jodaDateWrites(dateFormatString))
 
-  implicit val conversationHeaderReads: OFormat[ConversationHeader] = Json.format[ConversationHeader]
+  implicit val conversationHeaderReads: OFormat[MessageHeader] = Json.format[MessageHeader]
 
 }

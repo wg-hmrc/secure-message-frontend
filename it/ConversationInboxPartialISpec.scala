@@ -17,7 +17,7 @@
 import com.google.inject.AbstractModule
 import connectors.SecureMessageConnector
 import controllers.generic.models.{ CustomerEnrolment, Tag }
-import models.ConversationHeader
+import models.{ MessageHeader, MessageType }
 import net.codingwell.scalaguice.ScalaModule
 import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers
@@ -60,14 +60,16 @@ class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with Mocki
         )(any[ExecutionContext], any[HeaderCarrier])).thenReturn(
         Future.successful(
           List(
-            ConversationHeader(
-              "cdcm",
+            MessageHeader(
+              MessageType.Conversation,
+              "123456",
               "D-80542-20201120",
-              "DMS7324874993",
               new DateTime(),
               Some("CDS Exports Team"),
               unreadMessages = true,
-              1)))
+              1,
+              Some(""),
+              Some(""))))
       )
       val response = wsClient
         .url(resource("/secure-message-frontend/cdcm/messages?" +
