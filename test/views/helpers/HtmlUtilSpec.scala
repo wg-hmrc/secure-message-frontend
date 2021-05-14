@@ -17,7 +17,8 @@
 package views.helpers
 
 import models.{ FirstReaderInformation, MessageHeader, MessageType }
-import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.{ DateTime }
 import org.scalatestplus.play.PlaySpec
 import views.helpers.HtmlUtil._
 
@@ -43,7 +44,7 @@ class HtmlUtilSpec extends PlaySpec {
     decodeBase64String("V2hhdCBhIGRheSE=") mustBe "What a day!"
   }
 
-  "Inbox creation date" must {
+  "Inbox creation date for conversation" must {
     "return correct date if date is not today" in {
       getMessageDate(
         MessageHeader(
@@ -63,6 +64,39 @@ class HtmlUtilSpec extends PlaySpec {
       val messageDateOrTime =
         getMessageDate(MessageHeader(MessageType.Conversation, "", "", dateTime, None, false, 1, Some(""), Some("")))
       messageDateOrTime.takeRight(5) must be(":29am")
+    }
+  }
+
+  "Inbox creation date for message" must {
+    "return correct date if date is not today" in {
+      getMessageDate(MessageHeader(
+        MessageType.Letter,
+        "",
+        "",
+        DateTime.parse("2021-02-19"),
+        None,
+        false,
+        1,
+        Some(""),
+        Some(""))) must be("19 February 2021")
+    }
+
+    "return today's Date even if date is today" in {
+      val dateTime = DateTime.parse(s"${DateTime.now().toLocalDate}")
+      val dtf = DateTimeFormat.forPattern("d MMMM yyyy")
+      val messageDateOrTime =
+        getMessageDate(
+          MessageHeader(
+            MessageType.Letter,
+            "",
+            "",
+            DateTime.parse(dateTime.toString),
+            None,
+            false,
+            1,
+            Some(""),
+            Some("")))
+      messageDateOrTime must be(dtf.print(dateTime))
     }
   }
 

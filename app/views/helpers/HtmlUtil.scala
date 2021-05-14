@@ -43,10 +43,13 @@ object HtmlUtil {
       case _          => messages("conversation.inbox.default.sender")
     }
 
-  def getMessageDate(conversationHeader: MessageHeader): String =
-    if (conversationHeader.issueDate.toLocalDate.toString === DateTime.now.toLocalDate.toString) {
+  def getMessageDate(conversationHeader: MessageHeader): String = {
+    val isConversation = conversationHeader.messageType.entryName === MessageType.Conversation.entryName
+    val isToday = conversationHeader.issueDate.toLocalDate.toString === DateTime.now.toLocalDate.toString
+    if (isToday && isConversation) {
       dtfHours.print(conversationHeader.issueDate) + amOrPm.print(conversationHeader.issueDate).toLowerCase
     } else { dtf.print(conversationHeader.issueDate) }
+  }
 
   def getMessageUrl(clientService: String, messageHeader: MessageHeader): String =
     if (messageHeader.messageType.entryName === MessageType.Conversation.entryName) {
