@@ -68,7 +68,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
       val pageContent = Jsoup.parse(response.body)
       pageContent
         .select("h1.govuk-heading-l.margin-top-small.margin-bottom-small")
-        .text() mustBe "This subject needs action"
+        .text() mustBe "CDS-EXPORTS Subject"
       response.body must include("CDS Exports Team sent")
       pageContent.select("div.govuk-body").first().text() mustBe "Message body!!"
       pageContent
