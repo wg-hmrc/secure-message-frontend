@@ -33,8 +33,7 @@ class conversationInboxSpec extends TemplateUnitSpec[MessageInbox] {
           pageContent must include("""<h1 class="govuk-heading-xl">test</h1>""")
           pageContent must include("""<span class="govuk-visually-hidden"> 1 unread</span>""")
           pageContent must include("""<span  class="govuk-visually-hidden"> 5 in total </span>""")
-          pageContent must include(
-            """<div class="header-status"><span aria-hidden="true" class="govuk-visually-hidden" ></span></div>""")
+          pageContent must include("""<div class="header-status"><span class="govuk-visually-hidden" ></span></div>""")
           pageContent must include("""<div class="govuk-!-font-weight-bold header-subject"></div>""")
           pageContent must include("""<div class="govuk-!-font-weight-bold header-date"></div>""")
         }
