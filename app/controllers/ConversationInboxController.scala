@@ -54,7 +54,7 @@ class ConversationInboxController @Inject()(
       case Left(e) => Future.successful(BadRequest(e.getMessage))
       case _ =>
         authorised() {
-          secureMessageConnector.getConversationList(enrolmentKeys, customerEnrolments, tags).flatMap { conversations =>
+          secureMessageConnector.getInboxList(enrolmentKeys, customerEnrolments, tags).flatMap { conversations =>
             val messages = this.messagesApi.preferred(request)
             Future.successful(
               Ok(

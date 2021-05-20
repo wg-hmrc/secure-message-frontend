@@ -51,6 +51,40 @@ class ConversationController @Inject()(
   formProvider: MessageFormProvider)(implicit ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport with AuthorisedFunctions with Logging {
 
+  def displayMessage(
+    clientService: String,
+    rawId: String,
+    showReplyForm: Boolean
+  ): Action[AnyContent] = Action.async { implicit request =>
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+    logger.debug(s"service: $clientService")
+
+    def contentHelper[A](content: String => Future[A], view: A => Html): Future[Result] =
+      content(rawId).map { a =>
+        Ok(view(a))
+      }
+    rawId match {
+      case Id("letter", _) =>
+        authorised() { contentHelper(secureMessageConnector.getLetterContent _, letterView.apply _) }
+      case Id("conversation", id) =>
+        authorised() {
+          contentHelper(
+            (s: String) => {
+              val replyFormActionUrl = s"/$clientService/messages/$id"
+              val replyFormUrl = s"$replyFormActionUrl?showReplyForm=true#reply-form"
+              val replyForm =
+                messageReply(
+                  MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormUrl), Seq.empty[String], ""))
+              secureMessageConnector.getConversationContent(s).map(getConversationView(_, replyForm))
+            },
+            conversationView.apply _
+          )
+        }
+      case _ => Future.successful(BadRequest("Invalid URL path"))
+    }
+  }
+
+  //legacy
   def display(
     clientService: String,
     client: String,
@@ -105,6 +139,54 @@ class ConversationController @Inject()(
 
   val form: Form[CustomerMessage] = formProvider()
 
+  def saveReplyMessage(clientService: String, id: String): Action[AnyContent] = Action.async { implicit request =>
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+    val replyFormActionUrl = s"/$clientService/conversation/$id"
+    val replyFormUrl = s"$replyFormActionUrl?showReplyForm=true#reply-form"
+    authorised() {
+      form
+        .bindFromRequest()
+        .fold(
+          form => {
+            secureMessageConnector
+              .getConversationContent(id)
+              .flatMap {
+                conversation =>
+                  val messages = {
+                    messagePartial(conversation.messages)
+                  }
+                  val firstMessage = messages.headOption.getOrElse(
+                    throw new NotFoundException("There can't be a conversation without a message"))
+                  val replyForm =
+                    messageReply(
+                      MessageReply(
+                        showReplyForm = true,
+                        replyFormActionUrl,
+                        getReplyIcon(replyFormUrl),
+                        form.errors.map(_.message),
+                        content = form.data.getOrElse("content", "")))
+                  Future.successful(
+                    BadRequest(
+                      conversationView(
+                        ConversationView(
+                          conversation.subject,
+                          firstMessage,
+                          replyForm,
+                          messages.tail,
+                          form.errors.map(_.message)))))
+              }
+
+          },
+          message =>
+            secureMessageConnector.saveCustomerMessage(id, message).map { sent =>
+              val redirectURL = s"/$clientService/messages/$id/result"
+              if (sent) Ok(redirectURL) else BadGateway("Failed to send message")
+          }
+        )
+    }
+  }
+
+  //legacy
   def saveReply(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action.async {
     implicit request =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
@@ -153,6 +235,19 @@ class ConversationController @Inject()(
       }
   }
 
+  def displayResult(clientService: String, id: String): Action[AnyContent] = Action {
+    // TODO try to ignore this id in parameter
+    logger.debug(s"id: $id")
+    Ok(
+      messageResult(
+        s"/$clientService/messages",
+        Panel(
+          title = Text("Message sent"),
+          content = Text("We received your message")
+        )))
+  }
+
+  //legacy
   def result(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action {
     // FIXME - log statement is just to keep compiler happy - do we really need these parameters?
     logger.debug(s"service: $clientService, client: $client, conversation: $conversationId")
@@ -163,32 +258,6 @@ class ConversationController @Inject()(
           title = Text("Message sent"),
           content = Text("We received your message")
         )))
-  }
-
-  def displayMessage(
-    clientService: String,
-    rawId: String
-  ): Action[AnyContent] = Action.async { implicit request =>
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
-    logger.debug(s"service: $clientService")
-
-    def contentHelper[A](content: String => Future[A], view: A => Html): Future[Result] =
-      content(rawId).map { a =>
-        Ok(view(a))
-      }
-
-    rawId match {
-      case Id("letter", _) =>
-        authorised() { contentHelper(secureMessageConnector.getLetterContent _, letterView.apply _) }
-      case Id("conversation", _) =>
-        authorised() {
-          contentHelper((s: String) => {
-            secureMessageConnector.getConversationContent(s).map(getConversationView(_, Html("")))
-          }, conversationView.apply _)
-        }
-      case _ => Future.successful(BadRequest("Invalid URL path"))
-    }
-
   }
 
   private[controllers] def messagePartial(messages: List[Message])(implicit request: Request[_]) =

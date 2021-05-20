@@ -63,7 +63,7 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
                 Some("123"),
                 Some("CDCM")))))
       private val result = await(
-        connector.getConversationList(
+        connector.getInboxList(
           Some(List("HMRC-CUS-ORG")),
           Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777"))),
           Some(List(Tag("notificationType", "CDS Exports")))))

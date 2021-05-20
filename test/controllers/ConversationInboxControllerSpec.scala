@@ -47,7 +47,7 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
     "return 200 when secure message connector returns valid data" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
       when(
-        mockSecureMessageConnector.getConversationList(
+        mockSecureMessageConnector.getInboxList(
           ArgumentMatchers.eq(Some(List("HMRC-CUS-ORG"))),
           ArgumentMatchers.eq(Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777")))),
           ArgumentMatchers.eq(Some(List(Tag("notificationType", "CDS Exports"))))
@@ -84,7 +84,7 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
     "return BAD REQUEST when query filter parameters are not valid" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
       when(
-        mockSecureMessageConnector.getConversationList(
+        mockSecureMessageConnector.getInboxList(
           ArgumentMatchers.eq(None),
           ArgumentMatchers.eq(None),
           ArgumentMatchers.eq(None)

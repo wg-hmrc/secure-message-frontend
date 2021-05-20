@@ -31,7 +31,7 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
 
   private val secureMessageBaseUrl = servicesConfig.baseUrl("secure-message")
 
-  def getConversationList(
+  def getInboxList(
     enrolmentKeys: Option[List[String]],
     customerEnrolments: Option[List[CustomerEnrolment]],
     tags: Option[List[Tag]])(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[List[MessageHeader]] = {
@@ -73,6 +73,23 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
   def getConversationContent(rawId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Conversation] =
     httpClient.GET[Conversation](s"$secureMessageBaseUrl/secure-messaging/messages/$rawId")
 
+  def saveCustomerMessage(id: String, message: CustomerMessage)(
+    implicit ec: ExecutionContext,
+    hc: HeaderCarrier): Future[Boolean] =
+    httpClient
+      .POST[CustomerMessage, HttpResponse](
+        s"$secureMessageBaseUrl/secure-messaging/messages/$id/customer-message",
+        message)
+      .map { response =>
+        response.status match {
+          case CREATED => true
+          case status =>
+            logger.error(s"POST of customer message failed. Got response status $status with message ${response.body}")
+            false
+        }
+      }
+
+  //legacy
   def postCustomerMessage(client: String, conversationId: String, message: CustomerMessage)(
     implicit ec: ExecutionContext,
     hc: HeaderCarrier): Future[Boolean] =

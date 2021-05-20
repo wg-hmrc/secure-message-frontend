@@ -283,7 +283,7 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
     "return BAD REQUEST when MesssageType not letter or conversation" in new TestCase {
       private val id = encodeBase64String("messageType/someId")
 
-      private val result = controller.displayMessage("some-service", id)(
+      private val result = controller.displayMessage("some-service", id, showReplyForm = false)(
         FakeRequest("GET", s"/some-service/messages/$id")
       )
       status(result) mustBe Status.BAD_REQUEST
@@ -297,7 +297,7 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
         .thenReturn(Future.successful(letter))
       when(mockletterView.apply(any[Letter])(any[Messages]))
         .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
-      private val result = controller.displayMessage("some-service", id)(
+      private val result = controller.displayMessage("some-service", id, showReplyForm = false)(
         FakeRequest("GET", s"/some-service/messages/$id")
       )
       status(result) mustBe Status.OK
@@ -326,7 +326,7 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       when(mockConversationView.apply(any[ConversationView])(any[Messages]))
         .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
 
-      private val result = controller.displayMessage("some-service", id)(
+      private val result = controller.displayMessage("some-service", id, showReplyForm = false)(
         FakeRequest("GET", s"/some-service/messages/$id")
       )
 

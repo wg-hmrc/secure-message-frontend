@@ -9,14 +9,24 @@ GET         /:clientService/messages                                           c
 
 GET         /messages/count                                                    controllers.ApiController.count(enrolmentKey: Option[List[String]], enrolment: Option[List[CustomerEnrolment]], tag: Option[List[Tag]])
 
-GET         /:clientService/conversation/:client/:conversationId               controllers.ConversationController.display(clientService, client, conversationId, showReplyForm: Boolean ?= false)
+GET         /:clientService/messages/:id                                       controllers.ConversationController.displayMessage(clientService, id, showReplyForm: Boolean ?= false)
 
-GET         /:clientService/messages/:id                                       controllers.ConversationController.displayMessage(clientService, id)
++ nocsrf
+POST        /:clientService/messages/:id                                       controllers.ConversationController.saveReplyMessage(clientService, id)
+
+GET         /:clientService/messages/:id/result                                controllers.ConversationController.displayResult(clientService, id)
+
+
+###legeacy endpoints
+GET         /:clientService/conversation/:client/:conversationId               controllers.ConversationController.display(clientService, client, conversationId, showReplyForm: Boolean ?= false)
 
 + nocsrf
 POST        /:clientService/conversation/:client/:conversationId               controllers.ConversationController.saveReply(clientService, client, conversationId)
 
+
 GET         /:clientService/conversation/:client/:conversationId/result        controllers.ConversationController.result(clientService, client, conversationId)
+
+
 
 ### NoDocs ###
 GET         /language/:lang                                                    controllers.LanguageSwitchController.selectLanguage(lang: Language)

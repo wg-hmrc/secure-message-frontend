@@ -117,7 +117,7 @@ class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with Mocki
 
     "return status code OK 200" in {
       when(
-        mockSecureMessageConnector.getConversationList(
+        mockSecureMessageConnector.getInboxList(
           ArgumentMatchers.eq(Some(List("HMRC-CUS-ORG"))),
           ArgumentMatchers.eq(Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777")))),
           ArgumentMatchers.eq(Some(List(Tag("notificationType", "CDS Exports"))))
@@ -146,7 +146,7 @@ class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with Mocki
 
     "return status code BAD REQUEST 400 when provided with filter parameters that are invalid (not allowed)" in {
       when(
-        mockSecureMessageConnector.getConversationList(
+        mockSecureMessageConnector.getInboxList(
           ArgumentMatchers.eq(None),
           ArgumentMatchers.eq(None),
           ArgumentMatchers.eq(None)
