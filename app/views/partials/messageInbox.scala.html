@@ -99,7 +99,7 @@
 <div class="govuk-body">
   <div class="messages-grid">
     <!-- status header -->
-    <div class="header-status"><span class="govuk-visually-hidden" >@messages("conversation.inbox.heading.status")</span></div>
+    <div class="header-status"></div>
     <!-- sender header -->
     <div class="govuk-!-font-weight-bold header-subject">@messages("conversation.inbox.heading.subject")</div>
     <!-- date header -->
@@ -143,7 +143,7 @@
             <span class="govuk-visually-hidden">Subject</span><span class="underline black-text">{conversationHeader.subject}</span>
           }
           val subjectMaybeWithCount = if(conversationHeader.count > 1){
-            subjectMaybeRead ++ <span aria--hidden="true" class="message-counter non-breaking">({conversationHeader.count})</span><span class="govuk-visually-hidden">{conversationHeader.count} messages in this conversation</span>
+            subjectMaybeRead ++ <span aria-hidden="true" class="message-counter non-breaking">({conversationHeader.count})</span><span class="govuk-visually-hidden">{conversationHeader.count} messages in this conversation</span>
           } else {
             subjectMaybeRead
           }
