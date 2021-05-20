@@ -27,7 +27,7 @@ object AppDependencies {
     "uk.gov.hmrc"             %% "play-language"              % "4.10.0-play-27",
     "uk.gov.hmrc"             %% "url-builder"                % "3.4.0-play-27",
     "com.typesafe.play"       %% "play-json-joda"             % "2.9.1",
-    "com.iheart"              %% "play-swagger"               % "0.10.4",
+    "com.iheart"              %% "play-swagger"               % "0.10.5",
     "org.typelevel"           %% "cats-core"                  % "2.6.1",
     "org.scala-lang.modules"  %% "scala-xml"                  % "2.0.0",
     "com.beachape"            %% "enumeratum-play"            % "1.5.17"
