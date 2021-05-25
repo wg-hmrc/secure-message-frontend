@@ -23,45 +23,51 @@
 @(params: MessageInbox)(implicit messages: Messages)
 @import params._
 <style>
-.header-status {
-  grid-column:1;
-  border-bottom:1px solid #a1acb2;
-  padding-bottom:1ex;margin-bottom:1ex;
+
+
+@@media screen and (max-width: 414px) {
+ 
+  .mob-align-right {
+    text-align: right
+  }
+
+  .mob-nowrap {
+    white-space: nowrap;
+  }
+
+
 }
-.header-subject {
-  grid-column:2/5;
-  border-bottom:1px solid #a1acb2;padding-bottom:1ex;
-  margin-bottom:1ex;
-}
-.header-date {
-  grid-column:5/6;
-  border-bottom:1px solid #a1acb2;
-  padding-bottom:1ex;margin-bottom:1ex;
-}
-.conversation-status {
-  grid-column:1;
-  text-align:center;
-  padding-left: 1ex;
-  padding-right: 1ex;
-}
+
+
 .conversation-status-marker {
   display:inline-block;
   background-color:#1d70b8;
 }
+
+
+
 .last-message-date {
   grid-column:5/6;
 }
+
+
 .last-message-sender {
   grid-column:2/5;
   padding-right: 1em;
 }
+
+
 .conversation-subject {
   grid-column:2/6;
   padding-bottom:1em;
 }
+
+
 .black-text {
   color:#0b0c0c;
 }
+
+
 .dot-unread {
   height: 10px;
   width: 10px;
@@ -71,90 +77,134 @@
   overflow: hidden;
   text-indent: -99999px;
 }
+
+
 .underline {
   text-decoration: underline !important;
 }
 .no-underline {
   text-decoration: none !important;
 }
+
+
 .message-counter {
   font-size:90%;
   color:#6F777B;
   padding-left:1ex;
 }
+
+
 .non-breaking {
     font-size: 90%;
     color: #6F777B;
 }
-.messages-grid {
-    display: grid;
-    grid-template-columns: auto auto auto auto auto auto;
-}
-</style>
-<h1 class="govuk-heading-xl">@heading</h1>
 
-<span class="govuk-visually-hidden"> @params.unread unread</span>
-<span  class="govuk-visually-hidden"> @params.total in total </span>
+
+.break-long {
+  word-break: break-word;
+}
+
+
+.grid-header-row { 
+  border-bottom:1px solid rgba(177, 180, 182,0.75);
+padding:10px; 
+}
+
+.grid-wrapper  div.cols {
+  display: inline-block;
+}
+
+
+.col-status { width:5%;  margin-bottom: 5px; vertical-align: top; padding-top: 2px;}
+.col-sender {width: 65%;  margin-bottom: 5px;}
+.col-date {width:25%;  margin-bottom: 5px; vertical-align: top;}
+
+
+.message {margin-bottom: 10px; }
+.message-row { padding:10px;
+	border-bottom:  1px solid rgba(177, 180, 182,0.75)
+}
+.message-row:hover { background-color:#f3f2f1; }
+a.underline-fix { text-decoration: none; }
+.conversation-status { text-align:center;  padding-top: 7px;}
+
+</style>
+
+<h1 class="govuk-heading-xl">@heading</h1>
+<span class="govuk-visually-hidden">@params.unread unread, @params.total in total. Each message in the list includes its status (either unread or previously viewed), and its sender name, subject, and send time or date. If a message includes replies, then its subject says the number of messages in that conversation.</span>
 
 <div class="govuk-body">
-  <div class="messages-grid">
-    <!-- status header -->
-    <div class="header-status"></div>
-    <!-- sender header -->
-    <div class="govuk-!-font-weight-bold header-subject">@messages("conversation.inbox.heading.subject")</div>
-    <!-- date header -->
-    <div class="govuk-!-font-weight-bold header-date">@messages("conversation.inbox.heading.date")</div>
-    @for(conversationHeader <- conversationHeaders) {
-      <!-- status -->
-      <div class="conversation-status">@{
-        if(conversationHeader.unreadMessages) {
-          <a href={getMessageUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="no--underline" aria-hidden="true">
-              <span class="dot-unread">Unread</span>
-          </a>
-          <span class="govuk-visually-hidden">unread message</span>
-        } else {
-          <span class="govuk-visually-hidden">previously viewed message</span>
-        }
-      }</div>
+
+<div class="grid-wrapper">
+  <div class=" grid-header-row">
+  <div class="cols col-status "></div>
+  <div aria-hidden="true" class="cols col-sender govuk-!-font-weight-bold">@messages("conversation.inbox.heading.subject")</div>
+  <div aria-hidden="true" class="cols col-date govuk-!-font-weight-bold mob-align-right">@messages("conversation.inbox.heading.date")</div>
+</div>
+  @for((conversationHeader,index) <- conversationHeaders.zipWithIndex) {
+    
+   
+<!-- status -->    
+<div class="message-row">
+<a href=@{getMessageUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="underline-fix no--underline" >
+
+    <div class="col-status cols conversation-status">@{
+      if(conversationHeader.unreadMessages) {
+        <span aria-hidden="true" class="dot-unread">Unread</span>
+        <span class="govuk-visually-hidden">Number {index+1}. unread message,</span>
+      } else {
+        <span aria-hidden="true">&nbsp;</span>
+        <span class="govuk-visually-hidden">Number {index+1}. previously viewed message</span>
+      }
+    }</div>
+  
+ 
+
+    <div class="col-sender cols">
       <!-- sender -->
-      <div class="last-message-sender">@{
+      <div>@{
         val senderSpan = if(conversationHeader.unreadMessages){
-          <span class="govuk-visually-hidden">from</span><span class="govuk-!-font-weight-bold black-text">{getSenderName(conversationHeader)}</span>
+          <span class="govuk-visually-hidden">. from:</span><span class="govuk-!-font-weight-bold black-text break-long ">{getSenderName(conversationHeader)}</span>
         } else {
-          <span class="govuk-visually-hidden">from</span><span class='black-text'>{getSenderName(conversationHeader)}</span>
+          <span class="govuk-visually-hidden">. from:</span><span class='black-text break-long '>{getSenderName(conversationHeader)}</span>
         }
-        Link.toInternalPage(
-          url = getMessageUrl(clientService,conversationHeader),
-          Some(senderSpan.mkString),
-          None,
-          Some("no-underline")
-        ).toHtml
+        senderSpan
       }</div>
-      <!-- date -->
-      <div class="last-message-date">
-        <span class='@{if(conversationHeader.unreadMessages){"govuk-!-font-weight-bold"}} black-text'>@{getMessageDate(conversationHeader)}</span>
-      </div>
+
       <!-- subject -->
-      <div class="conversation-subject">
+      <div>
         <span>@{
           val subjectMaybeRead = if(conversationHeader.unreadMessages){
-            <span class="govuk-visually-hidden">Subject</span><span class="govuk-!-font-weight-bold underline black-text">{conversationHeader.subject}</span>
+            <span class="govuk-visually-hidden">. Subject:</span><span class="govuk-!-font-weight-bold underline black-text break-long ">{conversationHeader.subject}</span> <span class="govuk-visually-hidden">.</span>
           } else {
-            <span class="govuk-visually-hidden">Subject</span><span class="underline black-text">{conversationHeader.subject}</span>
+            <span class="govuk-visually-hidden">. Subject:</span><span class="underline black-text break-long ">{conversationHeader.subject}</span><span class="govuk-visually-hidden">.</span>
           }
           val subjectMaybeWithCount = if(conversationHeader.count > 1){
             subjectMaybeRead ++ <span aria-hidden="true" class="message-counter non-breaking">({conversationHeader.count})</span><span class="govuk-visually-hidden">{conversationHeader.count} messages in this conversation</span>
           } else {
             subjectMaybeRead
           }
-          Link.toInternalPage(
-            url = getMessageUrl(clientService,conversationHeader),
-            Some(subjectMaybeWithCount.mkString),
-            None,
-            Some("no-underline conversation-subject")
-          ).toHtml
+          subjectMaybeWithCount
         }</span>
       </div>
-    }
+    </div>
+   
+
+
+  <div class="col-date cols mob-align-right mob-nowrap">
+    <span class='@{if(conversationHeader.unreadMessages){"govuk-!-font-weight-bold"}} black-text'>@{getMessageDate(conversationHeader)}</span>
   </div>
+    
+  </a>
+</div>
+
+  }
+
+</div>
+
+
+
+
+
+ 
 </div>

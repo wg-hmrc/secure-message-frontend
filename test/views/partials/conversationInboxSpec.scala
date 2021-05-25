@@ -31,11 +31,13 @@ class conversationInboxSpec extends TemplateUnitSpec[MessageInbox] {
         case Success(component) => {
           val pageContent = component.body
           pageContent must include("""<h1 class="govuk-heading-xl">test</h1>""")
-          pageContent must include("""<span class="govuk-visually-hidden"> 1 unread</span>""")
-          pageContent must include("""<span  class="govuk-visually-hidden"> 5 in total </span>""")
-          pageContent must include("""<div class="header-status"></div>""")
-          pageContent must include("""<div class="govuk-!-font-weight-bold header-subject"></div>""")
-          pageContent must include("""<div class="govuk-!-font-weight-bold header-date"></div>""")
+          pageContent must include("""<span class="govuk-visually-hidden">""")
+          pageContent must include(
+            """1 unread, 5 in total. Each message in the list includes its status (either unread or previously viewed), and its sender name, subject, and send time or date. If a message includes replies, then its subject says the number of messages in that conversation.""")
+          pageContent must include(
+            """<div aria-hidden="true" class="cols col-sender govuk-!-font-weight-bold"></div>""")
+          pageContent must include(
+            """<div aria-hidden="true" class="cols col-date govuk-!-font-weight-bold mob-align-right"></div>""")
         }
         case _ => fail("There was a problem reading the test output")
       }
