@@ -148,10 +148,12 @@ a.underline-fix { text-decoration: none; }
     <div class="col-status cols conversation-status">@{
       if(conversationHeader.unreadMessages) {
         <span aria-hidden="true" class="dot-unread prefs__palette">Unread</span>
-        <span class="govuk-visually-hidden">Number {index+1}. Unread message,</span>
+
+
+        <span class="govuk-visually-hidden">Number {index+1}. Unread message.&nbsp;</span>
       } else {
-        <span aria-hidden="true">&nbsp;</span>
-        <span class="govuk-visually-hidden">Number {index+1}. Previously viewed message</span>
+        <!-- <span aria-hidden="true">&nbsp;</span> -->
+        <span class="govuk-visually-hidden">Number {index+1}. Previously viewed message.&nbsp;</span>
       }
     }</div>
   
@@ -161,9 +163,9 @@ a.underline-fix { text-decoration: none; }
       <!-- sender -->
       <div>@{
         val senderSpan = if(conversationHeader.unreadMessages){
-          <span class="govuk-visually-hidden">. From:</span><span class="govuk-!-font-weight-bold black-text break-long ">{getSenderName(conversationHeader)}</span>
+          <span class="govuk-visually-hidden">From:</span><span class="govuk-!-font-weight-bold black-text break-long ">{getSenderName(conversationHeader)}</span>
         } else {
-          <span class="govuk-visually-hidden">. From:</span><span class='black-text break-long '>{getSenderName(conversationHeader)}</span>
+          <span class="govuk-visually-hidden">From:</span><span class='black-text break-long '>{getSenderName(conversationHeader)}</span>
         }
         senderSpan
       }</div>
@@ -172,9 +174,9 @@ a.underline-fix { text-decoration: none; }
       <div>
         <span>@{
           val subjectMaybeRead = if(conversationHeader.unreadMessages){
-            <span class="govuk-visually-hidden">. Subject:</span><span class="govuk-!-font-weight-bold underline black-text break-long ">{conversationHeader.subject}</span> <span class="govuk-visually-hidden">.&nbsp;</span>
+            <span class="govuk-visually-hidden">. Subject:</span><span class="govuk-!-font-weight-bold underline black-text break-long ">{conversationHeader.subject}</span> <span class="govuk-visually-hidden">,&nbsp;</span>
           } else {
-            <span class="govuk-visually-hidden">. Subject:</span><span class="underline black-text break-long ">{conversationHeader.subject}</span><span class="govuk-visually-hidden">.&nbsp;</span>
+            <span class="govuk-visually-hidden">. Subject:</span><span class="underline black-text break-long ">{conversationHeader.subject}</span><span class="govuk-visually-hidden">,&nbsp;</span>
           }
           val subjectMaybeWithCount = if(conversationHeader.count > 1){
             subjectMaybeRead ++ <span aria-hidden="true" class="message-counter non-breaking">({conversationHeader.count})</span><span class="govuk-visually-hidden">{conversationHeader.count} messages in this conversation.</span>
