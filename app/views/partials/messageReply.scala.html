@@ -31,6 +31,12 @@
     .govuk-character-count {
         margin-bottom: 5px;
     }
+   
+   
+    span#reply-form-error + textarea {
+        border: 2px solid #d4351c;
+}
+
     </style>
     <hr aria-hidden="true" class="govuk-section-break govuk-section-break--m govuk-section-break--visible"/>
     @formWithCSRF(Call(method = "POST", url = replyFormUrl)) {
@@ -42,11 +48,12 @@
             threshold = Some(75),
             label = Label(
                 isPageHeading = false,
-                classes = "govuk-label--s",
+                classes = "govuk-label--s ",
                 content = Text(messages("conversation.reply.form.heading"))
             ),
             errorMessage = formErrors.headOption.map(error => ErrorMessage(content = Text(messages(error)))),
             value = Some(content),
+            classes ="",
             attributes = Map("spellcheck" -> "true")
         ))
 
