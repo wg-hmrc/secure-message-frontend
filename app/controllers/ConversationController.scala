@@ -197,7 +197,7 @@ class ConversationController @Inject()(
       .map(message =>
         messageContent(MessageView(
           senderName(message.senderInformation),
-          sentMessageConversationText(readableTime(message.senderInformation.sent)),
+          sentMessageConversationText(readableTime(message.senderInformation.sent, "en")),
           firstReadMessageConversationText(message.firstReader),
           readMessageConversationText,
           decodeBase64String(message.content),

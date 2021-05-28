@@ -20,7 +20,7 @@ import cats.implicits.catsSyntaxEq
 import models.{ FirstReaderInformation, MessageHeader, MessageType, SenderInformation }
 import org.apache.commons.codec.binary.Base64
 import org.joda.time._
-import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.{ DateTimeFormat, DateTimeFormatter }
 import play.api.i18n.Messages
 import play.twirl.api.Html
 
@@ -31,10 +31,34 @@ object HtmlUtil {
 
   private val dtf = dateTimeFormatWithLondonZone("d MMMM yyyy")
   private val dtfHours = dateTimeFormatWithLondonZone("h:mm")
-  private val conversationDateTimeFormat = dateTimeFormatWithLondonZone("d MMMM yyyy 'at' h:mm")
   private val amOrPm = dateTimeFormatWithLondonZone("a")
+//  private val welshMonths = List(
+//    "Ionawr",
+//    "Chwefror",
+//    "Mawrth",
+//    "Ebrill",
+//    "Mai",
+//    "Mehefin",
+//    "Gorffennaf",
+//    "Awst",
+//    "Medi",
+//    "Hydref",
+//    "Tachwedd",
+//    "Rhagfyr",
+//  )
 
-  private def dateTimeFormatWithLondonZone(pattern: String) =
+  def readableTime(dateTime: DateTime, langCode: String): String =
+    langCode match {
+//      case "cy" => {
+//        val welshMonth = welshMonths(dateTime.getMonthOfYear - 1)
+//        dateTimeFormatWithLondonZone(s"d '$welshMonth' yyyy 'am' h:mm")
+//          .print(dateTime) + amOrPm.print(dateTime).toLowerCase
+//      }
+      case _ =>
+        dateTimeFormatWithLondonZone(s"d MMMM yyyy 'at' h:mm").print(dateTime) + amOrPm.print(dateTime).toLowerCase
+    }
+
+  private def dateTimeFormatWithLondonZone(pattern: String): DateTimeFormatter =
     DateTimeFormat.forPattern(pattern).withZone(DateTimeZone.forID("Europe/London"))
 
   def getSenderName(conversationHeader: MessageHeader)(implicit messages: Messages): String =
@@ -61,13 +85,10 @@ object HtmlUtil {
       s"/$clientService/messages/${messageHeader.id}"
     }
 
-  def readableTime(dateTime: DateTime): String =
-    conversationDateTimeFormat.print(dateTime) + amOrPm.print(dateTime).toLowerCase
-
   def readableDate(date: LocalDate): String =
     dtf.print(date)
 
-// sender information for an org is mandatory. if for any reason if its missing we are putting as you, this will be covered in diff story
+  // sender information for an org is mandatory. if for any reason if its missing we are putting as you, this will be covered in diff story
   def senderName(sender: SenderInformation): String = sender.name match {
     case Some(name)       => name
     case _ if sender.self => "You"
@@ -76,10 +97,10 @@ object HtmlUtil {
 
   def sentMessageConversationText(time: String): String = s"this on $time"
 
-  def readMessageConversationText: String = s"this on ${readableTime(DateTime.now)}"
+  def readMessageConversationText: String = s"this on ${readableTime(DateTime.now, "en")}"
 
   def firstReadMessageConversationText(firstReader: Option[FirstReaderInformation]): Option[String] =
-    firstReader.map(r => s"on ${readableTime(r.read)}")
+    firstReader.map(r => s"on ${readableTime(r.read, "en")}")
 
   def decodeBase64String(input: String): String =
     new String(Base64.decodeBase64(input.getBytes("UTF-8")))

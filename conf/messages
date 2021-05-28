@@ -7,7 +7,6 @@ conversation.page.heading = Messages between you and HMRC
 conversation.page.recent.messages.heading = Your messages
 conversation.page.archive.messages.heading = Archived messages
 conversation.page.recent.messages.summary = Recent and unread messages
-conversation.page.archive.messages.summary = Messages you have read, older than 30 days
 conversation.page.filter.text = Filter your messages
 conversation.page.subject = Subject
 conversation.page.date = Date
@@ -16,6 +15,11 @@ conversation.inbox.title = Messages between you and HMRC
 conversation.inbox.heading.status = Status
 conversation.inbox.heading.subject = Subject
 conversation.inbox.heading.date = Date
+conversation.inbox.subject.count = messages in this conversation
+conversation.inbox.heading.unread = unread
+conversation.inbox.heading.total = in total
+conversation.inbox.status.previously-viewed = previously viewed message
+conversation.inbox.last-message-from = from
 
 conversation.reply.form.heading = Reply to this message
 conversation.reply.form.error_summary.heading = There is a problem
@@ -25,3 +29,12 @@ conversation.reply.form.send.button = Send
 
 message.sent_on = sent this on
 message.first_read_on = First read on
+message.first_viewed_on = First viewed on
+message.at = at
+
+confirmation.heading = Message sent
+confirmation.sub.heading = We received your message
+confirmation.what.next = What happens next
+confirmation.step1 = You do not need to do anything now.
+confirmation.step2 = We will contact you if we need more information.
+confirmation.back = Back to your messages

@@ -30,7 +30,7 @@ object AppDependencies {
     "com.iheart"              %% "play-swagger"               % "0.10.5",
     "org.typelevel"           %% "cats-core"                  % "2.6.1",
     "org.scala-lang.modules"  %% "scala-xml"                  % "2.0.0",
-    "com.beachape"            %% "enumeratum-play"            % "1.5.17"
+    "com.beachape"            %% "enumeratum-play"            % "1.5.17",
   )
 
   val test = Seq(
@@ -44,7 +44,7 @@ object AppDependencies {
     "org.mockito"             % "mockito-core"               % "3.10.0"           % "test, it",
     "com.vladsch.flexmark"    % "flexmark-all"               % "0.36.8"          % "test, it",
     "org.pegdown"             % "pegdown"                    % "1.6.0"           % "test, it",
-    "net.codingwell"          %% "scala-guice"               % "5.0.0"           % "test, it"
+    "net.codingwell"          %% "scala-guice"               % "5.0.1"           % "test, it"
   )
 
   val dependencyOverrides = Seq(

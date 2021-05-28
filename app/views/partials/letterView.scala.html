@@ -53,7 +53,7 @@
   @letter.firstReaderInformation.map{s =>
    <p class="message_time faded-text--small govuk-!-margin-top-0 govuk-!-margin-bottom-6">
     <span aria-hidden="true" class="govuk-caption-m">
-     <span class="govuk-!-font-weight-bold">@messages("message.first_read_on")</span> @readableTime(s.read)
+     <span class="govuk-!-font-weight-bold">@messages("message.first_read_on")</span> @readableTime(s.read, messages.lang.code)
     </span>
    </p>
   }

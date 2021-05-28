@@ -26,18 +26,18 @@ import views.helpers.HtmlUtil._
 class HtmlUtilSpec extends PlaySpec {
 
   "conversation readableTime function returns correct readable timestamp" in {
-    readableTime(DateTime.parse("2021-02-19T10:29:47.275Z")) must be("19 February 2021 at 10:29am")
+    readableTime(DateTime.parse("2021-02-19T10:29:47.275Z"), "en") must be("19 February 2021 at 10:29am")
   }
 
   "readMessageConversationText function returns correct read message text" in {
     val testTime = DateTime.now
-    readMessageConversationText must be(s"this on ${readableTime(testTime)}")
+    readMessageConversationText must be(s"this on ${readableTime(testTime, "en")}")
   }
 
   "firstReadMessageConversationText function returns correct first read message text" in {
     val testTime = DateTime.now
     val firstReader = Some(FirstReaderInformation(Some("Name"), testTime))
-    firstReadMessageConversationText(firstReader) must be(Some(s"on ${readableTime(testTime)}"))
+    firstReadMessageConversationText(firstReader) must be(Some(s"on ${readableTime(testTime, "en")}"))
   }
 
   "decodeBase64String function should return decoded string" in {

@@ -28,8 +28,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.partials.messageInbox
 import views.viewmodels.MessageInbox
-
 import javax.inject.{ Inject, Singleton }
+import play.api.Logger.logger
+
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
@@ -56,6 +57,7 @@ class ConversationInboxController @Inject()(
         authorised() {
           secureMessageConnector.getConversationList(enrolmentKeys, customerEnrolments, tags).flatMap { conversations =>
             val messages = this.messagesApi.preferred(request)
+            logger.error("*************** " + messages.lang.language)
             Future.successful(
               Ok(
                 inbox.apply(
