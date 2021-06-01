@@ -18,8 +18,10 @@ conversation.inbox.heading.date = Date
 conversation.inbox.subject.count = messages in this conversation
 conversation.inbox.heading.unread = unread
 conversation.inbox.heading.total = in total
+conversation.inbox.heading.description = Each message in the list includes its status (either unread or previously viewed), and its sender name, subject, and send time or date. If a message includes replies, then its subject says the number of messages in that conversation.
 conversation.inbox.status.previously-viewed = previously viewed message
-conversation.inbox.last-message-from = from
+conversation.inbox.from = from
+
 
 conversation.reply.form.heading = Reply to this message
 conversation.reply.form.error_summary.heading = There is a problem
