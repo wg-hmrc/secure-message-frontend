@@ -43,12 +43,12 @@ import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
-class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with MockAuthConnector {
+class MessageControllerSpec extends PlaySpec with GuiceOneAppPerSuite with MockAuthConnector {
 
   implicit val mat: Materializer = NoMaterializer
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  "Conversation Controller" must {
+  "Message Controller" must {
 
     "return message partial with 1 message" in new TestCase {
       val messages = List(
@@ -125,10 +125,9 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       messagesContent must include("Message body!")
     }
 
-    "return conversation partial" in new TestCase {
+    "return conversation partial legacy" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
-      when(
-        mockSecureMessageConnector.getConversation(any[String], any[String])(any[ExecutionContext], any[HeaderCarrier]))
+      when(mockSecureMessageConnector.getConversationContent(any[String])(any[ExecutionContext], any[HeaderCarrier]))
         .thenReturn(Future.successful(Conversation(
           client,
           conversationId,
@@ -156,8 +155,9 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
     "save a customer reply and return OK with a redirection URL" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
-      when(mockSecureMessageConnector
-        .postCustomerMessage(any[String], any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
+      when(
+        mockSecureMessageConnector
+          .saveCustomerMessage(any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
         .thenReturn(Future.successful(true))
       private val result = controller.saveReply("some-service", "111", "DA123")(
         FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(
@@ -170,8 +170,7 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
     "return BAD REQUEST when the payload is not valid" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
 
-      when(
-        mockSecureMessageConnector.getConversation(any[String], any[String])(any[ExecutionContext], any[HeaderCarrier]))
+      when(mockSecureMessageConnector.getConversationContent(any[String])(any[ExecutionContext], any[HeaderCarrier]))
         .thenReturn(Future.successful(Conversation(
           client,
           conversationId,
@@ -199,8 +198,7 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
       mockAuthorise[Unit]()(Future.successful(()))
 
-      when(
-        mockSecureMessageConnector.getConversation(any[String], any[String])(any[ExecutionContext], any[HeaderCarrier]))
+      when(mockSecureMessageConnector.getConversationContent(any[String])(any[ExecutionContext], any[HeaderCarrier]))
         .thenReturn(Future.successful(Conversation(
           client,
           conversationId,
@@ -218,8 +216,9 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       when(mockConversationView.apply(any[ConversationView])(any[Messages]))
         .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
 
-      when(mockSecureMessageConnector
-        .postCustomerMessage(any[String], any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
+      when(
+        mockSecureMessageConnector
+          .saveCustomerMessage(any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
         .thenReturn(Future.successful(true))
       private val result = controller.saveReply("some-service", "111", "DA123")(
         FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(("content", "")))
@@ -229,8 +228,7 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
     "return BAD REQUEST when the payload exceeds 4000 chars" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
       val textLength4001: String = List.fill(4001)("a").mkString
-      when(
-        mockSecureMessageConnector.getConversation(any[String], any[String])(any[ExecutionContext], any[HeaderCarrier]))
+      when(mockSecureMessageConnector.getConversationContent(any[String])(any[ExecutionContext], any[HeaderCarrier]))
         .thenReturn(Future.successful(Conversation(
           client,
           conversationId,
@@ -248,8 +246,9 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       when(mockConversationView.apply(any[ConversationView])(any[Messages]))
         .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
 
-      when(mockSecureMessageConnector
-        .postCustomerMessage(any[String], any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
+      when(
+        mockSecureMessageConnector
+          .saveCustomerMessage(any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
         .thenReturn(Future.successful(true))
       private val result = controller.saveReply("some-service", "111", "DA123")(
         FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(
@@ -259,8 +258,9 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
     "return BAD GATEWAY when the message can't be sent" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
-      when(mockSecureMessageConnector
-        .postCustomerMessage(any[String], any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
+      when(
+        mockSecureMessageConnector
+          .saveCustomerMessage(any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
         .thenReturn(Future.successful(false))
       private val result = controller.saveReply("some-service", "111", "DA123")(
         FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(
@@ -340,6 +340,148 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
       controller.Id.unapply(encodeBase64String("letter/123")) mustBe Some(("letter", "123"))
       controller.Id.unapply("letter/1233") mustBe None
     }
+
+    "saveReplyMessage" must {
+      "redirect to result page when message is saved" in new TestCase {
+        mockAuthorise[Unit]()(Future.successful(()))
+        when(
+          mockSecureMessageConnector
+            .saveCustomerMessage(any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
+          .thenReturn(Future.successful(true))
+        private val result = controller.saveReplyMessage("some-service", "L2NvbnZlcnNhdGlvbi8xMjMxNTQ2NDU2")(
+          FakeRequest("POST", "/some-service/messages/:id").withFormUrlEncodedBody(("content", "c29tZSBjb250ZW50")))
+        status(result) mustBe Status.OK
+        private val pageContent = contentAsString(result)
+        pageContent must include("/some-service/messages/L2NvbnZlcnNhdGlvbi8xMjMxNTQ2NDU2/result")
+      }
+
+      "return BadGateway when message failed to save" in new TestCase {
+        mockAuthorise[Unit]()(Future.successful(()))
+        when(
+          mockSecureMessageConnector
+            .saveCustomerMessage(any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
+          .thenReturn(Future.successful(false))
+        private val result = controller.saveReplyMessage("some-service", "L2NvbnZlcnNhdGlvbi8xMjMxNTQ2NDU2")(
+          FakeRequest("POST", "/some-service/messages/:id").withFormUrlEncodedBody(("content", "c29tZSBjb250ZW50")))
+        status(result) mustBe Status.BAD_GATEWAY
+      }
+
+      "return BAD REQUEST when the payload exceeds 4000 chars" in new TestCase {
+        mockAuthorise[Unit]()(Future.successful(()))
+        val textLength4001: String = List.fill(4001)("a").mkString
+        when(mockSecureMessageConnector.getConversationContent(any[String])(any[ExecutionContext], any[HeaderCarrier]))
+          .thenReturn(Future.successful(Conversation(
+            client,
+            conversationId,
+            "",
+            None,
+            "",
+            "",
+            List(Message(
+              SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), self = false),
+              Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-05-01T10:29:47.275Z"))),
+              "TWVzc2FnZSBib2R5IQ=="
+            ))
+          )))
+
+        when(mockConversationView.apply(any[ConversationView])(any[Messages]))
+          .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
+
+        when(
+          mockSecureMessageConnector
+            .saveCustomerMessage(any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
+          .thenReturn(Future.successful(true))
+        private val result = controller.saveReplyMessage("some-service", "L2NvbnZlcnNhdGlvbi8xMjMxNTQ2NDU2")(
+          FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(
+            ("content", textLength4001)))
+        status(result) mustBe Status.BAD_REQUEST
+      }
+
+      "return BAD REQUEST when the payload is empty" in new TestCase {
+
+        mockAuthorise[Unit]()(Future.successful(()))
+
+        when(mockSecureMessageConnector.getConversationContent(any[String])(any[ExecutionContext], any[HeaderCarrier]))
+          .thenReturn(Future.successful(Conversation(
+            client,
+            conversationId,
+            "",
+            None,
+            "",
+            "",
+            List(Message(
+              SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), self = false),
+              Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-05-01T10:29:47.275Z"))),
+              "TWVzc2FnZSBib2R5IQ=="
+            ))
+          )))
+
+        when(mockConversationView.apply(any[ConversationView])(any[Messages]))
+          .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
+
+        when(
+          mockSecureMessageConnector
+            .saveCustomerMessage(any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
+          .thenReturn(Future.successful(true))
+        private val result = controller.saveReplyMessage("some-service", "L2NvbnZlcnNhdGlvbi8xMjMxNTQ2NDU2")(
+          FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(("content", "")))
+        status(result) mustBe Status.BAD_REQUEST
+      }
+
+      "return BAD REQUEST when the payload is not valid" in new TestCase {
+        mockAuthorise[Unit]()(Future.successful(()))
+
+        when(mockSecureMessageConnector.getConversationContent(any[String])(any[ExecutionContext], any[HeaderCarrier]))
+          .thenReturn(Future.successful(Conversation(
+            client,
+            conversationId,
+            "",
+            None,
+            "",
+            "",
+            List(Message(
+              SenderInformation(Some("senderName"), DateTime.parse("2021-04-19T10:29:47.275Z"), self = false),
+              Some(FirstReaderInformation(Some("firstReadername"), DateTime.parse("2021-05-01T10:29:47.275Z"))),
+              "TWVzc2FnZSBib2R5IQ=="
+            ))
+          )))
+
+        when(mockConversationView.apply(any[ConversationView])(any[Messages]))
+          .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
+
+        private val result = controller.saveReplyMessage("some-service", "L2NvbnZlcnNhdGlvbi8xMjMxNTQ2NDU2")(
+          FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(
+            ("invalid", "c29tZSBjb250ZW50")))
+        status(result) mustBe Status.BAD_REQUEST
+      }
+
+      "save a customer reply and return OK with a redirection URL" in new TestCase {
+        mockAuthorise[Unit]()(Future.successful(()))
+        when(
+          mockSecureMessageConnector
+            .saveCustomerMessage(any[String], any[CustomerMessage])(any[ExecutionContext], any[HeaderCarrier]))
+          .thenReturn(Future.successful(true))
+        private val result = controller.saveReplyMessage("some-service", "L2NvbnZlcnNhdGlvbi8xMjMxNTQ2NDU2")(
+          FakeRequest("POST", "/some-service/conversation-message/111/DA123").withFormUrlEncodedBody(
+            ("content", "c29tZSBjb250ZW50")))
+        status(result) mustBe Status.OK
+        private val pageContent = contentAsString(result)
+        pageContent must include("/some-service/messages/L2NvbnZlcnNhdGlvbi8xMjMxNTQ2NDU2/result")
+      }
+
+    }
+
+    "displayResult" must {
+      "return a result page HTML partial" in new TestCase {
+        mockAuthorise[Unit]()(Future.successful(()))
+        when(mockMessageResult.apply(any[String], any[Panel])).thenReturn(Html("<div>result</div>"))
+        private val result =
+          controller.displayResult("some-service")(FakeRequest("GET", "/:clientService/messages/:id/result"))
+        status(result) mustBe Status.OK
+        private val pageContent = contentAsString(result)
+        pageContent must include("result")
+      }
+    }
   }
 
   class TestCase {
@@ -364,7 +506,7 @@ class ConversationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
     val messageFormProvider: MessageFormProvider = new MessageFormProvider
 
-    val controller = new ConversationController(
+    val controller = new MessageController(
       stubMessagesControllerComponents(),
       mockSecureMessageConnector,
       messageContent,

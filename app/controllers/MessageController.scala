@@ -39,7 +39,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 @Singleton
-class ConversationController @Inject()(
+class MessageController @Inject()(
   controllerComponents: MessagesControllerComponents,
   secureMessageConnector: SecureMessageConnector,
   messageContent: messageContent,
@@ -57,7 +57,6 @@ class ConversationController @Inject()(
     showReplyForm: Boolean
   ): Action[AnyContent] = Action.async { implicit request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
-    logger.debug(s"service: $clientService")
 
     def contentHelper[A](content: String => Future[A], view: A => Html): Future[Result] =
       content(rawId).map { a =>
@@ -96,7 +95,7 @@ class ConversationController @Inject()(
     val replyFormUrl = s"$replyFormActionUrl?showReplyForm=true#reply-form"
     authorised() {
       secureMessageConnector
-        .getConversation(client, conversationId)
+        .getConversationContent(conversationId)
         .flatMap { conversation =>
           val messages = {
             messagePartial(conversation.messages)
@@ -187,10 +186,10 @@ class ConversationController @Inject()(
   }
 
   //legacy
-  def saveReply(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action.async {
+  def saveReply(clientService: String, client: String, encodedId: String): Action[AnyContent] = Action.async {
     implicit request =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
-      val replyFormActionUrl = s"/$clientService/conversation/$client/$conversationId"
+      val replyFormActionUrl = s"/$clientService/conversation/$client/$encodedId"
       val replyFormUrl = s"$replyFormActionUrl?showReplyForm=true#reply-form"
       authorised() {
         form
@@ -198,7 +197,7 @@ class ConversationController @Inject()(
           .fold(
             form => {
               secureMessageConnector
-                .getConversation(client, conversationId)
+                .getConversationContent(encodedId)
                 .flatMap {
                   conversation =>
                     val messages = {
@@ -227,17 +226,15 @@ class ConversationController @Inject()(
 
             },
             message =>
-              secureMessageConnector.postCustomerMessage(client, conversationId, message).map { sent =>
-                val redirectURL = s"/$clientService/conversation/$client/$conversationId/result"
+              secureMessageConnector.saveCustomerMessage(encodedId, message).map { sent =>
+                val redirectURL = s"/$clientService/conversation/$client/$encodedId/result"
                 if (sent) Ok(redirectURL) else BadGateway("Failed to send message")
             }
           )
       }
   }
 
-  def displayResult(clientService: String, id: String): Action[AnyContent] = Action {
-    // TODO try to ignore this id in parameter
-    logger.debug(s"id: $id")
+  def displayResult(clientService: String): Action[AnyContent] = Action {
     Ok(
       messageResult(
         s"/$clientService/messages",

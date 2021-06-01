@@ -24,7 +24,6 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient, HttpResponse }
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.Inject
-
 import scala.concurrent.{ ExecutionContext, Future }
 
 class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: ServicesConfig) extends Logging {
@@ -62,11 +61,6 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
       tagsQueryParams: List[(String, String)] <- tags.map(t => t.map(tag => ("tag", s"${tag.key}~${tag.value}")))
     } yield (keysQueryParams union enrolmentsQueryParams union tagsQueryParams)
 
-  def getConversation(clientName: String, conversationId: String)(
-    implicit ec: ExecutionContext,
-    hc: HeaderCarrier): Future[Conversation] =
-    httpClient.GET[Conversation](s"$secureMessageBaseUrl/secure-messaging/conversation/$clientName/$conversationId")
-
   def getLetterContent(rawId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Letter] =
     httpClient.GET[Letter](s"$secureMessageBaseUrl/secure-messaging/messages/$rawId")
 
@@ -88,22 +82,4 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient, servicesConfig: S
             false
         }
       }
-
-  //legacy
-  def postCustomerMessage(client: String, conversationId: String, message: CustomerMessage)(
-    implicit ec: ExecutionContext,
-    hc: HeaderCarrier): Future[Boolean] =
-    httpClient
-      .POST[CustomerMessage, HttpResponse](
-        s"$secureMessageBaseUrl/secure-messaging/conversation/$client/$conversationId/customer-message",
-        message)
-      .map { response =>
-        response.status match {
-          case CREATED => true
-          case status =>
-            logger.error(s"POST of customer message failed. Got response status $status with message ${response.body}")
-            false
-        }
-      }
-
 }

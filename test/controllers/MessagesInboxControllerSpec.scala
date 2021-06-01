@@ -41,7 +41,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
-class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with MockAuthConnector {
+class MessagesInboxControllerSpec extends PlaySpec with MockitoSugar with MockAuthConnector {
 
   "ConversationInbox Controller" must {
     "return 200 when secure message connector returns valid data" in new TestCase {
@@ -66,7 +66,7 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
                 Some("D-80542-20201120"),
                 Some("cdcm")))))
       when(mockConversationsInboxPartial.apply(any[MessageInbox])(any[Messages])).thenReturn(new Html("test"))
-      private val controller = new ConversationInboxController(
+      private val controller = new MessagesInboxController(
         mockAppConfig,
         Helpers.stubMessagesControllerComponents(),
         mockConversationsInboxPartial,
@@ -90,7 +90,7 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
           ArgumentMatchers.eq(None)
         )(any[ExecutionContext], any[HeaderCarrier])).thenReturn(Future(List()))
       when(mockConversationsInboxPartial.apply(any[MessageInbox])(any[Messages])).thenReturn(new Html("test"))
-      private val controller = new ConversationInboxController(
+      private val controller = new MessagesInboxController(
         mockAppConfig,
         Helpers.stubMessagesControllerComponents(),
         mockConversationsInboxPartial,

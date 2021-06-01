@@ -44,7 +44,7 @@ object AppDependencies {
     "org.mockito"             % "mockito-core"               % "3.10.0"           % "test, it",
     "com.vladsch.flexmark"    % "flexmark-all"               % "0.36.8"          % "test, it",
     "org.pegdown"             % "pegdown"                    % "1.6.0"           % "test, it",
-    "net.codingwell"          %% "scala-guice"               % "5.0.0"           % "test, it"
+    "net.codingwell"          %% "scala-guice"               % "5.0.1"           % "test, it"
   )
 
   val dependencyOverrides = Seq(

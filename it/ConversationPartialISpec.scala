@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import controllers.Assets.{ BAD_REQUEST, CREATED }
+import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
@@ -21,20 +23,17 @@ import play.api.http.{ ContentTypes, HeaderNames }
 import play.api.libs.json.{ Json, Reads }
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.integration.ServiceSpec
-import java.io.File
-
-import org.jsoup.Jsoup
-import play.api.http.Status.{ BAD_REQUEST, CREATED, OK }
+import views.helpers.HtmlUtil.encodeBase64String
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
   override def externalServices: Seq[String] = Seq.empty
   val secureMessagePort: Int = 9051
   val overCharacterLimit: Int = 4001
-
+  val id = "909d1359aa0220d12c73160a"
   override protected def beforeEach() = {
     (wsClient
-      .url(s"http://localhost:$secureMessagePort/test-only/delete/conversation/SMF123456789/CDCM")
+      .url(s"http://localhost:$secureMessagePort/test-only/delete/conversation/$id")
       .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
       .delete
       .futureValue)
@@ -46,34 +45,36 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
   "Conversation partial" must {
 
     "return all messages within a conversation" in {
-
+      val id = "909d1359aa0220d12c73160a"
       val createConversationUrl =
-        s"http://localhost:$secureMessagePort/secure-messaging/conversation/CDCM/SMF123456789"
+        s"http://localhost:$secureMessagePort/test-only/create/conversation/$id"
 
-      val responseFromSecureMessage =
+      val responseFromInsert =
         wsClient
           .url(createConversationUrl)
           .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
-          .put(new File("./it/resources/create-conversation.json"))
+          .put(Json.parse("{}"))
           .futureValue
-      responseFromSecureMessage.status mustBe CREATED
+      responseFromInsert.status mustBe CREATED
+
+      val encodedUrl = encodeBase64String(s"conversation/$id")
 
       val response = wsClient
-        .url(resource("/secure-message-frontend/whatever/conversation/CDCM/SMF123456789"))
+        .url(resource(s"/secure-message-frontend/whatever/messages/$encodedUrl"))
         .withHttpHeaders(AuthUtil.buildEoriToken)
         .get()
         .futureValue
-      response.status mustBe OK
+      response.status mustBe 200
 
       val pageContent = Jsoup.parse(response.body)
       pageContent
         .select("h1.govuk-heading-l.margin-top-small.margin-bottom-small")
         .text() mustBe "CDS-EXPORTS Subject"
       response.body must include("CDS Exports Team sent")
-      pageContent.select("div.govuk-body").first().text() mustBe "Message body!!"
+      pageContent.select("div.govuk-body").first().text() mustBe "Blah blah blah"
       pageContent
         .select("#reply-link > a[href]")
-        .attr("href") mustBe "/whatever/conversation/CDCM/SMF123456789?showReplyForm=true#reply-form"
+        .attr("href") mustBe "/whatever/messages/909d1359aa0220d12c73160a?showReplyForm=true#reply-form"
       pageContent
         .select("#reply-link > a[href]")
         .text() mustBe "Reply to this message"
@@ -81,17 +82,18 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
 
     "validates a reply text is less than 4000 characters" in {
 
+      val id = "909d1359aa0220d12c73160a"
       val createConversationUrl =
-        s"http://localhost:$secureMessagePort/secure-messaging/conversation/CDCM/SMF123456789"
+        s"http://localhost:$secureMessagePort/test-only/create/conversation/$id"
 
-      val responseFromSecureMessage =
+      val responseFromInsert =
         wsClient
           .url(createConversationUrl)
           .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
-          .put(new File("./it/resources/create-conversation.json"))
+          .put(Json.parse("{}"))
           .futureValue
-      responseFromSecureMessage.status mustBe CREATED
-
+      responseFromInsert.status mustBe CREATED
+      val encodedUrl = encodeBase64String(s"conversation/$id")
       val textLength4001: String = List.fill(overCharacterLimit)("a").mkString
       val longContent =
         s"""
@@ -99,8 +101,9 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
            |  "content": "$textLength4001"
            |  }
         """.stripMargin
+
       val replyPostResponse = wsClient
-        .url(resource("/secure-message-frontend/whatever/conversation/CDCM/SMF123456789"))
+        .url(resource(s"/secure-message-frontend/whatever/messages/$encodedUrl"))
         .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
         .withHttpHeaders(AuthUtil.buildEoriToken)
         .post(longContent)
@@ -118,17 +121,18 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
 
     "validates a reply text is non-empty" in {
 
+      val id = "909d1359aa0220d12c73160a"
       val createConversationUrl =
-        s"http://localhost:$secureMessagePort/secure-messaging/conversation/CDCM/SMF123456789"
+        s"http://localhost:$secureMessagePort/test-only/create/conversation/$id"
 
-      val responseFromSecureMessage =
+      val responseFromInsert =
         wsClient
           .url(createConversationUrl)
           .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
-          .put(new File("./it/resources/create-conversation.json"))
+          .put(Json.parse("{}"))
           .futureValue
-      responseFromSecureMessage.status mustBe CREATED
-
+      responseFromInsert.status mustBe CREATED
+      val encodedUrl = encodeBase64String(s"conversation/$id")
       val emptyContent =
         s"""
            | {
@@ -136,7 +140,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
            |  }
         """.stripMargin
       val replyEmptyPostReponse = wsClient
-        .url(resource("/secure-message-frontend/whatever/conversation/CDCM/SMF123456789"))
+        .url(resource(s"/secure-message-frontend/whatever/messages/$encodedUrl"))
         .withHttpHeaders((HeaderNames.CONTENT_TYPE, ContentTypes.JSON))
         .withHttpHeaders(AuthUtil.buildEoriToken)
         .post(emptyContent)

@@ -5,26 +5,26 @@
 ### NoDocs ###
 ->          /hmrc-frontend                                                     hmrcfrontend.Routes
 
-GET         /:clientService/messages                                           controllers.ConversationInboxController.display(clientService: String, enrolmentKey: Option[List[String]], enrolment: Option[List[CustomerEnrolment]], tag: Option[List[Tag]])
+GET         /:clientService/messages                                           controllers.MessagesInboxController.display(clientService: String, enrolmentKey: Option[List[String]], enrolment: Option[List[CustomerEnrolment]], tag: Option[List[Tag]])
 
 GET         /messages/count                                                    controllers.ApiController.count(enrolmentKey: Option[List[String]], enrolment: Option[List[CustomerEnrolment]], tag: Option[List[Tag]])
 
-GET         /:clientService/messages/:id                                       controllers.ConversationController.displayMessage(clientService, id, showReplyForm: Boolean ?= false)
+GET         /:clientService/messages/:id                                       controllers.MessageController.displayMessage(clientService, id, showReplyForm: Boolean ?= false)
 
 + nocsrf
-POST        /:clientService/messages/:id                                       controllers.ConversationController.saveReplyMessage(clientService, id)
+POST        /:clientService/messages/:id                                       controllers.MessageController.saveReplyMessage(clientService, id)
 
-GET         /:clientService/messages/:id/result                                controllers.ConversationController.displayResult(clientService, id)
+GET         /:clientService/messages/result                                    controllers.MessageController.displayResult(clientService)
 
 
 ###legeacy endpoints
-GET         /:clientService/conversation/:client/:conversationId               controllers.ConversationController.display(clientService, client, conversationId, showReplyForm: Boolean ?= false)
+GET         /:clientService/conversation/:client/:conversationId               controllers.MessageController.display(clientService, client, conversationId, showReplyForm: Boolean ?= false)
 
 + nocsrf
-POST        /:clientService/conversation/:client/:conversationId               controllers.ConversationController.saveReply(clientService, client, conversationId)
+POST        /:clientService/conversation/:client/:conversationId               controllers.MessageController.saveReply(clientService, client, conversationId)
 
 
-GET         /:clientService/conversation/:client/:conversationId/result        controllers.ConversationController.result(clientService, client, conversationId)
+GET         /:clientService/conversation/:client/:conversationId/result        controllers.MessageController.result(clientService, client, conversationId)
 
 
 

@@ -38,7 +38,7 @@ import java.io.File
 import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
-class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
+class MessagesInboxPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
   override def externalServices: Seq[String] = Seq.empty
   val secureMessagePort: Int = 9051
   val secureMessageFrontendPort: Int = 9055
