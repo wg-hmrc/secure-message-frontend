@@ -24,6 +24,15 @@ Then run the integration tests:
 
 `sbt it:test`
 
+## Service endpoints
+ `/:clientService/messages`                                          
+
+  `/messages/count`                                        
+
+  `/:clientService/messages/:id`                                     
+
+  `/:clientService/messages/result`
+
 ## Swagger endpoint
 
 Available locally here: http://localhost:9055/secure-message-frontend/api/schema.json

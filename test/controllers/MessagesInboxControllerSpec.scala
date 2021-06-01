@@ -41,13 +41,13 @@ import scala.concurrent.duration._
 import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
-class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with MockAuthConnector {
+class MessagesInboxControllerSpec extends PlaySpec with MockitoSugar with MockAuthConnector {
 
   "ConversationInbox Controller" must {
     "return 200 when secure message connector returns valid data" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
       when(
-        mockSecureMessageConnector.getConversationList(
+        mockSecureMessageConnector.getInboxList(
           ArgumentMatchers.eq(Some(List("HMRC-CUS-ORG"))),
           ArgumentMatchers.eq(Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777")))),
           ArgumentMatchers.eq(Some(List(Tag("notificationType", "CDS Exports"))))
@@ -66,7 +66,7 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
                 Some("D-80542-20201120"),
                 Some("cdcm")))))
       when(mockConversationsInboxPartial.apply(any[MessageInbox])(any[Messages])).thenReturn(new Html("test"))
-      private val controller = new ConversationInboxController(
+      private val controller = new MessagesInboxController(
         mockAppConfig,
         Helpers.stubMessagesControllerComponents(),
         mockConversationsInboxPartial,
@@ -84,13 +84,13 @@ class ConversationInboxControllerSpec extends PlaySpec with MockitoSugar with Mo
     "return BAD REQUEST when query filter parameters are not valid" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
       when(
-        mockSecureMessageConnector.getConversationList(
+        mockSecureMessageConnector.getInboxList(
           ArgumentMatchers.eq(None),
           ArgumentMatchers.eq(None),
           ArgumentMatchers.eq(None)
         )(any[ExecutionContext], any[HeaderCarrier])).thenReturn(Future(List()))
       when(mockConversationsInboxPartial.apply(any[MessageInbox])(any[Messages])).thenReturn(new Html("test"))
-      private val controller = new ConversationInboxController(
+      private val controller = new MessagesInboxController(
         mockAppConfig,
         Helpers.stubMessagesControllerComponents(),
         mockConversationsInboxPartial,

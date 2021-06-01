@@ -65,7 +65,7 @@ class ConversationMessagesPartialISpec extends PlaySpec with ServiceSpec with Mo
           "TWVzc2FnZSBib2R5IQ==")
       )
 
-      when(mockSecureMessageConnector.getConversation(anyString, anyString)(any[ExecutionContext], any[HeaderCarrier]))
+      when(mockSecureMessageConnector.getConversationContent(anyString)(any[ExecutionContext], any[HeaderCarrier]))
         .thenReturn(
           Future.successful(Conversation("client", "conversationId", "status", None, "subject", "en", messages)))
       val response = wsClient

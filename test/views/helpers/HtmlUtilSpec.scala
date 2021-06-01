@@ -102,7 +102,7 @@ class HtmlUtilSpec extends PlaySpec {
 
   "Inbox link url" must {
     val id = "60995694180000c223edb0b9"
-    "return with clientName and  conversation for a conversation" in {
+    "return with client and id for a conversation" in {
       getMessageUrl(
         "someclient",
         MessageHeader(
@@ -114,7 +114,7 @@ class HtmlUtilSpec extends PlaySpec {
           false,
           1,
           Some("111"),
-          Some("CDCM"))) mustBe "/someclient/conversation/CDCM/111"
+          Some("CDCM"))) mustBe s"/someclient/conversation/CDCM/$id"
     }
     "with id for letter" in {
       getMessageUrl(

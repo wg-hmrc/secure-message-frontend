@@ -63,7 +63,7 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
                 Some("123"),
                 Some("CDCM")))))
       private val result = await(
-        connector.getConversationList(
+        connector.getInboxList(
           Some(List("HMRC-CUS-ORG")),
           Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777"))),
           Some(List(Tag("notificationType", "CDS Exports")))))
@@ -113,7 +113,7 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
               "subject",
               "en",
               List(Message(SenderInformation(Some("name"), testDate, self = false), None, "content")))))
-      private val result = await(connector.getConversation("client", "conversationId"))
+      private val result = await(connector.getConversationContent("conversationId"))
       result mustBe Conversation(
         "client",
         "conversationId",
@@ -184,7 +184,7 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
           any[HttpReads[HttpResponse]],
           any[HeaderCarrier],
           any[ExecutionContext])).thenReturn(Future.successful(HttpResponse(CREATED, "")))
-      private val result = await(connector.postCustomerMessage(aClient, aConversationId, CustomerMessage("test")))
+      private val result = await(connector.saveCustomerMessage(id, CustomerMessage("test")))
       result mustEqual true
     }
 
@@ -195,16 +195,42 @@ class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
           any[HttpReads[HttpResponse]],
           any[HeaderCarrier],
           any[ExecutionContext])).thenReturn(Future.successful(HttpResponse(BAD_REQUEST, "")))
-      private val result = await(connector.postCustomerMessage(aClient, aConversationId, CustomerMessage("test")))
+      private val result = await(connector.saveCustomerMessage(id, CustomerMessage("test")))
       result mustEqual false
     }
 
+  }
+
+  "SecureMessageConnector.saveCustomerMessage" must {
+
+    "return true when message sent successfully" in new TestCase {
+      when(
+        mockHttpClient.POST[CustomerMessage, HttpResponse](anyString, any[CustomerMessage], any[Seq[(String, String)]])(
+          any[Writes[CustomerMessage]],
+          any[HttpReads[HttpResponse]],
+          any[HeaderCarrier],
+          any[ExecutionContext])).thenReturn(Future.successful(HttpResponse(CREATED, "")))
+      private val result = await(connector.saveCustomerMessage(id, CustomerMessage("test")))
+      result mustEqual true
+    }
+
+    "return false when message fails to send" in new TestCase {
+      when(
+        mockHttpClient.POST[CustomerMessage, HttpResponse](anyString, any[CustomerMessage], any[Seq[(String, String)]])(
+          any[Writes[CustomerMessage]],
+          any[HttpReads[HttpResponse]],
+          any[HeaderCarrier],
+          any[ExecutionContext])).thenReturn(Future.successful(HttpResponse(BAD_REQUEST, "")))
+      private val result = await(connector.saveCustomerMessage(id, CustomerMessage("test")))
+      result mustEqual false
+    }
   }
 
   trait TestCase {
     implicit val hc: HeaderCarrier = HeaderCarrier()
     val aClient: String = "cdcm"
     val aConversationId: String = "D-80542-20210308"
+    val id = "L2NvbnZlcnNhdGlvbi8xMjMxNTQ2NDU2"
     val mockHttpClient: HttpClient = mock[HttpClient]
     val mockServicesConfig: ServicesConfig = mock[ServicesConfig]
     val connector = new SecureMessageConnector(mockHttpClient, mockServicesConfig)

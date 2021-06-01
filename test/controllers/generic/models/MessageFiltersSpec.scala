@@ -18,7 +18,7 @@ package controllers.generic.models
 
 import org.scalatestplus.play.PlaySpec
 
-class ConversationFiltersSpec extends PlaySpec {
+class MessageFiltersSpec extends PlaySpec {
 
   "CustomerEnrolment request model" should {
     "parse a URL parameter for enrolment into its 3 part constituents" in {

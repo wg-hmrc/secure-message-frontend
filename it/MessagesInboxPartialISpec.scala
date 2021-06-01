@@ -38,7 +38,7 @@ import java.io.File
 import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
-class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
+class MessagesInboxPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
   override def externalServices: Seq[String] = Seq.empty
   val secureMessagePort: Int = 9051
   val secureMessageFrontendPort: Int = 9055
@@ -117,7 +117,7 @@ class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with Mocki
 
     "return status code OK 200" in {
       when(
-        mockSecureMessageConnector.getConversationList(
+        mockSecureMessageConnector.getInboxList(
           ArgumentMatchers.eq(Some(List("HMRC-CUS-ORG"))),
           ArgumentMatchers.eq(Some(List(CustomerEnrolment("HMRC-CUS-ORG", "EORIName", "GB7777777777")))),
           ArgumentMatchers.eq(Some(List(Tag("notificationType", "CDS Exports"))))
@@ -146,7 +146,7 @@ class ConversationInboxPartialISpec extends PlaySpec with ServiceSpec with Mocki
 
     "return status code BAD REQUEST 400 when provided with filter parameters that are invalid (not allowed)" in {
       when(
-        mockSecureMessageConnector.getConversationList(
+        mockSecureMessageConnector.getInboxList(
           ArgumentMatchers.eq(None),
           ArgumentMatchers.eq(None),
           ArgumentMatchers.eq(None)

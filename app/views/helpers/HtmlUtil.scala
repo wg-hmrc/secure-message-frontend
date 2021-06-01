@@ -53,10 +53,7 @@ object HtmlUtil {
 
   def getMessageUrl(clientService: String, messageHeader: MessageHeader): String =
     if (messageHeader.messageType.entryName === MessageType.Conversation.entryName) {
-      (messageHeader.client, messageHeader.conversationId) match {
-        case (Some(client), Some(conversationId)) => s"/$clientService/conversation/$client/$conversationId"
-        case _                                    => ""
-      }
+      s"/$clientService/conversation/CDCM/${messageHeader.id}"
     } else {
       s"/$clientService/messages/${messageHeader.id}"
     }

@@ -33,7 +33,7 @@ import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class ConversationInboxController @Inject()(
+class MessagesInboxController @Inject()(
   appConfig: AppConfig,
   controllerComponents: MessagesControllerComponents,
   inbox: messageInbox,
@@ -54,7 +54,7 @@ class ConversationInboxController @Inject()(
       case Left(e) => Future.successful(BadRequest(e.getMessage))
       case _ =>
         authorised() {
-          secureMessageConnector.getConversationList(enrolmentKeys, customerEnrolments, tags).flatMap { conversations =>
+          secureMessageConnector.getInboxList(enrolmentKeys, customerEnrolments, tags).flatMap { inboxList =>
             val messages = this.messagesApi.preferred(request)
             Future.successful(
               Ok(
@@ -62,9 +62,9 @@ class ConversationInboxController @Inject()(
                   MessageInbox(
                     clientService,
                     messages("conversation.inbox.title"),
-                    conversations.size,
-                    conversations.count(_.unreadMessages),
-                    conversations))))
+                    inboxList.size,
+                    inboxList.count(_.unreadMessages),
+                    inboxList))))
           }
         }
     }
