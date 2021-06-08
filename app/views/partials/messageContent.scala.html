@@ -28,16 +28,17 @@
 @import message._
 <p>
     <span aria-hidden="true" class="custom-caption">
-        <span class="govuk-!-font-weight-bold">@senderName.fold(messages("message.you.sent.on", readableTime(sent)))(name => messages("message.sent.on", name) + "</span> " + readableTime(sent))
+        <span class="govuk-!-font-weight-bold">
+            @messages("message.sent.on", senderName.getOrElse(messages("message.you")))</span> @readableTime(sent)
     </span>
     <span class="govuk-visually-hidden">
-        @senderName.fold(messages("message.you.sent.on", readableTime(sent)))(name => messages("message.sent.on", name) + " " + readableTime(sent))
+        @messages("message.sent.on", senderName.getOrElse(messages("message.you"))) @readableTime(sent)
     </span>
     @firstRead.map { read =>
         <span aria-hidden="true" class="custom-caption">
             <span class="govuk-!-font-weight-bold">@messages("message.first.read.on")</span> @readableTime(read)
         </span>
-        <span class="govuk-visually-hidden">@messages("message.first.viewed.on", readableTime(read))</span>
+        <span class="govuk-visually-hidden">@messages("message.first.viewed.on") @readableTime(read))</span>
     }
 </p>
 

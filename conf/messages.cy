@@ -27,11 +27,10 @@ conversation.reply.form.empty = Mae’n rhaid i chi ysgrifennu neges er mwyn ate
 conversation.reply.form.exceeded.length = Mae’n rhaid i’r neges fod yn 4,000 o gymeriadau neu lai
 conversation.reply.form.send.button = Anfon
 
+message.you = Chi
 message.sent.on = {0} wnaeth anfon y neges hon ar
-message.you.sent.on = Chi wnaeth anfon y neges hon ar {0}
 message.first.read.on = Darllenwyd am y tro cyntaf ar
-message.first.viewed.on = Gwelwyd am y tro cyntaf ar {0}
-message.date.time.separator = am
+message.first.viewed.on = Gwelwyd am y tro cyntaf ar
 
 confirmation.panel.title = Anfonwyd y neges
 confirmation.panel.content = Daeth eich neges i law

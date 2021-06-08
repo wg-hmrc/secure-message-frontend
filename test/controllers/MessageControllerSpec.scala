@@ -62,6 +62,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
 
       private val messagesContent = controller.messagePartial(messages).toString()
 
+      messagesContent must include("senderName sent this on</span> 19 February 2021 at 10:29am")
       messagesContent must include("senderName sent this on 19 February 2021 at 10:29am")
       messagesContent must include("First read on</span> 1 March 2021 at 10:29am")
       messagesContent must include("Message body!")
@@ -77,6 +78,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
 
       private val messagesContent = controller.messagePartial(messages).toString()
 
+      messagesContent must include("You sent this on</span> 19 February 2021 at 10:29am")
       messagesContent must include("You sent this on 19 February 2021 at 10:29am")
       messagesContent must include("First read on</span> 1 March 2021 at 10:29am")
       messagesContent must include("Message body!")
@@ -101,6 +103,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
 
       private val messagesContent = controller.messagePartial(messages).toString()
 
+      messagesContent must include("senderName sent this on</span> 19 February 2021 at 10:29am")
       messagesContent must include("senderName sent this on 19 February 2021 at 10:29am")
       messagesContent must include("First read on</span> 1 March 2021 at 10:29am")
       messagesContent must include("Message body!")
@@ -117,6 +120,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
         ))
 
       private val messagesContent = controller.messagePartial(messages).toString()
+      messagesContent must include("senderName sent this on</span> 19 February 2021 at 10:29am")
       messagesContent must include("senderName sent this on 19 February 2021 at 10:29am")
       messagesContent must not include "First read on</span> 19 February 2021 at 10:29am"
       messagesContent must include("Message body!")
