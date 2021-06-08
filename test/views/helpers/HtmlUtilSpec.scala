@@ -29,7 +29,7 @@ class HtmlUtilSpec extends PlaySpec {
   implicit val messages = MessagesImpl(Lang("en"), messagesApi)
 
   "conversation readableTime function returns correct readable timestamp in English" in {
-    readableTime(DateTime.parse("2021-02-19T10:29:47.275Z")) must be("19 February 2021 at 10:29AM")
+    readableTime(DateTime.parse("2021-02-19T10:29:47.275Z")) must be("19 February 2021 at 10:29am")
   }
 
   "conversation readableTime function returns correct readable timestamp in Welsh" in {
@@ -60,7 +60,16 @@ class HtmlUtilSpec extends PlaySpec {
       val dateTime = DateTime.parse(s"${DateTime.now().toLocalDate}T05:29:47.275Z")
       val messageDateOrTime =
         getMessageDate(MessageHeader(MessageType.Conversation, "", "", dateTime, None, false, 1, Some(""), Some("")))
-      messageDateOrTime.takeRight(5) must be(":29AM")
+      messageDateOrTime.takeRight(5) must be(":29am")
+    }
+
+    "return just time if message creation is today, in Welsh" in {
+      val messagesCy = MessagesImpl(Lang("cy"), messagesApi)
+      val dateTime = DateTime.parse(s"${DateTime.now().toLocalDate}T05:29:47.275Z")
+      val messageDateOrTime =
+        getMessageDate(MessageHeader(MessageType.Conversation, "", "", dateTime, None, false, 1, Some(""), Some("")))(
+          messagesCy)
+      messageDateOrTime.takeRight(5) must be(":29yb")
     }
   }
 

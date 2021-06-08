@@ -17,7 +17,7 @@
 package views.helpers
 
 import cats.implicits.catsSyntaxEq
-import com.ibm.icu.text.SimpleDateFormat
+import com.ibm.icu.text.{ DateFormatSymbols, SimpleDateFormat }
 import com.ibm.icu.util.{ TimeZone, ULocale }
 import models.{ MessageHeader, MessageType }
 import org.apache.commons.codec.binary.Base64
@@ -31,7 +31,7 @@ import scala.xml.{ Utility, Xhtml }
 object HtmlUtil {
 
   private def dtf(implicit messages: Messages): SimpleDateFormat = createDateFormatForPattern("d MMMM yyyy")
-  private def dtfHours(implicit messages: Messages): SimpleDateFormat = createDateFormatForPattern("h:mmaa")
+  private def dtfHours(implicit messages: Messages): SimpleDateFormat = createDateFormatForPattern("h:mma")
 
   private def createDateFormatForPattern(pattern: String)(implicit messages: Messages): SimpleDateFormat = {
     val langCode = messages.lang.code
@@ -40,6 +40,11 @@ object HtmlUtil {
     val locale: ULocale = if (validLang) new ULocale(langCode) else ULocale.getDefault
     val sdf = new SimpleDateFormat(pattern, locale)
     sdf.setTimeZone(uk)
+    if (langCode === "en") {
+      val symbols = new DateFormatSymbols(new ULocale("en_GB"))
+      symbols.setAmPmStrings(Array[String]("am", "pm"))
+      sdf.setDateFormatSymbols(symbols)
+    }
     sdf
   }
 
@@ -71,7 +76,7 @@ object HtmlUtil {
       case "cy" => "am"
       case _    => "at"
     }
-    createDateFormatForPattern(s"d MMMM yyyy '$at' h:mmaa").format(dateTime.toDate)
+    createDateFormatForPattern(s"d MMMM yyyy '$at' h:mma").format(dateTime.toDate)
   }
 
   def readableDate(date: LocalDate)(implicit messages: Messages): String =
