@@ -27,8 +27,8 @@ conversation.reply.form.empty = Mae’n rhaid i chi ysgrifennu neges er mwyn ate
 conversation.reply.form.exceeded.length = Mae’n rhaid i’r neges fod yn 4,000 o gymeriadau neu lai
 conversation.reply.form.send.button = Anfon
 
-message.you = Chi
-message.sent.on = {0} wnaeth anfon y neges hon ar
+message.you.sent.this.on = Gwnaethoch anfon hon ar
+message.x.sent.this.on = {0} wnaeth anfon y neges hon ar
 message.first.read.on = Darllenwyd am y tro cyntaf ar
 message.first.viewed.on = Gwelwyd am y tro cyntaf ar
 

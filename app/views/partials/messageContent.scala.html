@@ -28,17 +28,26 @@
 @import message._
 <p>
     <span aria-hidden="true" class="custom-caption">
-        <span class="govuk-!-font-weight-bold">
-            @messages("message.sent.on", senderName.getOrElse(messages("message.you")))</span> @readableTime(sent)
+        @{
+            senderName match {
+                case Some(name) => messages("message.x.sent.this.on", name) + " " + readableTime(sent)
+                case None => messages("message.you.sent.this.on") + " " + readableTime(sent)
+            }
+        }
     </span>
     <span class="govuk-visually-hidden">
-        @messages("message.sent.on", senderName.getOrElse(messages("message.you"))) @readableTime(sent)
+        @{
+            senderName match {
+                case Some(name) => messages("message.x.sent.this.on", name) + " " + readableTime(sent)
+                case None => messages("message.you.sent.this.on") + " " + readableTime(sent)
+            }
+        }
     </span>
     @firstRead.map { read =>
         <span aria-hidden="true" class="custom-caption">
-            <span class="govuk-!-font-weight-bold">@messages("message.first.read.on")</span> @readableTime(read)
+            @messages("message.first.read.on") @readableTime(read)
         </span>
-        <span class="govuk-visually-hidden">@messages("message.first.viewed.on") @readableTime(read))</span>
+        <span class="govuk-visually-hidden">@messages("message.first.viewed.on") @readableTime(read)</span>
     }
 </p>
 

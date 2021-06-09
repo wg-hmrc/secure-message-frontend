@@ -39,7 +39,7 @@ class messageContentSpec extends PlaySpec with LanguageStubs {
           "message body"))(messagesEn, requestHeader).toString
 
       messageContent must include("Mike sent this on 19 February 2021 at")
-      messageContent must include("First read on</span> 19 February 2021 at")
+      messageContent must include("First read on 19 February 2021 at")
       messageContent must include("First viewed on 19 February 2021 at")
       messageContent must include("message body")
     }
@@ -52,8 +52,8 @@ class messageContentSpec extends PlaySpec with LanguageStubs {
           requestHeader).toString
 
       messageContent must include("Mike sent this on 19 February 2021 at")
-      messageContent mustNot include("First read on")
-      messageContent mustNot include("First viewed on")
+      messageContent mustNot include("First read")
+      messageContent mustNot include("First viewed")
       messageContent must include("message body")
     }
 
@@ -66,7 +66,7 @@ class messageContentSpec extends PlaySpec with LanguageStubs {
           "message body"))(messagesCy, requestHeader).toString
 
       messageContent must include("Mike wnaeth anfon y neges hon ar 19 Chwefror 2021 am")
-      messageContent must include("Darllenwyd am y tro cyntaf ar</span> 19 Chwefror 2021 am")
+      messageContent must include("Darllenwyd am y tro cyntaf ar 19 Chwefror 2021 am")
       messageContent must include("Gwelwyd am y tro cyntaf ar 19 Chwefror 2021 am")
       messageContent must include("message body")
     }
