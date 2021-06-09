@@ -34,7 +34,6 @@ import play.api.test.Helpers.{ contentAsString, status }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import play.api.test.{ FakeRequest, NoMaterializer }
 import play.twirl.api.Html
-import uk.gov.hmrc.govukfrontend.views.viewmodels.panel.Panel
 import uk.gov.hmrc.http.HeaderCarrier
 import views.helpers.HtmlUtil.encodeBase64String
 import views.html.partials.{ conversationView, letterView, messageContent, messageReply, messageResult }
@@ -269,7 +268,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
 
     "return a result page HTML partial" in new TestCase {
       mockAuthorise[Unit]()(Future.successful(()))
-      when(mockMessageResult.apply(any[String], any[Panel])(any[Messages])).thenReturn(Html("<div>result</div>"))
+      when(mockMessageResult.apply(any[String])(any[Messages])).thenReturn(Html("<div>result</div>"))
       private val result = controller.result("some-service", "111", "DA123")(
         FakeRequest("GET", "/some-service/conversation-message/111/DA123/result"))
       status(result) mustBe Status.OK
@@ -471,7 +470,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
     "displayResult" must {
       "return a result page HTML partial" in new TestCase {
         mockAuthorise[Unit]()(Future.successful(()))
-        when(mockMessageResult.apply(any[String], any[Panel])(any[Messages])).thenReturn(Html("<div>result</div>"))
+        when(mockMessageResult.apply(any[String])(any[Messages])).thenReturn(Html("<div>result</div>"))
         private val result =
           controller.displayResult("some-service")(FakeRequest("GET", "/:clientService/messages/:id/result"))
         status(result) mustBe Status.OK

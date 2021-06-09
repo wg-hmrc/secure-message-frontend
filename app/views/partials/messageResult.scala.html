@@ -15,10 +15,10 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.panel.Panel
   
 @this(govukPanel: GovukPanel)
-@(messageInboxUrl: String, panel: Panel)(implicit messages: Messages)
+@(messageInboxUrl: String)(implicit messages: Messages)
 
 <style>
    .govuk-panel--confirmation > * {
@@ -26,7 +26,10 @@
       }
  </style>
 
-@govukPanel(panel)
+@govukPanel(Panel(
+ title = Text(messages("confirmation.panel.title")),
+ content = Text(messages("confirmation.panel.content"))
+))
 <h2 class="govuk-heading-m">@messages("confirmation.what.next")</h2>
 <p class="govuk-body">@messages("confirmation.step1")</p>
 <p class="govuk-body">@messages("confirmation.step2")</p>

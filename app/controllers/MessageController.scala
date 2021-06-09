@@ -27,8 +27,6 @@ import play.api.i18n.{ I18nSupport, Lang, Langs }
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents, Request, Result }
 import play.twirl.api.{ Html, HtmlFormat }
 import uk.gov.hmrc.auth.core.{ AuthConnector, AuthorisedFunctions }
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.panel.Panel
 import uk.gov.hmrc.http.{ HeaderCarrier, NotFoundException }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -240,14 +238,7 @@ class MessageController @Inject()(
   def displayResult(clientService: String): Action[AnyContent] = Action.async { implicit request: Request[_] =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
     authorised() {
-      Future.successful(
-        Ok(
-          messageResult(
-            s"/$clientService/messages",
-            Panel(
-              title = Text(messagesApi("confirmation.panel.title")),
-              content = Text(messagesApi("confirmation.panel.content"))
-            ))))
+      Future.successful(Ok(messageResult(s"/$clientService/messages")))
     }
   }
 
@@ -258,14 +249,7 @@ class MessageController @Inject()(
       authorised() {
         // FIXME - log statement is just to keep compiler happy - do we really need these parameters?
         logger.debug(s"service: $clientService, client: $client, conversation: $conversationId")
-        Future.successful(
-          Ok(
-            messageResult(
-              s"/$clientService/messages",
-              Panel(
-                title = Text(messagesApi("confirmation.panel.title")),
-                content = Text(messagesApi("confirmation.panel.content"))
-              ))))
+        Future.successful(Ok(messageResult(s"/$clientService/messages")))
       }
   }
 
