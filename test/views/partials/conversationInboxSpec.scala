@@ -16,8 +16,7 @@
 
 package views.partials
 
-import play.api.i18n.{ DefaultMessagesApi, Lang, Messages, MessagesApi, MessagesImpl }
-import play.api.i18n.Messages.UrlMessageSource
+import base.LanguageStubs
 import play.twirl.api.HtmlFormat
 import views.html.partials.messageInbox
 import views.viewmodels.MessageInbox
@@ -25,7 +24,7 @@ import views.viewmodels.MessageInbox
 import scala.util.{ Success, Try }
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements", "org.wartremover.warts.EitherProjectionPartial"))
-class conversationInboxSpec extends TemplateUnitSpec[MessageInbox] {
+class conversationInboxSpec extends TemplateUnitSpec[MessageInbox] with LanguageStubs {
 
   "A conversation inbox template" must {
     "have all mandatory information" in {
@@ -54,28 +53,6 @@ class conversationInboxSpec extends TemplateUnitSpec[MessageInbox] {
     */
   override def render(templateParams: MessageInbox): Try[HtmlFormat.Appendable] = {
     val inbox = new messageInbox
-
-    val messagesResourceEn: Map[String, String] =
-      Messages
-        .parse(UrlMessageSource(this.getClass.getClassLoader.getResource("messages")), "")
-        .right
-        .get
-
-    val messagesResourceCy: Map[String, String] =
-      Messages
-        .parse(UrlMessageSource(this.getClass.getClassLoader.getResource("messages.cy")), "")
-        .right
-        .get
-
-    val messagesApi: MessagesApi = new DefaultMessagesApi(
-      messages = Map(
-        "en" -> messagesResourceEn,
-        "cy" -> messagesResourceCy
-      )
-    )
-
-    val messagesEn = MessagesImpl(Lang("en"), messagesApi)
-//    val messagesCy = MessagesImpl(Lang("cy"), messagesApi)
     Try(inbox(templateParams)(messagesEn))
   }
 
