@@ -22,19 +22,18 @@ import forms.MessageFormProvider
 import javax.inject.Singleton
 import models.{ Conversation, CustomerMessage, Message }
 import play.api.Logging
-import play.api.data.Form
-import play.api.i18n.I18nSupport
+import play.api.data.{ Form, FormError }
+import play.api.i18n.{ I18nSupport, Lang, Langs }
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents, Request, Result }
-import play.twirl.api.Html
+import play.twirl.api.{ Html, HtmlFormat }
 import uk.gov.hmrc.auth.core.{ AuthConnector, AuthorisedFunctions }
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.panel.Panel
 import uk.gov.hmrc.http.{ HeaderCarrier, NotFoundException }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.helpers.HtmlUtil._
 import views.html.partials.{ conversationView, letterView, messageContent, messageReply, messageResult }
 import views.viewmodels.{ ConversationView, MessageReply, MessageView }
+
 import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
@@ -48,8 +47,10 @@ class MessageController @Inject()(
   conversationView: conversationView,
   letterView: letterView,
   val authConnector: AuthConnector,
-  formProvider: MessageFormProvider)(implicit ec: ExecutionContext)
+  formProvider: MessageFormProvider)(implicit ec: ExecutionContext, langs: Langs)
     extends FrontendController(controllerComponents) with I18nSupport with AuthorisedFunctions with Logging {
+
+  implicit val lang: Lang = langs.availables.head
 
   def displayMessage(
     clientService: String,
@@ -73,7 +74,7 @@ class MessageController @Inject()(
               val replyFormUrl = s"$replyFormActionUrl?showReplyForm=true#reply-form"
               val replyForm =
                 messageReply(
-                  MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormUrl), Seq.empty[String], ""))
+                  MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormUrl), Seq.empty[FormError], ""))
               secureMessageConnector.getConversationContent(s).map(getConversationView(_, replyForm))
             },
             conversationView.apply _
@@ -104,7 +105,7 @@ class MessageController @Inject()(
             throw new NotFoundException("There can't be a conversation without a message"))
           val replyForm =
             messageReply(
-              MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormUrl), Seq.empty[String], ""))
+              MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormUrl), Seq.empty[FormError], ""))
           Future.successful(
             Ok(
               conversationView(
@@ -113,7 +114,7 @@ class MessageController @Inject()(
                   firstMessage,
                   replyForm,
                   messages.tail,
-                  Seq.empty[String]
+                  Seq.empty[FormError]
                 ))))
         }
     }
@@ -132,7 +133,7 @@ class MessageController @Inject()(
       firstMessage,
       replyForm,
       messages.tail,
-      Seq.empty[String]
+      Seq.empty[FormError]
     )
   }
 
@@ -162,17 +163,10 @@ class MessageController @Inject()(
                         showReplyForm = true,
                         replyFormActionUrl,
                         getReplyIcon(replyFormUrl),
-                        form.errors.map(_.message),
+                        form.errors,
                         content = form.data.getOrElse("content", "")))
-                  Future.successful(
-                    BadRequest(
-                      conversationView(
-                        ConversationView(
-                          conversation.subject,
-                          firstMessage,
-                          replyForm,
-                          messages.tail,
-                          form.errors.map(_.message)))))
+                  Future.successful(BadRequest(conversationView(
+                    ConversationView(conversation.subject, firstMessage, replyForm, messages.tail, form.errors))))
               }
 
           },
@@ -211,17 +205,10 @@ class MessageController @Inject()(
                           showReplyForm = true,
                           replyFormActionUrl,
                           getReplyIcon(replyFormUrl),
-                          form.errors.map(_.message),
+                          form.errors,
                           content = form.data.getOrElse("content", "")))
-                    Future.successful(
-                      BadRequest(
-                        conversationView(
-                          ConversationView(
-                            conversation.subject,
-                            firstMessage,
-                            replyForm,
-                            messages.tail,
-                            form.errors.map(_.message)))))
+                    Future.successful(BadRequest(conversationView(
+                      ConversationView(conversation.subject, firstMessage, replyForm, messages.tail, form.errors))))
                 }
 
             },
@@ -234,41 +221,37 @@ class MessageController @Inject()(
       }
   }
 
-  def displayResult(clientService: String): Action[AnyContent] = Action {
-    Ok(
-      messageResult(
-        s"/$clientService/messages",
-        Panel(
-          title = Text("Message sent"),
-          content = Text("We received your message")
-        )))
+  def displayResult(clientService: String): Action[AnyContent] = Action.async { implicit request: Request[_] =>
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+    authorised() {
+      Future.successful(Ok(messageResult(s"/$clientService/messages")))
+    }
   }
 
   //legacy
-  def result(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action {
-    // FIXME - log statement is just to keep compiler happy - do we really need these parameters?
-    logger.debug(s"service: $clientService, client: $client, conversation: $conversationId")
-    Ok(
-      messageResult(
-        s"/$clientService/messages",
-        Panel(
-          title = Text("Message sent"),
-          content = Text("We received your message")
-        )))
+  def result(clientService: String, client: String, conversationId: String): Action[AnyContent] = Action.async {
+    implicit request: Request[_] =>
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+      authorised() {
+        // FIXME - log statement is just to keep compiler happy - do we really need these parameters?
+        logger.debug(s"service: $clientService, client: $client, conversation: $conversationId")
+        Future.successful(Ok(messageResult(s"/$clientService/messages")))
+      }
   }
 
-  private[controllers] def messagePartial(messages: List[Message])(implicit request: Request[_]) =
+  private[controllers] def messagePartial(messages: List[Message])(
+    implicit request: Request[_]): List[HtmlFormat.Appendable] =
     messages
       .sortBy(_.senderInformation.sent.getMillis)(Ordering[Long].reverse)
-      .map(message =>
-        messageContent(MessageView(
-          senderName(message.senderInformation),
-          sentMessageConversationText(readableTime(message.senderInformation.sent)),
-          firstReadMessageConversationText(message.firstReader),
-          readMessageConversationText,
-          decodeBase64String(message.content),
-          message.senderInformation.self
-        )))
+      .map(
+        message =>
+          messageContent(
+            MessageView(
+              message.senderInformation.name,
+              message.senderInformation.sent,
+              message.firstReader.map(_.read),
+              decodeBase64String(message.content)
+            )))
 
   object Id {
     def apply(messageType: String, id: String): String =

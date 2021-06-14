@@ -16,14 +16,15 @@
 
 package views.partials
 
+import base.LanguageStubs
 import play.twirl.api.HtmlFormat
-import views.html.partials.{ messageInbox }
+import views.html.partials.messageInbox
 import views.viewmodels.MessageInbox
 
 import scala.util.{ Success, Try }
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
-class conversationInboxSpec extends TemplateUnitSpec[MessageInbox] {
+@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements", "org.wartremover.warts.EitherProjectionPartial"))
+class conversationInboxSpec extends TemplateUnitSpec[MessageInbox] with LanguageStubs {
 
   "A conversation inbox template" must {
     "have all mandatory information" in {
@@ -35,9 +36,9 @@ class conversationInboxSpec extends TemplateUnitSpec[MessageInbox] {
           pageContent must include(
             """1 unread, 5 in total. Each message in the list includes its status (either unread or previously viewed), and its sender name, subject, and send time or date. If a message includes replies, then its subject says the number of messages in that conversation.""")
           pageContent must include(
-            """<div aria-hidden="true" class="cols col-sender govuk-!-font-weight-bold"></div>""")
+            """<div aria-hidden="true" class="cols col-sender govuk-!-font-weight-bold">Subject</div>""")
           pageContent must include(
-            """<div aria-hidden="true" class="cols col-date govuk-!-font-weight-bold mob-align-right"></div>""")
+            """<div aria-hidden="true" class="cols col-date govuk-!-font-weight-bold mob-align-right">Date</div>""")
         }
         case _ => fail("There was a problem reading the test output")
       }
@@ -52,7 +53,7 @@ class conversationInboxSpec extends TemplateUnitSpec[MessageInbox] {
     */
   override def render(templateParams: MessageInbox): Try[HtmlFormat.Appendable] = {
     val inbox = new messageInbox
-    Try(inbox(templateParams))
+    Try(inbox(templateParams)(messagesEn))
   }
 
 }
