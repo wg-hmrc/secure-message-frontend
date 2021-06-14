@@ -19,13 +19,14 @@ package views.partials
 import base.LanguageStubs
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
+import play.api.mvc.Request
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.html.components.{ GovukBackLink, GovukErrorSummary, GovukPanel }
 import views.html.Layout
 import views.html.partials.conversationView
 import views.viewmodels.ConversationView
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
+@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements", "org.wartremover.warts.Any"))
 class conversationSpec extends PlaySpec with LanguageStubs {
   "conversation template" must {
     "have message content with subject and back link" in new TestClass {
@@ -36,7 +37,7 @@ class conversationSpec extends PlaySpec with LanguageStubs {
             Html("first message"),
             Html("reply form"),
             Seq(Html("message content one")),
-            Seq()))(messagesEn).toString
+            Seq()))(messagesEn, mock[Request[_]]).toString
       conversationContent must include("subject")
       conversationContent must include("message content one")
     }

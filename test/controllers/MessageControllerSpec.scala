@@ -139,7 +139,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
           ))
         )))
 
-      when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request]))
+      when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request[_]]))
         .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
 
       private val result =
@@ -182,7 +182,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
           ))
         )))
 
-      when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request]))
+      when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request[_]]))
         .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
 
       private val result = controller.saveReply("some-service", "111", "DA123")(
@@ -210,7 +210,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
           ))
         )))
 
-      when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request]))
+      when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request[_]]))
         .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
 
       when(
@@ -240,7 +240,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
           ))
         )))
 
-      when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request]))
+      when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request[_]]))
         .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
 
       when(
@@ -320,7 +320,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
           ))
         )))
 
-      when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request]))
+      when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request[_]]))
         .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
 
       private val result = controller.displayMessage("some-service", id, showReplyForm = false)(
@@ -381,7 +381,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
             ))
           )))
 
-        when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request]))
+        when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request[_]]))
           .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
 
         when(
@@ -413,7 +413,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
             ))
           )))
 
-        when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request]))
+        when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request[_]]))
           .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
 
         when(
@@ -443,7 +443,7 @@ class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneApp
             ))
           )))
 
-        when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request]))
+        when(mockConversationView.apply(any[ConversationView])(any[Messages], any[Request[_]]))
           .thenReturn(new Html("MRN 20GB16046891253600 needs action"))
 
         private val result = controller.saveReplyMessage("some-service", "L2NvbnZlcnNhdGlvbi8xMjMxNTQ2NDU2")(
