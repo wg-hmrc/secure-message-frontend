@@ -22,27 +22,27 @@ import base.LanguageStubs
 import config.AppConfig
 import connectors.SecureMessageConnector
 import forms.MessageFormProvider
-import models.{Conversation, CustomerMessage, FirstReaderInformation, Letter, Message, Sender, SenderInformation}
-import org.joda.time.{DateTime, LocalDate}
+import models.{ Conversation, CustomerMessage, FirstReaderInformation, Letter, Message, Sender, SenderInformation }
+import org.joda.time.{ DateTime, LocalDate }
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
-import play.api.i18n.{Langs, Messages}
+import play.api.i18n.{ Langs, Messages }
 import play.api.mvc.Request
-import play.api.test.Helpers.{contentAsString, status}
+import play.api.test.Helpers.{ contentAsString, status }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import play.api.test.{FakeRequest, NoMaterializer}
+import play.api.test.{ FakeRequest, NoMaterializer }
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import views.helpers.HtmlUtil.encodeBase64String
-import views.html.partials.{conversationView, letterView, messageContent, messageReply, messageResult}
+import views.html.partials.{ conversationView, letterView, messageContent, messageReply, messageResult }
 import views.viewmodels.ConversationView
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneAppPerSuite with MockAuthConnector {
