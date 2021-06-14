@@ -16,6 +16,7 @@
 
 package views.viewmodels
 
+import play.api.data.FormError
 import play.twirl.api.Html
 
 final case class ConversationView(
@@ -23,4 +24,4 @@ final case class ConversationView(
   latestMessage: Html,
   replyForm: Html,
   remainingMessages: Seq[Html],
-  replyFormErrors: Seq[String])
+  replyFormErrors: Seq[FormError])

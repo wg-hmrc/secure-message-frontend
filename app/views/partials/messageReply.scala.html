@@ -24,7 +24,7 @@
     govukButton: GovukButton
 )
 
-@(reply: MessageReply)(implicit messages: Messages, requestHeader: RequestHeader)
+@(reply: MessageReply)(implicit messages: Messages, requestHeader: RequestHeader, request: Request[_])
 @import reply._
 @if(showReplyForm) {
     <style>
@@ -49,9 +49,9 @@
                 classes = "govuk-label--s ",
                 content = Text(messages("conversation.reply.form.heading"))
             ),
-            errorMessage = formErrors.headOption.map(error => ErrorMessage(content = Text(messages(error)))),
+            errorMessage = formErrors.headOption.map(error => ErrorMessage(content = Text(messages(error.message, error.args:_*)))),
             value = Some(content),
-            classes ="",
+            classes = "",
             attributes = Map("spellcheck" -> "true")
         ))
 

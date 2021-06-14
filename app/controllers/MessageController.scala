@@ -22,7 +22,7 @@ import forms.MessageFormProvider
 import javax.inject.Singleton
 import models.{ Conversation, CustomerMessage, Message }
 import play.api.Logging
-import play.api.data.Form
+import play.api.data.{ Form, FormError }
 import play.api.i18n.{ I18nSupport, Lang, Langs }
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents, Request, Result }
 import play.twirl.api.{ Html, HtmlFormat }
@@ -74,7 +74,7 @@ class MessageController @Inject()(
               val replyFormUrl = s"$replyFormActionUrl?showReplyForm=true#reply-form"
               val replyForm =
                 messageReply(
-                  MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormUrl), Seq.empty[String], ""))
+                  MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormUrl), Seq.empty[FormError], ""))
               secureMessageConnector.getConversationContent(s).map(getConversationView(_, replyForm))
             },
             conversationView.apply _
@@ -105,7 +105,7 @@ class MessageController @Inject()(
             throw new NotFoundException("There can't be a conversation without a message"))
           val replyForm =
             messageReply(
-              MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormUrl), Seq.empty[String], ""))
+              MessageReply(showReplyForm, replyFormActionUrl, getReplyIcon(replyFormUrl), Seq.empty[FormError], ""))
           Future.successful(
             Ok(
               conversationView(
@@ -114,7 +114,7 @@ class MessageController @Inject()(
                   firstMessage,
                   replyForm,
                   messages.tail,
-                  Seq.empty[String]
+                  Seq.empty[FormError]
                 ))))
         }
     }
@@ -133,7 +133,7 @@ class MessageController @Inject()(
       firstMessage,
       replyForm,
       messages.tail,
-      Seq.empty[String]
+      Seq.empty[FormError]
     )
   }
 
@@ -163,17 +163,10 @@ class MessageController @Inject()(
                         showReplyForm = true,
                         replyFormActionUrl,
                         getReplyIcon(replyFormUrl),
-                        form.errors.map(_.message),
+                        form.errors,
                         content = form.data.getOrElse("content", "")))
-                  Future.successful(
-                    BadRequest(
-                      conversationView(
-                        ConversationView(
-                          conversation.subject,
-                          firstMessage,
-                          replyForm,
-                          messages.tail,
-                          form.errors.map(_.message)))))
+                  Future.successful(BadRequest(conversationView(
+                    ConversationView(conversation.subject, firstMessage, replyForm, messages.tail, form.errors))))
               }
 
           },
@@ -212,17 +205,10 @@ class MessageController @Inject()(
                           showReplyForm = true,
                           replyFormActionUrl,
                           getReplyIcon(replyFormUrl),
-                          form.errors.map(_.message),
+                          form.errors,
                           content = form.data.getOrElse("content", "")))
-                    Future.successful(
-                      BadRequest(
-                        conversationView(
-                          ConversationView(
-                            conversation.subject,
-                            firstMessage,
-                            replyForm,
-                            messages.tail,
-                            form.errors.map(_.message)))))
+                    Future.successful(BadRequest(conversationView(
+                      ConversationView(conversation.subject, firstMessage, replyForm, messages.tail, form.errors))))
                 }
 
             },

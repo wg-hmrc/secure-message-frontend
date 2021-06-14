@@ -23,7 +23,7 @@
     govukBackLink: GovukBackLink,
     govukErrorSummary: GovukErrorSummary)
 
-@(conversation: ConversationView)(implicit messages: Messages)
+@(conversation: ConversationView)(implicit messages: Messages, request: Request[_])
 <style>
 
 
@@ -59,10 +59,10 @@
             errorList = conversation.replyFormErrors.map(error =>
                 ErrorLink(
                     href = Some("#reply-form"),
-                    content = Text(messages(error))
+                    content = Text(messages(error.message, error.args:_*))
                 )
             ),
-            title = Text(messages(messages("conversation.reply.form.error_summary.heading")))
+            title = Text(messages("conversation.reply.form.error_summary.heading"))
         ))
     }
     <h1 class="govuk-heading-l margin-top-small margin-bottom-small">@conversation.subject</h1>
@@ -70,7 +70,6 @@
     @conversation.replyForm
     @for(message <- conversation.remainingMessages) {
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        <h2 class="govuk-heading-l">@conversation.subject</h2>
         @message
     }
 </div>
