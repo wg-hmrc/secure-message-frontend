@@ -154,12 +154,12 @@ a.underline-fix { text-decoration: none; }
 
     <div class="col-status cols conversation-status">@{
       if(conversationHeader.unreadMessages) {
-        <span aria-hidden="true" class="dot-unread prefs__palette">@messages("conversation.inbox.heading.unread")</span>
+        <span aria-hidden="true" class="dot-unread prefs__palette">{messages("conversation.inbox.heading.unread2")}</span>
 
 
         <span class="govuk-visually-hidden">Number {index+1}. Unread message.&nbsp;</span>
       } else {
-        <span class="govuk-visually-hidden">Number {index+1}. @messages("conversation.inbox.status.previously.viewed").&nbsp;</span>
+        <span class="govuk-visually-hidden">Number {index+1}. {messages("conversation.inbox.status.previously.viewed")}.&nbsp;</span>
       }
     }</div>
   
