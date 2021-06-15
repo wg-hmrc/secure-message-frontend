@@ -16,10 +16,11 @@ conversation.inbox.heading.subject = Pwnc
 conversation.inbox.heading.date = Dyddiad
 conversation.inbox.subject.count = o negeseuon yn y sgwrs hon
 conversation.inbox.heading.unread = o negeseuon heb eu darllen
+conversation.inbox.heading.unread2 = O negeseuon heb eu darllen
 conversation.inbox.heading.total = mewn cyfanswm
 conversation.inbox.heading.from = oddi wrth
 conversation.inbox.heading.description = Mae pob neges yn y rhestr yn cynnwys ei statws (naill ai heb ei darllen neu gwelwyd eisoes), ac enw’r anfonwr, y pwnc, a’r amser neu ddyddiad anfon. Os yw neges yn cynnwys atebion, yna mae ei phwnc yn nodi nifer y negeseuon yn y sgwrs honno.
-conversation.inbox.status.previously.viewed = neges a welwyd eisoes
+conversation.inbox.status.previously.viewed = Neges a welwyd eisoes
 
 conversation.reply.form.heading = Ateb y neges hon
 conversation.reply.form.error_summary.heading = Mae problem wedi codi
