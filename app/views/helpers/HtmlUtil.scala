@@ -27,7 +27,6 @@ import play.twirl.api.Html
 
 import scala.xml.{ Utility, Xhtml }
 
-@SuppressWarnings(Array("org.wartremover.warts.PlatformDefault"))
 object HtmlUtil {
 
   private def dtf(implicit messages: Messages): SimpleDateFormat = createDateFormatForPattern("d MMMM yyyy")

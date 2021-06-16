@@ -22,7 +22,6 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.test.FakeRequest
 import base.SpecBase
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class LanguageSwitchControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures {
 
   "when translation is enabled switching language" should {

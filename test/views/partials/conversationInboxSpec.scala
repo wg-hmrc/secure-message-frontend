@@ -23,7 +23,6 @@ import views.viewmodels.MessageInbox
 
 import scala.util.{ Success, Try }
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements", "org.wartremover.warts.EitherProjectionPartial"))
 class conversationInboxSpec extends TemplateUnitSpec[MessageInbox] with LanguageStubs {
 
   "A conversation inbox template" must {

@@ -25,7 +25,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class ApiSpecsControllerSpec extends PlaySpec with GuiceOneAppPerSuite {
   private val fakeRequest = FakeRequest("GET", "/api/schema.json")
   private val controller = new ApiSpecsController(stubMessagesControllerComponents())

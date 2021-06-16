@@ -25,7 +25,6 @@ import play.api.libs.ws.WSClient
 import uk.gov.hmrc.integration.ServiceSpec
 import views.helpers.HtmlUtil.encodeBase64String
 
-@SuppressWarnings(Array("org.wartremover.warts.All"))
 class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
   override def externalServices: Seq[String] = Seq.empty
   val secureMessagePort: Int = 9051

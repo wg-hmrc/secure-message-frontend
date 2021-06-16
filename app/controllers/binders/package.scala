@@ -20,7 +20,6 @@ import controllers.generic.models.{ CustomerEnrolment, Tag }
 import play.api.mvc.QueryStringBindable
 
 package object binders {
-  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter", "org.wartremover.warts.Nothing"))
   implicit def queryStringBindableCustomerEnrolment(
     implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[CustomerEnrolment] =
     new QueryStringBindable[CustomerEnrolment] {
@@ -35,7 +34,6 @@ package object binders {
         customerEnrolment.key + "~" + customerEnrolment.name + "~" + customerEnrolment.value
     }
 
-  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter", "org.wartremover.warts.Nothing"))
   implicit def queryStringBindableTag(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[Tag] =
     new QueryStringBindable[Tag] {
 

@@ -40,7 +40,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{ ExecutionContext, Future }
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class MessagesInboxControllerSpec extends PlaySpec with MockitoSugar with MockAuthConnector {
 
   "ConversationInbox Controller" must {

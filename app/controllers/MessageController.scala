@@ -36,7 +36,6 @@ import views.viewmodels.{ ConversationView, MessageReply, MessageView }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-@SuppressWarnings(Array("org.wartremover.warts.All"))
 @Singleton
 class MessageController @Inject()(
   controllerComponents: MessagesControllerComponents,

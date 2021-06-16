@@ -29,7 +29,6 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.CSRFTokenHelper._
 
-@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf", "org.wartremover.warts.DefaultArguments"))
 trait SpecBase extends PlaySpec with TryValues with ScalaFutures with IntegrationPatience {
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(fakeRequest("", ""))

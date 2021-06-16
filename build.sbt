@@ -40,13 +40,6 @@ lazy val externalServices = List(
   ExternalService("ENTITY_RESOLVER")
 )
 
-lazy val wartremoverSettings =
-  Seq(
-    WartRemoverSettings.wartRemoverError,
-    wartremoverExcluded in (Compile, compile) ++= routes.in(Compile).value,
-    wartremoverExcluded += (target in TwirlKeys.compileTemplates).value
-  )
-
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin, BuildInfoPlugin)
   .disablePlugins(JUnitXmlReportPlugin) // Required to prevent https://github.com/scalatest/scalatest/issues/1427
@@ -77,9 +70,6 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions ++= Seq(
       "-P:silencer:pathFilters=target/.*",
       s"-P:silencer:sourceRoots=${baseDirectory.value.getCanonicalPath}",
-      "-P:wartremover:excluded:/conf/app.routes",
-      "-P:silencer:pathFilters=app.routes",
-      "-P:wartremover:traverser:org.wartremover.warts.Unsafe",
       "-deprecation", // Emit warning and location for usages of deprecated APIs.
       "-encoding",
       "utf-8", // Specify character encoding used by source files.
@@ -148,7 +138,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(ServiceManagerPlugin.serviceManagerSettings)
   .settings(itDependenciesList := externalServices)
   .settings(ScoverageSettings())
-  .settings(wartremoverSettings: _*)
   .settings(
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
   )

@@ -44,7 +44,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ ExecutionContext, Future }
 
-@SuppressWarnings(Array("org.wartremover.warts.All"))
 class MessageControllerSpec extends PlaySpec with LanguageStubs with GuiceOneAppPerSuite with MockAuthConnector {
 
   implicit val mat: Materializer = NoMaterializer

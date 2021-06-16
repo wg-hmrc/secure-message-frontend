@@ -27,7 +27,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-@SuppressWarnings(Array("org.wartremover.warts.DefaultArguments", "org.wartremover.warts.NonUnitStatements"))
 trait MockAuthConnector extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 

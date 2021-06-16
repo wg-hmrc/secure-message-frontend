@@ -32,7 +32,6 @@ import uk.gov.hmrc.integration.ServiceSpec
 import scala.concurrent.{ ExecutionContext, Future }
 import play.api.http.Status.OK
 
-@SuppressWarnings(Array("org.wartremover.warts.All"))
 class ConversationMessagesPartialISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
 
   override def externalServices: Seq[String] = Seq.empty
