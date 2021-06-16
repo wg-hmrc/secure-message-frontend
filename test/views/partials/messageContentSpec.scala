@@ -25,7 +25,6 @@ import views.html.Layout
 import views.html.partials.messageContent
 import views.viewmodels.MessageView
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class messageContentSpec extends PlaySpec with LanguageStubs {
 
   "messsageContent template" must {

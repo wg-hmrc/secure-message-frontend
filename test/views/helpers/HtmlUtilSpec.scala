@@ -23,7 +23,6 @@ import org.scalatestplus.play.PlaySpec
 import play.api.i18n.{ DefaultMessagesApi, Lang, MessagesImpl }
 import views.helpers.HtmlUtil._
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class HtmlUtilSpec extends PlaySpec {
   val messagesApi = new DefaultMessagesApi()
   implicit val messages = MessagesImpl(Lang("en"), messagesApi)

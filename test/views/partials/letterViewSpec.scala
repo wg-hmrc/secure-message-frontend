@@ -26,7 +26,6 @@ import views.helpers.HtmlUtil.{ readableDate, readableTime }
 import views.html.Layout
 import views.html.partials.letterView
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class letterViewSpec extends PlaySpec with LanguageStubs {
   "letterView template" must {
     "have message content with subject and sent date" in new TestClass {

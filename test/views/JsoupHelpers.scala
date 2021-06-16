@@ -21,7 +21,6 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.twirl.api.Html
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 trait JsoupHelpers {
 
   implicit class RichHtml(html: Html) {

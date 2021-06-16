@@ -19,7 +19,6 @@ package base
 import play.api.i18n.Messages.UrlMessageSource
 import play.api.i18n.{ DefaultMessagesApi, Lang, Messages, MessagesApi, MessagesImpl }
 
-@SuppressWarnings(Array("org.wartremover.warts.EitherProjectionPartial"))
 trait LanguageStubs {
 
   val messagesResourceEn: Map[String, String] =

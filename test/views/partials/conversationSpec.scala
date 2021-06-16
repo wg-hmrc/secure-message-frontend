@@ -26,7 +26,6 @@ import views.html.Layout
 import views.html.partials.conversationView
 import views.viewmodels.ConversationView
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements", "org.wartremover.warts.Any"))
 class conversationSpec extends PlaySpec with LanguageStubs {
   "conversation template" must {
     "have message content with subject and back link" in new TestClass {

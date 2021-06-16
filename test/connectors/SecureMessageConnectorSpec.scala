@@ -32,7 +32,6 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ ExecutionContext, Future }
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class SecureMessageConnectorSpec extends PlaySpec with MockitoSugar {
 
   "SecureMessageConnector.getConversationList" must {

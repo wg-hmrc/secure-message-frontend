@@ -34,7 +34,6 @@ import uk.gov.hmrc.integration.ServiceSpec
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class ApiEndpointsISpec extends PlaySpec with ServiceSpec with MockitoSugar with BeforeAndAfterEach {
 
   override def externalServices: Seq[String] = Seq.empty
