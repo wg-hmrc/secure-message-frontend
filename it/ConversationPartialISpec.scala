@@ -179,7 +179,7 @@ class ConversationPartialISpec extends PlaySpec with ServiceSpec with MockitoSug
         | {
         |  "credId": "1235",
         |  "affinityGroup": "Organisation",
-        |  "confidenceLevel": 100,
+        |  "confidenceLevel": 200,
         |  "credentialStrength": "none",
         |  "enrolments": []
         |  }

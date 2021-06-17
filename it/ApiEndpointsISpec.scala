@@ -105,7 +105,7 @@ class ApiEndpointsISpec extends PlaySpec with ServiceSpec with MockitoSugar with
         | {
         |  "credId": "1235",
         |  "affinityGroup": "Organisation",
-        |  "confidenceLevel": 100,
+        |  "confidenceLevel": 200,
         |  "credentialStrength": "none",
         |  "enrolments": []
         |  }
