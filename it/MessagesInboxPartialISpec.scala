@@ -197,7 +197,7 @@ class MessagesInboxPartialISpec extends PlaySpec with ServiceSpec with MockitoSu
         | {
         |  "credId": "1235",
         |  "affinityGroup": "Organisation",
-        |  "confidenceLevel": 100,
+        |  "confidenceLevel": 200,
         |  "credentialStrength": "none",
         |  "enrolments": []
         |  }

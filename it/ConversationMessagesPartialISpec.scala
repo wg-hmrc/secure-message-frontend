@@ -102,7 +102,7 @@ class ConversationMessagesPartialISpec extends PlaySpec with ServiceSpec with Mo
         | {
         |  "credId": "1235",
         |  "affinityGroup": "Organisation",
-        |  "confidenceLevel": 100,
+        |  "confidenceLevel": 200,
         |  "credentialStrength": "none",
         |  "enrolments": []
         |  }
