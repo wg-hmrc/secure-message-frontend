@@ -54,11 +54,6 @@
 }
 
 
-.conversation-subject {
-  padding-bottom:1em;
-}
-
-
 .black-text {
   color:#0b0c0c;
 }
@@ -106,20 +101,10 @@
   padding:10px; 
 }
 
-/* .grid-wrapper  div.cols {
-  display: inline-block;
-} */
-
-/* 
-.col-status { width:5%;  margin-bottom: 5px; vertical-align: top; padding-top: 2px;}
-.col-sender {width: 65%;  margin-bottom: 5px;}
-.col-date {width:25%;  margin-bottom: 5px; vertical-align: top;} */
 
 
 .message {margin-bottom: 10px; }
-/* .message-row { padding:10px;
-	border-bottom:  1px solid rgba(177, 180, 182,0.75)
-} */
+
 .message-row:hover { background-color:#f3f2f1; }
 .message-row a:focus {  background-color: #f3f2f1;}
 .message-row:focus-within {  background-color:#f3f2f1;}
@@ -147,7 +132,7 @@ a.underline-fix { text-decoration: none; }
   </caption>
   <thead class="govuk-table__head">
   <tr class="govuk-table__row">
-      <th scope="col" class="govuk-table__header"></th>
+      <th aria-hidden="true" scope="col" class="govuk-table__header">&nbsp;</th>
       <th aria-hidden="true" scope="col" class="govuk-table__header">@messages("conversation.inbox.heading.subject")</th>
       <th aria-hidden="true" scope="col" class="govuk-table__header mob-align-right">@messages("conversation.inbox.heading.date")</th>
   </tr>
