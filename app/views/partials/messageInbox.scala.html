@@ -106,20 +106,20 @@
   padding:10px; 
 }
 
-.grid-wrapper  div.cols {
+/* .grid-wrapper  div.cols {
   display: inline-block;
-}
+} */
 
-
+/* 
 .col-status { width:5%;  margin-bottom: 5px; vertical-align: top; padding-top: 2px;}
 .col-sender {width: 65%;  margin-bottom: 5px;}
-.col-date {width:25%;  margin-bottom: 5px; vertical-align: top;}
+.col-date {width:25%;  margin-bottom: 5px; vertical-align: top;} */
 
 
 .message {margin-bottom: 10px; }
-.message-row { padding:10px;
+/* .message-row { padding:10px;
 	border-bottom:  1px solid rgba(177, 180, 182,0.75)
-}
+} */
 .message-row:hover { background-color:#f3f2f1; }
 .message-row a:focus {  background-color: #f3f2f1;}
 .message-row:focus-within {  background-color:#f3f2f1;}
@@ -132,40 +132,48 @@
 a.underline-fix { text-decoration: none; }
 .conversation-status { text-align:center; }
 
+.status-align {
+  text-align: right;
+}
 </style>
 
 <h1 class="govuk-heading-xl">@heading</h1>
-<span class="govuk-visually-hidden">@params.unread @messages("conversation.inbox.heading.unread"), @params.total @messages("conversation.inbox.heading.total"). @messages("conversation.inbox.heading.description")</span>
 
 <div class="govuk-body">
 
-<div class="grid-wrapper">
-  <div class=" grid-header-row">
-  <div class="cols col-status "></div>
-  <div aria-hidden="true" class="cols col-sender govuk-!-font-weight-bold">@messages("conversation.inbox.heading.subject")</div>
-  <div aria-hidden="true" class="cols col-date govuk-!-font-weight-bold mob-align-right">@messages("conversation.inbox.heading.date")</div>
-</div>
+<table class="govuk-table">
+  <caption class="govuk-table__caption govuk-table__caption--m">
+    <span class="govuk-visually-hidden">@params.unread @messages("conversation.inbox.heading.unread"), @params.total @messages("conversation.inbox.heading.total"). @messages("conversation.inbox.heading.description")</span>
+  </caption>
+  <thead class="govuk-table__head">
+  <tr class="govuk-table__row">
+      <th scope="col" class="govuk-table__header"></th>
+      <th aria-hidden="true" scope="col" class="govuk-table__header">@messages("conversation.inbox.heading.subject")</th>
+      <th aria-hidden="true" scope="col" class="govuk-table__header mob-align-right">@messages("conversation.inbox.heading.date")</th>
+  </tr>
+  </thead>
+  <tbody class="govuk-table__body">
+
+
   @for((conversationHeader,index) <- conversationHeaders.zipWithIndex) {
-    
+    <tr class="govuk-table__row message-row" >
    
 <!-- status -->    
-<div class="message-row">
-<a href=@{getMessageUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="underline-fix no--underline" >
-
-    <div class="col-status cols conversation-status">@{
+  <td class="govuk-table__cell status-align">
+      @{
       if(conversationHeader.unreadMessages) {
-        <span aria-hidden="true" class="dot-unread prefs__palette">{messages("conversation.inbox.heading.unread2")}</span>
-
-
-        <span class="govuk-visually-hidden">Number {index+1}. Unread message.&nbsp;</span>
+        <span aria-hidden="true" class="dot-unread prefs__palette">&nbsp;</span>
+        <span class="govuk-visually-hidden">{messages("conversation.inbox.heading.unread2")}.&nbsp;</span>
       } else {
-        <span class="govuk-visually-hidden">Number {index+1}. {messages("conversation.inbox.status.previously.viewed")}.&nbsp;</span>
+        <span class="govuk-visually-hidden">{messages("conversation.inbox.status.previously.viewed")}.&nbsp;</span>
       }
-    }</div>
-  
- 
+    }
+</td>
 
-    <div class="col-sender cols">
+
+
+<td class="govuk-table__cell ">
+      <a href=@{getMessageUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="underline-fix no--underline" >
       <!-- sender -->
       <div>@{
         val senderSpan = if(conversationHeader.unreadMessages){
@@ -192,20 +200,27 @@ a.underline-fix { text-decoration: none; }
           subjectMaybeWithCount
         }</span>
       </div>
-    </div>
-   
+    </a>
+  
+   </td>
 
 
-  <div class="col-date cols mob-align-right mob-nowrap">
+
+ <td class="govuk-table__cell mob-align-right mob-nowrapx">
+  <a href=@{getMessageUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="underline-fix no--underline" >
     <span class='@{if(conversationHeader.unreadMessages){"govuk-!-font-weight-bold"}} black-text'>@{getMessageDate(conversationHeader)}</span>
-  </div>
-    
   </a>
-</div>
+ </td>
+
+</tr>
 
   }
 
-</div>
+
+</tbody>
+</table>
+
+
 
 
 
