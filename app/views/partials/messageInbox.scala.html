@@ -31,10 +31,6 @@
     text-align: right
   }
 
-  .mob-nowrap {
-    white-space: nowrap;
-  }
-
 }
 
 
@@ -178,7 +174,8 @@ a.underline-fix { text-decoration: none; }
             <span class="govuk-visually-hidden">{messages("conversation.inbox.heading.subject")}:</span><span class="underline black-text break-long ">{conversationHeader.subject}</span><span class="govuk-visually-hidden">,&nbsp;</span>
           }
           val subjectMaybeWithCount = if(conversationHeader.count > 1){
-            subjectMaybeRead ++ <span aria-hidden="true" class="message-counter non-breaking">({conversationHeader.count})</span><span class="govuk-visually-hidden">{conversationHeader.count} @messages("conversation.inbox.subject.count").</span>
+            subjectMaybeRead ++ <span aria-hidden="true" class="message-counter non-breaking">({conversationHeader.count})</span><span class="govuk-visually-hidden">{conversationHeader.count}  
+              {messages("conversation.inbox.subject.count")}.</span>
           } else {
             subjectMaybeRead
           }
@@ -191,10 +188,11 @@ a.underline-fix { text-decoration: none; }
 
 
 
- <td class="govuk-table__cell mob-align-right mob-nowrapx">
-  <a href=@{getMessageUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="underline-fix no--underline" >
+ <td class="govuk-table__cell mob-align-right">
+  <a aria-hidden="true" href=@{getMessageUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="underline-fix no--underline" >
     <span class='@{if(conversationHeader.unreadMessages){"govuk-!-font-weight-bold"}} black-text'>@{getMessageDate(conversationHeader)}</span>
   </a>
+  <span class="govuk-visually-hidden">@{getMessageDate(conversationHeader)}</span>
  </td>
 
 </tr>
