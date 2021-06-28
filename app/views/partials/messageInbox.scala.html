@@ -128,9 +128,9 @@ a.underline-fix { text-decoration: none; }
   </caption>
   <thead class="govuk-table__head">
   <tr class="govuk-table__row">
-      <th aria-hidden="true" scope="col" class="govuk-table__header">&nbsp;</th>
-      <th aria-hidden="true" scope="col" class="govuk-table__header">@messages("conversation.inbox.heading.subject")</th>
-      <th aria-hidden="true" scope="col" class="govuk-table__header mob-align-right">@messages("conversation.inbox.heading.date")</th>
+      <th scope="col" class="govuk-table__header">&nbsp; <span class="govuk-visually-hidden">@messages("conversation.inbox.heading.status")</span></th>
+      <th scope="col" class="govuk-table__header">@messages("conversation.inbox.heading.subject")</th>
+      <th scope="col" class="govuk-table__header mob-align-right">@messages("conversation.inbox.heading.date")</th>
   </tr>
   </thead>
   <tbody class="govuk-table__body">
@@ -155,7 +155,7 @@ a.underline-fix { text-decoration: none; }
 
 <td class="govuk-table__cell ">
       <a href=@{getMessageUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="underline-fix no--underline" >
-      <!-- sender -->
+      
       <div>@{
         val senderSpan = if(conversationHeader.unreadMessages){
           <span class="govuk-visually-hidden">{messages("conversation.inbox.heading.from")}:</span><span class="govuk-!-font-weight-bold black-text break-long ">{getSenderName(conversationHeader)}<span class="govuk-visually-hidden">.&nbsp;</span></span>
@@ -165,7 +165,8 @@ a.underline-fix { text-decoration: none; }
         senderSpan
       }</div>
 
-      <!-- subject -->
+     
+
       <div>
         <span>@{
           val subjectMaybeRead = if(conversationHeader.unreadMessages){
@@ -182,9 +183,13 @@ a.underline-fix { text-decoration: none; }
           subjectMaybeWithCount
         }</span>
       </div>
+
     </a>
   
    </td>
+
+
+
 
 
 
