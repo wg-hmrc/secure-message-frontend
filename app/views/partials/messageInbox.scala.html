@@ -128,7 +128,7 @@ a.underline-fix { text-decoration: none; }
   </caption>
   <thead class="govuk-table__head">
   <tr class="govuk-table__row">
-      <th scope="col" class="govuk-table__header">&nbsp; <span class="govuk-visually-hidden">@messages("conversation.inbox.heading.status")</span></th>
+      <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">@messages("conversation.inbox.heading.status")</span></th>
       <th scope="col" class="govuk-table__header">@messages("conversation.inbox.heading.subject")</th>
       <th scope="col" class="govuk-table__header mob-align-right">@messages("conversation.inbox.heading.date")</th>
   </tr>
@@ -170,9 +170,11 @@ a.underline-fix { text-decoration: none; }
       <div>
         <span>@{
           val subjectMaybeRead = if(conversationHeader.unreadMessages){
-            <span class="govuk-visually-hidden">{messages("conversation.inbox.heading.subject")}:</span><span class="govuk-!-font-weight-bold underline black-text break-long ">{conversationHeader.subject}</span> <span class="govuk-visually-hidden">,&nbsp;</span>
+            
+            <span class="govuk-!-font-weight-bold underline black-text break-long ">{conversationHeader.subject}</span> <span class="govuk-visually-hidden">,&nbsp;</span>
           } else {
-            <span class="govuk-visually-hidden">{messages("conversation.inbox.heading.subject")}:</span><span class="underline black-text break-long ">{conversationHeader.subject}</span><span class="govuk-visually-hidden">,&nbsp;</span>
+            
+            <span class="underline black-text break-long ">{conversationHeader.subject}</span><span class="govuk-visually-hidden">,&nbsp;</span>
           }
           val subjectMaybeWithCount = if(conversationHeader.count > 1){
             subjectMaybeRead ++ <span aria-hidden="true" class="message-counter non-breaking">({conversationHeader.count})</span><span class="govuk-visually-hidden">{conversationHeader.count}  
