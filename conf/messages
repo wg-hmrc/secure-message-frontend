@@ -13,7 +13,8 @@ conversation.page.date = Date
 
 conversation.inbox.title = Messages between you and HMRC
 conversation.inbox.heading.status = Status
-conversation.inbox.heading.subject = Message
+conversation.inbox.heading.message = Message
+conversation.inbox.heading.subject = Subject
 conversation.inbox.heading.date = Date
 conversation.inbox.subject.count = messages in this conversation
 conversation.inbox.heading.unread = unread
