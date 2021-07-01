@@ -12,6 +12,7 @@ conversation.page.date = Dyddiad
 
 conversation.inbox.title = Negeseuon rhyngoch chi a CThEM
 conversation.inbox.heading.status = Status
+conversation.inbox.heading.message = Neges
 conversation.inbox.heading.subject = Pwnc
 conversation.inbox.heading.date = Dyddiad
 conversation.inbox.subject.count = o negeseuon yn y sgwrs hon

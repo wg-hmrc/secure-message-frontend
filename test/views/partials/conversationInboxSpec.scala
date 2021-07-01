@@ -34,10 +34,8 @@ class conversationInboxSpec extends TemplateUnitSpec[MessageInbox] with Language
           pageContent must include("""<span class="govuk-visually-hidden">""")
           pageContent must include(
             """1 unread, 5 in total. Each message in the list includes its status (either unread or previously viewed), and its sender name, subject, and send time or date. If a message includes replies, then its subject says the number of messages in that conversation.""")
-          pageContent must include(
-            """<div aria-hidden="true" class="cols col-sender govuk-!-font-weight-bold">Subject</div>""")
-          pageContent must include(
-            """<div aria-hidden="true" class="cols col-date govuk-!-font-weight-bold mob-align-right">Date</div>""")
+          pageContent must include("""<th scope="col" class="govuk-table__header">Message</th>""")
+          pageContent must include("""<th scope="col" class="govuk-table__header mob-align-right">Date</th>""")
         }
         case _ => fail("There was a problem reading the test output")
       }

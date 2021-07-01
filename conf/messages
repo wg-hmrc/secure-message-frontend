@@ -13,11 +13,12 @@ conversation.page.date = Date
 
 conversation.inbox.title = Messages between you and HMRC
 conversation.inbox.heading.status = Status
+conversation.inbox.heading.message = Message
 conversation.inbox.heading.subject = Subject
 conversation.inbox.heading.date = Date
 conversation.inbox.subject.count = messages in this conversation
 conversation.inbox.heading.unread = unread
-conversation.inbox.heading.unread2 = Unread
+conversation.inbox.heading.unread2 = Unread message
 conversation.inbox.heading.total = in total
 conversation.inbox.heading.from = from
 conversation.inbox.heading.description = Each message in the list includes its status (either unread or previously viewed), and its sender name, subject, and send time or date. If a message includes replies, then its subject says the number of messages in that conversation.
