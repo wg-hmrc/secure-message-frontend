@@ -196,7 +196,7 @@ a.underline-fix { text-decoration: none; }
 
 
  <td class="govuk-table__cell mob-align-right">
-  <a aria-hidden="true" href=@{getMessageUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="underline-fix no--underline" >
+  <a aria-hidden="true" href=@{getMessageUrl(clientService,conversationHeader)} target="_self" data-sso="false" class="underline-fix no--underline" tabIndex="-1">
     <span class='@{if(conversationHeader.unreadMessages){"govuk-!-font-weight-bold"}} black-text'>@{getMessageDate(conversationHeader)}</span>
   </a>
   <span class="govuk-visually-hidden">@{getMessageDate(conversationHeader)}</span>
